@@ -1,0 +1,6 @@
+[submodule "extern/mqt-core"]
+	path = extern/mqt-core
+	url = https://github.com/cda-tum/mqt-core.git
+[submodule "extern/googletest"]
+	path = extern/googletest
+	url = https://github.com/google/googletest.git
