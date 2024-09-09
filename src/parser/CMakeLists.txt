@@ -1,8 +1,8 @@
 # FLEX & BISON
 find_package(BISON)
 find_package(FLEX)
+BISON_TARGET(Parser parser.y ${CMAKE_CURRENT_BINARY_DIR}/parser.cpp) # Optional param: DEFINES_FILE ${CMAKE_CURRENT_BINARY_DIR}/parser.hpp
 FLEX_TARGET(Scanner lexer.l ${CMAKE_CURRENT_BINARY_DIR}/lexer.cpp)
-BISON_TARGET(Parser parser.y ${CMAKE_CURRENT_BINARY_DIR}/parser.cpp)
 ADD_FLEX_BISON_DEPENDENCY(Scanner Parser)
 
 #message("CMAKE CURRENT SOURCE DIR : ${CMAKE_CURRENT_SOURCE_DIR}")
@@ -16,8 +16,19 @@ ADD_FLEX_BISON_DEPENDENCY(Scanner Parser)
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 message(${BISON_Parser_OUTPUTS})
 message(${FLEX_Scanner_OUTPUTS})
+message(${FLEX_LIBRARIES})
+message(${FLEX_INCLUDE_DIRS})
 add_library(
     Parser STATIC
     ${BISON_Parser_OUTPUTS}
     ${FLEX_Scanner_OUTPUTS}
 )
+target_link_libraries(Parser ${FLEX_LIBRARIES})
+target_include_directories(Parser PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
+
+add_executable(
+    ParserRunner
+    ${BISON_Parser_OUTPUTS}
+    ${FLEX_Scanner_OUTPUTS}
+)
+target_link_libraries(ParserRunner ${FLEX_LIBRARIES})

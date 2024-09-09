@@ -1,20 +1,24 @@
+/* Section 1: Declarations and options */
 %{
-int mylineno = 0;
+#include "parser.hpp"
 %}
 
-string  \"[^\n"]+\"
+/* Section 2: A list of patterns and actions */
+%%
 
-ws      [ \t]+
-
-alpha   [A-Za-z]
-dig     [0-9]
-name    ({alpha}|{dig}|\$)({alpha}|{dig}|[_.\-/$])*
-num1    [-+]?{dig}+\.?([eE][-+]?{dig}+)?
-num2    [-+]?{dig}*\.{dig}+([eE][-+]?{dig}+)?
-number  {num1}|{num2}
+"+"     { return ADD; }
+"-"     { return SUB; }
+"*"     { return MUL; }
+"/"     { return DIV; }
+"|"     { return ABS; }
+"("     { return OP; }
+")"     { return CP; }
+[0-9]+  { yylval = atoi(yytext); return NUMBER; }
+\n      { return EOL; }
+"//".*
+[ \t]   { /* ignore whitespaces and comments starting with // */ }
+.       { printf("Mystery character %c\n", *yytext); }
 
 %%
 
-{ws}    /* skip blanks and tabs */
-
-%%
+/* Section 3: C codes */

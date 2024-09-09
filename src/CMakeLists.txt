@@ -4,7 +4,7 @@ add_subdirectory(
     "extern/mqt-core"
     EXCLUDE_FROM_ALL)
 
-#add_subdirectory(parser)
+add_subdirectory(parser)
 
 add_library(
     ${PROJECT_NAME}
@@ -19,4 +19,4 @@ target_include_directories(
     ${PROJECT_BINARY_DIR}/include)
 
 # link to the MQT::Core libararies
-target_link_libraries(${PROJECT_NAME} PUBLIC MQT::CoreDD MQT::CoreZX)
+target_link_libraries(${PROJECT_NAME} PUBLIC MQT::CoreDD MQT::CoreZX Parser)
