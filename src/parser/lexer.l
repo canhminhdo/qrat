@@ -18,6 +18,7 @@
 "//".*
 [ \t]   { /* ignore whitespaces and comments starting with // */ }
 .       { printf("Mystery character %c\n", *yytext); }
+[_a-zA-Z]([_a-zA-Z0-9])*    { printf("identifier: %s\n", yytext); }
 
 %%
 

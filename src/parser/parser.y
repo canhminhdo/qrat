@@ -4,6 +4,7 @@
 #include "parser.hpp"
 void yyerror(const char *s);
 int yylex (void);
+extern FILE *yyin;
 %}
 
 /* declare tokens */
@@ -11,6 +12,7 @@ int yylex (void);
 %token ADD SUB MUL DIV ABS
 %token OP CP
 %token EOL
+%token SPROG EPROG
 
 /* Section 2: BNF rules and actions */
 %%
@@ -38,8 +40,13 @@ term:     NUMBER
 %%
 
 /* Section 3: C code */
-int main(void)
+int main(int argc, char **argv)
 {
+    // reading from a file for testing
+    if (!(yyin = fopen("prog.qw", "r"))) {
+        printf("Could not open the file prog.qw");
+        return 1;
+    }
     printf("> ");
     yyparse();
 }

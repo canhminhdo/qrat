@@ -1,3 +1,6 @@
+# COPY FILE
+configure_file(prog.qw prog.qw)
+
 # FLEX & BISON
 find_package(BISON)
 find_package(FLEX)
