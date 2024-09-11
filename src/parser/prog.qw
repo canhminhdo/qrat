@@ -1,10 +1,17 @@
-1 + 3
-4 + 5
-q1 q2 q3
-program canh;
-var q1 : qubit;
+prog TELEPORT is
+var q1, q2, q3 : qubit;
+const
+    a, b: complex;
+init
+    q1 := a . |0> + b . |1>;
+    q2 := |0>;
+    q3 := |0>;
 begin
     q1 := X[q1];
+    q2, q3 := CX[q2, q3];
     q1, q2 := CX[q1, q2];
+    q1 := H[q1];
+    if M[q2] = 1 then q3 := X[q3]; else skip; fi;
+    if M[q1] = 1 then q3 := Z[q3]; else skip; fi;
+    while M[q1] = 1 do skip; od;
 end
-endprogram

@@ -1,5 +1,6 @@
 # COPY FILE
 configure_file(prog.qw prog.qw)
+configure_file(lexerAux.cpp lexerAux.cpp)
 
 # FLEX & BISON
 find_package(BISON)
@@ -32,6 +33,7 @@ target_include_directories(Parser PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
 add_executable(
     ParserRunner
     ${BISON_Parser_OUTPUTS}
-    ${FLEX_Scanner_OUTPUTS}
-)
-target_link_libraries(ParserRunner ${FLEX_LIBRARIES})
+    ${FLEX_Scanner_OUTPUTS})
+
+target_include_directories(ParserRunner PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
+target_link_libraries(ParserRunner PUBLIC ${FLEX_LIBRARIES})
