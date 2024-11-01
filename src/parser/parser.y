@@ -2,17 +2,26 @@
 %{
 #include <stdio.h>
 #include "parser/lexerAux.hpp"
-#include "parser.hpp"
+#include "parser/stringTable.hpp"
+
+// global variables
+StringTable stringTable;
+
+// for lexer
 void yyerror(const char *s);
 int yylex (void);
 extern FILE *yyin;
 extern char *yytext;
 %}
 
+%union {
+    const std::string* str_ptr; // Pointer to string in string table
+}
+
 /* declare tokens */
 %token KW_PROG KW_IS KW_VAR KW_CONST KW_WHERE KW_INIT KW_BEGIN KW_END
 %token KW_QUBIT KW_COMPLEX
-%token IDENTIFIER
+%token <str_ptr> IDENTIFIER
 %token KW_SKIP
 %token KW_IF KW_THEN KW_ELSE KW_FI
 %token KW_WHILE KW_DO KW_OD
@@ -25,63 +34,115 @@ extern char *yytext;
 %token KW_EQUAL
 %token EOL
 
+/* types for nonterminal sysmbols */
+%nterm <str_ptr> token
+
 /* start symbol */
 %start prog
 
+/* precedence and associativity */
+%left '-' '+'
+%left '*' '/'
+%left UMINUS    /* precedence for unary minus */
+%right '^'
+
 /* Section 2: BNF rules and actions */
 %%
-prog : KW_PROG
-       token {
-
-       } KW_IS startDecl startConst startWhere startInit begin KW_END;
-token : IDENTIFIER;
+prog    :   KW_PROG
+            token
+                {   printf("PROG: %s\n", $2);   }
+            KW_IS startDecl startConst startWhere startInit begin KW_END;
+token   :   IDENTIFIER;
 
 /* declaration */
-startDecl : KW_VAR decList | ;
-decList : decList decl | decl ;
-decl : varNameList ':' typeName expectedSemi;
-varNameList : varNameList ',' varName | varName;
-varName : IDENTIFIER ;
-typeName : KW_QUBIT | KW_COMPLEX ;
+startDecl   :   /* empty */
+            |   KW_VAR decList
+            ;
+
+decList :   decl
+        |   decList decl
+        ;
+
+decl    :   varNameList ':' typeName expectedSemi;
+varNameList :   varName
+            |   varNameList ',' varName
+            ;
+varName :   IDENTIFIER ;
+typeName    :   KW_QUBIT
+            |   KW_COMPLEX
+            ;
 
 /* constants */
-startConst : KW_CONST decList | ;
+startConst  :   /* empty */
+            |   KW_CONST decList
+            ;
 
 /* constraints for constants */
-startWhere : KW_WHERE decList | ;
+startWhere  :   /* empty */
+            |   KW_WHERE decList
+            ;
 
 /* initialization */
-startInit : KW_INIT initList | ;
-initList : initList init | init;
-init : varName KW_ASSIGN singleQubit expectedSemi;
-singleQubit :   singleQubit '+' singleQubit |
-                singleQubit '-' singleQubit |
-                expression '.' singleBasis |
-                singleBasis;
-singleBasis : KW_KET_ZERO | KW_KET_ONE;
-expression : NUMBER | IDENTIFIER;
+startInit   :   /* empty */
+            |   KW_INIT initList
+            ;
+initList    :   init
+            |   initList init
+            ;
+init    :   varName KW_ASSIGN singleQubit expectedSemi;
+singleQubit :   singleQubit '+' singleQubit
+            |   singleQubit '-' singleQubit
+            |   expression '.' singleBasis
+            |   singleBasis
+            ;
+singleBasis :   KW_KET_ZERO
+            |   KW_KET_ONE
+            ;
+expression  :   '(' expression ')'
+            |   expression '+' expression
+            |   expression '-' expression
+            |   expression '*' expression
+            |   expression '/' expression
+            |   '-' expression  %prec UMINUS
+NUMBER
+            |   IDENTIFIER
+            ;
 
 /* statements */
-begin : KW_BEGIN stmList | ;
-stmList : stmList stm | stm ;
-stm : skip | unitaryStm | condStm | loopStm;
+begin   :   /* empty */
+        |   KW_BEGIN stmList
+        ;
+stmList :   stm
+        |   stmList stm
+        ;
+stm :   skip
+    |   unitaryStm
+    |   condStm
+    |   loopStm
+    ;
 /* skip */
-skip : KW_SKIP expectedSemi;
+skip    :   KW_SKIP expectedSemi;
 /* unitary transformation */
-unitaryStm : varNameList KW_ASSIGN gate '[' varNameList ']' expectedSemi;
-gate : KW_GATE_X | KW_GATE_Y | KW_GATE_Z | KW_GATE_H | KW_GATE_CX;
+unitaryStm  :   varNameList KW_ASSIGN gate '[' varNameList ']' expectedSemi;
+gate    :   KW_GATE_X
+        |   KW_GATE_Y
+        |   KW_GATE_Z
+        |   KW_GATE_H
+        |   KW_GATE_CX
+        ;
 /* conditional statement */
-condStm : KW_IF condExp KW_THEN stmList KW_ELSE stmList KW_FI expectedSemi;
+condStm :   KW_IF condExp KW_THEN stmList KW_ELSE stmList KW_FI expectedSemi;
 /* loop statement */
-loopStm : KW_WHILE condExp KW_DO stmList KW_OD expectedSemi;
+loopStm :   KW_WHILE condExp KW_DO stmList KW_OD expectedSemi;
 
 /* measurement */
-measure : KW_MEASURE '[' varName ']';
+measure :   KW_MEASURE '[' varName ']';
 /* conditional expression */
-condExp : measure KW_EQUAL NUMBER ;
+condExp :   measure KW_EQUAL NUMBER;
 
 /* expected semicolon */
-expectedSemi : ';'
+expectedSemi    :   ';';
+
 %%
 
 /* Section 3: C code */
@@ -93,6 +154,7 @@ int main(int argc, char **argv)
         return 1;
     }
     yyparse();
+    stringTable.dump();
 }
 
 void yyerror(const char *s)

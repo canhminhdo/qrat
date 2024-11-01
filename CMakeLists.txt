@@ -16,6 +16,7 @@ include(cmake/Doxygen.cmake)
 
 add_subdirectory(src)
 #add_subdirectory(extern)
+include_directories(include)
 
 # add documentation
 option(BUILD_QRAT_DOC "Build documentation for the QRAT project" ON)
