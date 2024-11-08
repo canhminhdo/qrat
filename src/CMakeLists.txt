@@ -8,7 +8,8 @@ add_library(
     ${PROJECT_NAME}
     main.cpp
     getch.cpp
-    Person.cpp)
+    Person.cpp
+)
 
 # set include directories
 include_directories(

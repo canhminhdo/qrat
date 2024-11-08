@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include "parser/lexerAux.hpp"
 #include "parser/stringTable.hpp"
+#include "utils/Vector.hpp"
 
 // global variables
 StringTable stringTable;
@@ -155,6 +156,9 @@ int main(int argc, char **argv)
     }
     yyparse();
     stringTable.dump();
+    // test vector implementation
+    Vector<int> v{5};
+    v.dump();
 }
 
 void yyerror(const char *s)
