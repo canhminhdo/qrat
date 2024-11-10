@@ -1,8 +1,13 @@
 /* Section 1: Declarations and options */
-%option noyywrap nodefault yylineno
+/* not call to yywrap() after reaching the end of input. */
+%option noyywrap
+/* not generate a default rule for matching any unmatched characters (just copy unmatched input to yyout) */
+%option nodefault
+/*  provide the line number */
+%option yylineno
 %{
 #include "parser/lexerAux.hpp"
-#include "parser/stringTable.hpp"
+#include "utility/StringTable.hpp"
 // bison generated token file
 #include "parser.hpp"
 void lexerIdMode(void);
@@ -46,13 +51,19 @@ extern StringTable stringTable;
 "M"         { return KW_MEASURE; }
 [_a-zA-Z]([_a-zA-Z0-9])*    {
                 // printf("identifier: %s at line %d\n", yytext, yylineno);
-                yylval.str_ptr = stringTable.insert(yytext);
+                yylval.codeNr = stringTable.encode(yytext);
                 return IDENTIFIER;
             }
 [0-9]*      { return NUMBER; }
 [ \t\f\v\t\r]       /* ignore whitespaces */
-\n          /* ignore EOF, otherwise return EOL; */
+\n          /* ignore EOL, otherwise return EOL; */
 .           { printf("Mystery character %c at line %d\n", *yytext, yylineno); }
+
+<<EOF>>     {
+                /* if no rule for <<EOF>>, flex automatically calls yyterminate() to stop scanning */
+                /* handling other input files or just return 0 as end of input */
+                return 0;
+            }
 %%
 
 /* Section 3: C codes */

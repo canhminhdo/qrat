@@ -2,8 +2,8 @@
 %{
 #include <stdio.h>
 #include "parser/lexerAux.hpp"
-#include "parser/stringTable.hpp"
-#include "utils/Vector.hpp"
+#include "utility/Vector.hpp"
+#include "utility/StringTable.hpp"
 
 // global variables
 StringTable stringTable;
@@ -16,13 +16,13 @@ extern char *yytext;
 %}
 
 %union {
-    const std::string* str_ptr; // Pointer to string in string table
+    int codeNr; // the code of the string encoded in the string table
 }
 
 /* declare tokens */
 %token KW_PROG KW_IS KW_VAR KW_CONST KW_WHERE KW_INIT KW_BEGIN KW_END
 %token KW_QUBIT KW_COMPLEX
-%token <str_ptr> IDENTIFIER
+%token <yyToken> IDENTIFIER
 %token KW_SKIP
 %token KW_IF KW_THEN KW_ELSE KW_FI
 %token KW_WHILE KW_DO KW_OD
@@ -36,7 +36,7 @@ extern char *yytext;
 %token EOL
 
 /* types for nonterminal sysmbols */
-%nterm <str_ptr> token
+%nterm <yyToken> token
 
 /* start symbol */
 %start prog
@@ -51,7 +51,9 @@ extern char *yytext;
 %%
 prog    :   KW_PROG
             token
-                {   printf("PROG: %s\n", $2);   }
+                {
+                    /* printf("PROG: %s\n", stringTable.name($2)); */
+                }
             KW_IS startDecl startConst startWhere startInit begin KW_END;
 token   :   IDENTIFIER;
 

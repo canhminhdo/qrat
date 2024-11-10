@@ -34,7 +34,7 @@ add_executable(
     ParserRunner
     ${BISON_Parser_OUTPUTS}
     ${FLEX_Scanner_OUTPUTS}
-    stringTable.cpp
+    ../utility/StringTable.cpp
 )
 
 target_include_directories(ParserRunner PUBLIC ${CMAKE_CURRENT_BINARY_DIR})

@@ -11,6 +11,7 @@
 template<typename Object>
 class Vector {
 public:
+    // prevent implicit type conversions, otherwise, e.g., Vector v = 10 is valid
     explicit Vector(int initSize = 0) : theSize{initSize}, theCapacity{initSize + SPARE_CAPACITY} {
         objects = new Object[theCapacity];
     }
