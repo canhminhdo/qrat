@@ -22,7 +22,7 @@ extern char *yytext;
 /* declare tokens */
 %token KW_PROG KW_IS KW_VAR KW_CONST KW_WHERE KW_INIT KW_BEGIN KW_END
 %token KW_QUBIT KW_COMPLEX
-%token <yyToken> IDENTIFIER
+%token <codeNr> IDENTIFIER
 %token KW_SKIP
 %token KW_IF KW_THEN KW_ELSE KW_FI
 %token KW_WHILE KW_DO KW_OD
@@ -36,7 +36,7 @@ extern char *yytext;
 %token EOL
 
 /* types for nonterminal sysmbols */
-%nterm <yyToken> token
+%nterm <codeNr> token
 
 /* start symbol */
 %start prog
@@ -52,7 +52,7 @@ extern char *yytext;
 prog    :   KW_PROG
             token
                 {
-                    /* printf("PROG: %s\n", stringTable.name($2)); */
+                    printf("PROG: %s\n", stringTable.name($2));
                 }
             KW_IS startDecl startConst startWhere startInit begin KW_END;
 token   :   IDENTIFIER;
@@ -106,8 +106,7 @@ expression  :   '(' expression ')'
             |   expression '-' expression
             |   expression '*' expression
             |   expression '/' expression
-            |   '-' expression  %prec UMINUS
-NUMBER
+            |   '-' expression  %prec UMINUS NUMBER
             |   IDENTIFIER
             ;
 
