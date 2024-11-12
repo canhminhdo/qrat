@@ -92,7 +92,7 @@ void StringTable::resize() {
     }
 }
 
-void StringTable::dump() {
+void StringTable::dump() const {
     for (int i = 0, nrStrings = stringTable.size(); i < nrStrings; i++) {
         std::cout << "codeNr: " << i << ", string: " << stringTable[i] << std::endl;
     }

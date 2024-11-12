@@ -13,7 +13,7 @@ public:
     ~StringTable();
     int encode(const char *name);
     const char *name(int code) const;
-    void dump();
+    void dump() const;
 
 private:
     static int hash(const char *name);
