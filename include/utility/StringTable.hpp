@@ -12,6 +12,7 @@ public:
     StringTable(int size = 1024);
     ~StringTable();
     int encode(const char *name);
+    int lookup(const char *name) const;
     const char *name(int code) const;
     void dump() const;
 

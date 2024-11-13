@@ -3,7 +3,7 @@
 //
 
 #include "utility/StringTable.hpp"
-#include "utility/Macros.hpp"
+#include "utility/macros.hpp"
 #include <cassert>
 #include <iostream>
 
@@ -66,6 +66,27 @@ int StringTable::encode(const char *name) {
             break;
         if (step == 0)
             step = hash2(name);// hash2(name) & mask ???
+    }
+    return code;
+}
+
+int StringTable::lookup(const char *name) const {
+    int mask = hashTable.capacity() - 1;
+    int step = 0;
+    int code;
+    // h = (h1 + i * h2) % m for i = 0, 1, ...
+    for (int i = hash(name);; i += step) {
+        i &= mask;
+        code = hashTable[i];
+        // not encoded yet
+        if (code == UNUSED)
+            return UNUSED;
+        // check the same key
+        if (strcmp(name, stringTable[code]) == 0)
+            break;
+        // the hash function h ensures that an unused slot is found if the name has not yet been encoded, provided that half of the hash table are empty
+        if (step == 0)
+            step = hash2(name);
     }
     return code;
 }

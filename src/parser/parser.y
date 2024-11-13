@@ -160,6 +160,13 @@ int main(int argc, char **argv)
     // test vector implementation
     Vector<int> v{5};
     v.dump();
+    printf("Code: %d\n", stringTable.lookup("TELEPORT"));
+    printf("Code: %d\n", stringTable.lookup("q1"));
+    printf("Code: %d\n", stringTable.lookup("q2"));
+    printf("Code: %d\n", stringTable.lookup("q3"));
+    printf("Code: %d\n", stringTable.lookup("a"));
+    printf("Code: %d\n", stringTable.lookup("b"));
+    printf("Code: %d\n", stringTable.lookup("c"));
 }
 
 void yyerror(const char *s)
