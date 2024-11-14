@@ -34,6 +34,7 @@ add_executable(
     ParserRunner
     ${BISON_Parser_OUTPUTS}
     ${FLEX_Scanner_OUTPUTS}
+    ../core/Token.cpp
     ../utility/StringTable.cpp
 )
 

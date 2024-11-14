@@ -9,7 +9,6 @@ add_library(
     main.cpp
     getch.cpp
     Person.cpp
-    utility/StringTable.cpp
 )
 
 # set include directories

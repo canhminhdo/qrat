@@ -10,6 +10,10 @@
 class Token {
 public:
     void tokenize(const char *tokenString, int lineNumber);
+    const char *name();
+    static const void dump();
+    static int lookup(const char *name);
+
 private:
     static StringTable stringTable;
     int codeNr;

@@ -7,11 +7,14 @@
 %option yylineno
 %{
 #include "parser/lexerAux.hpp"
-#include "utility/StringTable.hpp"
+#include "core/Token.hpp"
 // bison generated token file
 #include "parser.hpp"
 void lexerIdMode(void);
-extern StringTable stringTable;
+
+#define RETURN(token) \
+  { yylval.yyToken.tokenize(yytext, yylineno); return (token); }
+
 %}
 
 /* start conditions */
@@ -51,8 +54,8 @@ extern StringTable stringTable;
 "M"         { return KW_MEASURE; }
 [_a-zA-Z]([_a-zA-Z0-9])*    {
                 // printf("identifier: %s at line %d\n", yytext, yylineno);
-                yylval.codeNr = stringTable.encode(yytext);
-                return IDENTIFIER;
+                // yylval.codeNr = stringTable.encode(yytext);
+                RETURN(IDENTIFIER);
             }
 [0-9]*      { return NUMBER; }
 [ \t\f\v\t\r]       /* ignore whitespaces */
