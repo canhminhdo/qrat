@@ -6,11 +6,11 @@
 /*  provide the line number */
 %option yylineno
 %{
+#include "utility/macros.hpp"
 #include "parser/lexerAux.hpp"
 #include "core/Token.hpp"
 #include "ast/VarNode.hpp"
-#include "utility/macros.hpp"
-using TokenList = std::vector<Token>;
+
 DeclMode declFlag = NONE_DECL;
 
 // bison generated token file
@@ -19,7 +19,6 @@ void lexerIdMode(void);
 
 #define RETURN(token) \
   { yylval.yyToken.tokenize(yytext, yylineno); return (token); }
-
 %}
 
 /* start conditions */
