@@ -1,5 +1,6 @@
 prog TELEPORT is
-var q1, q2, q3 : qubit;
+var
+    q1, q2, q3 : qubit;
 const
     a, b: complex;
 init

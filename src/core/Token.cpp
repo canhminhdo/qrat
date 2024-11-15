@@ -12,15 +12,22 @@ void Token::tokenize(const char *tokenString, int lineNumber) {
     lineNr = lineNumber;
 }
 
-const char *Token::name() {
+const char *Token::name() const {
     return stringTable.name(codeNr);
 }
 
-const void Token::dump() {
-    stringTable.dump();
+const char *Token::name(int code) {
+    return stringTable.name(code);
 }
 
-int Token::lookup(const char *name) {
+int Token::code() const {
+    return codeNr;
+}
+
+int Token::code(const char *name) {
     return stringTable.lookup(name);
 }
 
+void Token::dump() {
+    stringTable.dump();
+}

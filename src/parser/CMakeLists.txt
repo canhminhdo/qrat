@@ -36,6 +36,12 @@ add_executable(
     ${FLEX_Scanner_OUTPUTS}
     ../core/Token.cpp
     ../utility/StringTable.cpp
+    ../core/Interpreter.cpp
+    ../core/SyntaxProg.cpp
+    ../core/global.cpp
+    ../ast/VarNode.cpp
+    ../core/type.cpp
+    ../ast/ConstNode.cpp
 )
 
 target_include_directories(ParserRunner PUBLIC ${CMAKE_CURRENT_BINARY_DIR})

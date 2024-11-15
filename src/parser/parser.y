@@ -1,9 +1,19 @@
 /* Section 1: Declarations */
 %{
 #include <stdio.h>
+#include <vector>
 #include "parser/lexerAux.hpp"
 #include "utility/Vector.hpp"
 #include "core/Token.hpp"
+#include "core/global.hpp"
+#include "core/type.hpp"
+#include "ast/VarNode.hpp"
+#include "utility/macros.hpp"
+
+// for interpreter and programs
+SyntaxProg *currentSyntaxProg;
+
+extern DeclMode declFlag;
 
 // for lexer
 void yyerror(const char *s);
@@ -15,6 +25,8 @@ extern char *yytext;
 %union {
     Token yyToken;
     int codeNr; // the code of the string encoded in the string table
+    Type type; // type of variables and constants
+    TokenList *yyTokenList;
 }
 
 /* declare tokens */
@@ -34,7 +46,9 @@ extern char *yytext;
 %token EOL
 
 /* types for nonterminal sysmbols */
-%nterm <yyToken> token
+%nterm <yyToken> token varName
+%nterm <type> typeName
+%nterm <yyTokenList> varNameList
 
 /* start symbol */
 %start prog
@@ -50,7 +64,8 @@ extern char *yytext;
 prog    :   KW_PROG
             token
                 {
-                    printf("PROG: %s\n", $2.name());
+                    interpreter.setCurrentProg($2);
+                    currentSyntaxProg = interpreter.getCurrentProg();
                 }
             KW_IS startDecl startConst startWhere startInit begin KW_END;
 token   :   IDENTIFIER;
@@ -64,13 +79,29 @@ decList :   decl
         |   decList decl
         ;
 
-decl    :   varNameList ':' typeName expectedSemi;
+decl    :   varNameList ':' typeName expectedSemi
+                {
+                    if (declFlag == VAR_DECL) {
+                        currentSyntaxProg->addVarDecl($1, $3);
+                    } else if (declFlag == CONST_DECL) {
+                        currentSyntaxProg->addConstDecl($1, $3);
+                    }
+                    delete $1;
+                }
+            ;
 varNameList :   varName
+                    {
+                        $$ = new TokenList(); $$->push_back($1);
+                    }
             |   varNameList ',' varName
+                    {
+                        $1->push_back($3);
+                        $$ = $1;
+                    }
             ;
 varName :   IDENTIFIER ;
-typeName    :   KW_QUBIT
-            |   KW_COMPLEX
+typeName    :   KW_QUBIT { $$ = Type::Qubit; }
+            |   KW_COMPLEX { $$ = Type::Complex; }
             ;
 
 /* constants */
@@ -154,17 +185,20 @@ int main(int argc, char **argv)
         return 1;
     }
     yyparse();
+    #if false
     Token::dump();
     // test vector implementation
     Vector<int> v{5};
     v.dump();
-    printf("Code: %d\n", Token::lookup("TELEPORT"));
-    printf("Code: %d\n", Token::lookup("q1"));
-    printf("Code: %d\n", Token::lookup("q2"));
-    printf("Code: %d\n", Token::lookup("q3"));
-    printf("Code: %d\n", Token::lookup("a"));
-    printf("Code: %d\n", Token::lookup("b"));
-    printf("Code: %d\n", Token::lookup("c"));
+    printf("Code: %d\n", Token::code("TELEPORT"));
+    printf("Code: %d\n", Token::code("q1"));
+    printf("Code: %d\n", Token::code("q2"));
+    printf("Code: %d\n", Token::code("q3"));
+    printf("Code: %d\n", Token::code("a"));
+    printf("Code: %d\n", Token::code("b"));
+    printf("Code: %d\n", Token::code("c"));
+    #endif
+    currentSyntaxProg->dump();
 }
 
 void yyerror(const char *s)

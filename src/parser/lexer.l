@@ -8,6 +8,11 @@
 %{
 #include "parser/lexerAux.hpp"
 #include "core/Token.hpp"
+#include "ast/VarNode.hpp"
+#include "utility/macros.hpp"
+using TokenList = std::vector<Token>;
+DeclMode declFlag = NONE_DECL;
+
 // bison generated token file
 #include "parser.hpp"
 void lexerIdMode(void);
@@ -23,14 +28,14 @@ void lexerIdMode(void);
 
 /* Section 2: A list of patterns and actions */
 %%
-"prog"      { return KW_PROG; }
+"prog"      { declFlag = NONE_DECL; return KW_PROG; }
 "is"        { return KW_IS; }
-"var"       { return KW_VAR; }
-"const"     { return KW_CONST; }
+"var"       { declFlag = VAR_DECL ; return KW_VAR; }
+"const"     { declFlag = CONST_DECL; return KW_CONST; }
 "where"     { return KW_WHERE; }
 "init"      { return KW_INIT; }
 "begin"     { return KW_BEGIN; }
-"end"       { return KW_END; }
+"end"       { declFlag = NONE_DECL; return KW_END; }
 "while"     { return KW_WHILE; }
 "do"        { return KW_DO; }
 "od"        { return KW_OD; }
