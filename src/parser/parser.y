@@ -1,4 +1,5 @@
 /* Section 1: Declarations */
+%define parse.error detailed
 %{
 #include <stdio.h>
 #include <vector>
@@ -7,7 +8,12 @@
 #include "core/Token.hpp"
 #include "core/global.hpp"
 #include "core/type.hpp"
-#include "ast/VarNode.hpp"
+#include "ast/KetExpNode.hpp"
+#include "ast/QubitExpNode.hpp"
+#include "ast/ExpNode.hpp"
+#include "ast/OpExpNode.hpp"
+#include "ast/ConstExpNode.hpp"
+#include "ast/NumExpNode.hpp"
 #include "utility/macros.hpp"
 
 // for interpreter and programs
@@ -20,6 +26,7 @@ void yyerror(const char *s);
 int yylex (void);
 extern FILE *yyin;
 extern char *yytext;
+extern int yylineno;
 %}
 
 %union {
@@ -27,6 +34,9 @@ extern char *yytext;
     int codeNr; // the code of the string encoded in the string table
     Type type; // type of variables and constants
     TokenList *yyTokenList;
+    KetExpNode *ketBasis;
+    QubitExpNode *qubit;
+    ExpNode *expr;
 }
 
 /* declare tokens */
@@ -39,7 +49,7 @@ extern char *yytext;
 %token KW_ASSIGN
 %token KW_KET_ZERO
 %token KW_KET_ONE
-%token NUMBER
+%token INTEGER RATIONAL REAL
 %token KW_GATE_X KW_GATE_Y KW_GATE_Z KW_GATE_H KW_GATE_I KW_GATE_CX
 %token KW_MEASURE
 %token KW_EQUAL
@@ -49,6 +59,9 @@ extern char *yytext;
 %nterm <yyToken> token varName
 %nterm <type> typeName
 %nterm <yyTokenList> varNameList
+%nterm <ketBasis> basis
+%nterm <qubit> oneQubit
+%nterm <expr> expression NUMBER
 
 /* start symbol */
 %start prog
@@ -121,22 +134,83 @@ startInit   :   /* empty */
 initList    :   init
             |   initList init
             ;
-init    :   varName KW_ASSIGN singleQubit expectedSemi;
-singleQubit :   singleQubit '+' singleQubit
-            |   singleQubit '-' singleQubit
-            |   expression '.' singleBasis
-            |   singleBasis
+init    :   varName KW_ASSIGN expression expectedSemi
+                {
+                    currentSyntaxProg->addInit($1, $3);
+                }
             ;
-singleBasis :   KW_KET_ZERO
-            |   KW_KET_ONE
+oneQubit    :   expression '.' basis
+                    {
+                        $$ = new QubitExpNode($1, $3);
+                    }
+            |   basis
+                    {
+                        $$ = new QubitExpNode(nullptr, $1);
+                    }
             ;
+basis   :   KW_KET_ZERO
+                {
+                    $$ = new KetExpNode(KetType::KET_ZERO);
+                }
+        |   KW_KET_ONE
+                {
+                    $$ = new KetExpNode(KetType::KET_ONE);
+                }
+        ;
 expression  :   '(' expression ')'
+                    {
+                        $$ = $2;
+                    }
             |   expression '+' expression
+                    {
+                        $$ = new OpExpNode(OpExpType::ADD, $1, $3);
+                    }
             |   expression '-' expression
+                    {
+                        $$ = new OpExpNode(OpExpType::SUB, $1, $3);
+                    }
             |   expression '*' expression
+                    {
+                        $$ = new OpExpNode(OpExpType::MUL, $1, $3);
+                    }
             |   expression '/' expression
+                    {
+                        $$ = new OpExpNode(OpExpType::DIV, $1, $3);
+                    }
             |   '-' expression  %prec UMINUS NUMBER
+                    {
+                        $$ = new OpExpNode(OpExpType::MINUS, nullptr, $2);
+                    }
             |   IDENTIFIER
+                    {
+                        if (!currentSyntaxProg->hasConstSymbol($1)) {
+                            printf("Error: %s is not declared as a constant", $1.name());
+                            exit(1);
+                        }
+                        $$ = new ConstExpNode(currentSyntaxProg->lookup($1));
+                    }
+            |   NUMBER
+                    {
+                        $$ = $1;
+                    }
+            |   oneQubit
+                    {
+                        $$ = $1;
+                    }
+            ;
+
+NUMBER      :   INTEGER
+                    {
+                        $$ = new NumExpNode(NumType::INT, yytext);
+                    }
+            |   RATIONAL
+                    {
+                        $$ = new NumExpNode(NumType::INT, yytext);
+                    }
+            |   REAL
+                    {
+                        $$ = new NumExpNode(NumType::REAL, yytext);
+                    }
             ;
 
 /* statements */
@@ -169,7 +243,7 @@ loopStm :   KW_WHILE condExp KW_DO stmList KW_OD expectedSemi;
 /* measurement */
 measure :   KW_MEASURE '[' varName ']';
 /* conditional expression */
-condExp :   measure KW_EQUAL NUMBER;
+condExp :   measure KW_EQUAL INTEGER;
 
 /* expected semicolon */
 expectedSemi    :   ';';
@@ -186,7 +260,6 @@ int main(int argc, char **argv)
     }
     yyparse();
     #if false
-    Token::dump();
     // test vector implementation
     Vector<int> v{5};
     v.dump();
@@ -197,11 +270,12 @@ int main(int argc, char **argv)
     printf("Code: %d\n", Token::code("a"));
     printf("Code: %d\n", Token::code("b"));
     printf("Code: %d\n", Token::code("c"));
+    Token::dump();
     #endif
     currentSyntaxProg->dump();
 }
 
 void yyerror(const char *s)
 {
-    fprintf(stderr, "error: %s\n", s);
+    fprintf(stderr, "error: %s at line %d\n", s, yylineno);
 }

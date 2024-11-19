@@ -9,7 +9,12 @@
 #include "utility/macros.hpp"
 #include "parser/lexerAux.hpp"
 #include "core/Token.hpp"
-#include "ast/VarNode.hpp"
+#include "ast/KetExpNode.hpp"
+#include "ast/QubitExpNode.hpp"
+#include "ast/ExpNode.hpp"
+#include "ast/OpExpNode.hpp"
+#include "ast/ConstExpNode.hpp"
+#include "ast/NumExpNode.hpp"
 
 DeclMode declFlag = NONE_DECL;
 
@@ -61,7 +66,11 @@ void lexerIdMode(void);
                 // yylval.codeNr = stringTable.encode(yytext);
                 RETURN(IDENTIFIER);
             }
-[0-9]*      { return NUMBER; }
+[+-]?[0-9]+                 { return INTEGER; }
+[+-]?[0-9]+"/"[+-]?[0-9]+   { return RATIONAL; }
+[+-]?[0-9]+"."[0-9]*        { return REAL; }
+[+-]?("."[0-9]+)            { return REAL; }
+
 [ \t\f\v\t\r]       /* ignore whitespaces */
 \n          /* ignore EOL, otherwise return EOL; */
 .           { printf("Mystery character %c at line %d\n", *yytext, yylineno); }

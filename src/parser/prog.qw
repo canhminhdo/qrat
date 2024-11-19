@@ -4,7 +4,7 @@ var
 const
     a, b: complex;
 init
-    q1 := a . |0> + b . |1>;
+    q1 := (a . |0>) + (b . |1>);
     q2 := |0>;
     q3 := |0>;
 begin

@@ -9,6 +9,13 @@ add_library(
     main.cpp
     getch.cpp
     Person.cpp
+    ../include/core/ConstSymbol.hpp
+    ../include/core/Symbol.hpp
+    ../include/ast/OpExpNode.hpp
+    ../include/ast/ExpNode.hpp
+    ../include/ast/QubitExpNode.hpp
+    ../include/ast/ConstExpNode.hpp
+    ../include/ast/NumExpNode.hpp
 )
 
 # set include directories

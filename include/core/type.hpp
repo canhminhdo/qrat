@@ -9,7 +9,10 @@ enum class Type {
     Qubit,
     Complex
 };
+extern const char *typeNames[];
 
-extern const char* typeNames[];
+inline const char *getTypeName(Type type) {
+    return typeNames[static_cast<int>(type)];
+}
 
 #endif//TYPE_HPP

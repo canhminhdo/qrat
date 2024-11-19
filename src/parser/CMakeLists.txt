@@ -39,9 +39,15 @@ add_executable(
     ../core/Interpreter.cpp
     ../core/SyntaxProg.cpp
     ../core/global.cpp
-    ../ast/VarNode.cpp
     ../core/type.cpp
-    ../ast/ConstNode.cpp
+    ../core/SymbolTable.cpp
+    ../core/VarSymbol.cpp
+    ../core/ConstSymbol.cpp
+    ../ast/KetExpNode.cpp
+    ../ast/QubitExpNode.cpp
+    ../ast/OpExpNode.cpp
+    ../ast/ConstExpNode.cpp
+    ../ast/NumExpNode.cpp
 )
 
 target_include_directories(ParserRunner PUBLIC ${CMAKE_CURRENT_BINARY_DIR})

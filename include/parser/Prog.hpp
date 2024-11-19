@@ -13,7 +13,7 @@ public:
     void begin(std::string name);
     void addVariables();
     void addConstants();
-    void addInitialization();
+    void addInit(Token);
     void addStatments();
     // end program declaration
     void end();

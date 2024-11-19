@@ -114,7 +114,8 @@ void StringTable::resize() {
 }
 
 void StringTable::dump() const {
+    std::cout << "String Table:" << std::endl;
     for (int i = 0, nrStrings = stringTable.size(); i < nrStrings; i++) {
-        std::cout << "codeNr: " << i << ", string: " << stringTable[i] << std::endl;
+        std::cout << "\tcodeNr: " << i << ", string: " << stringTable[i] << std::endl;
     }
 }
