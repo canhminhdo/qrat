@@ -26,15 +26,18 @@ enum class OpExpType {
     ASSIGN
 };
 
+extern const char *opExpNames[];
+
 class OpExpNode : public ExpNode {
 public:
     OpExpNode(OpExpType type, ExpNode *left, ExpNode *right);
 
+    const char *getOpName();
+
     void eval() override {
     }
 
-    void dump() override {
-    }
+    void dump() override;
 
 private:
     OpExpType type;

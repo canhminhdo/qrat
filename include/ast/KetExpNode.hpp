@@ -23,8 +23,7 @@ public:
     void eval() override {
     }
 
-    void dump() override {
-    }
+    void dump() override;
 
 private:
     static const char *KetNames[];

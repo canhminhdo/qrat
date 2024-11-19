@@ -15,8 +15,7 @@ public:
     void eval() override {
     }
 
-    void dump() override {
-    }
+    void dump() override;
 
 private:
     ConstSymbol *symbol;

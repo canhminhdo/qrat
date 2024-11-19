@@ -3,7 +3,7 @@
 //
 
 #include "ast/KetExpNode.hpp"
-
+#include <iostream>
 
 const char *KetExpNode::KetNames[] = {"|0>", "|1>"};
 
@@ -15,6 +15,10 @@ KetType KetExpNode::getType() const {
     return type;
 }
 
-const char * KetExpNode::getName() const {
+const char *KetExpNode::getName() const {
     return KetNames[static_cast<int>(type)];
+}
+
+void KetExpNode::dump() {
+    std::cout << "KetExpNode: " << getName() << std::endl;
 }
