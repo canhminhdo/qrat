@@ -19,6 +19,10 @@
 #include "ast/SkipStmNode.hpp"
 #include "ast/GateExpNode.hpp"
 #include "ast/UnitaryStmNode.hpp"
+#include "ast/MeasExpNode.hpp"
+#include "ast/CondExpNode.hpp"
+#include "ast/CondStmNode.hpp"
+#include "ast/WhileStmNode.hpp"
 
 #include "core/Gate.hpp"
 #include "utility/macros.hpp"
@@ -44,6 +48,7 @@ extern int yylineno;
     Node *node;
     KetExpNode *ketBasis;
     QubitExpNode *qubit;
+    StmNode *stm;
     ExpNode *expr;
     Gate* gate;
 }
@@ -68,10 +73,8 @@ extern int yylineno;
 %nterm <yyToken> token varName
 %nterm <type> typeName
 %nterm <yyTokenList> varNameList
-%nterm <ketBasis> basis
-%nterm <qubit> oneQubit
-%nterm <expr> expression NUMBER
-%nterm <node> stm stmList unitaryStm
+%nterm <expr> expression number oneQubit basis measure condExp
+%nterm <stm> stm stmList unitaryStm condStm loopStm
 %nterm <gate> gate
 
 /* start symbol */
@@ -189,7 +192,7 @@ expression  :   '(' expression ')'
                     {
                         $$ = new OpExpNode(OpExpType::DIV, $1, $3);
                     }
-            |   '-' expression  %prec UMINUS NUMBER
+            |   '-' expression  %prec UMINUS number
                     {
                         $$ = new OpExpNode(OpExpType::MINUS, nullptr, $2);
                     }
@@ -201,7 +204,7 @@ expression  :   '(' expression ')'
                         }
                         $$ = new ConstExpNode(currentSyntaxProg->lookup($1));
                     }
-            |   NUMBER
+            |   number
                     {
                         $$ = $1;
                     }
@@ -211,7 +214,7 @@ expression  :   '(' expression ')'
                     }
             ;
 
-NUMBER      :   INTEGER
+number      :   INTEGER
                     {
                         $$ = new NumExpNode(NumType::INT, yytext);
                     }
@@ -235,11 +238,11 @@ begin   :   /* empty */
 stmList :   stm
                 {
                     $$ = new StmSeqNode();
-                    dynamic_cast<StmSeqNode *>($$)->addStm(dynamic_cast<StmNode *>$1);
+                    dynamic_cast<StmSeqNode *>($$)->addStm($1);
                 }
         |   stmList stm
                 {
-                    dynamic_cast<StmSeqNode *>($1)->addStm(dynamic_cast<StmNode *>$2);
+                    dynamic_cast<StmSeqNode *>($1)->addStm($2);
                     $$ = $1;
                 }
         ;
@@ -248,12 +251,8 @@ stm :   skip
                 $$ = new SkipStmNode();
             }
     |   unitaryStm
-            {
-                $$ = $1;
-                printf("unitaryStm\n");
-            }
-    |   condStm { printf("condStm\n"); }
-    |   loopStm { printf("loopStm\n"); }
+    |   condStm
+    |   loopStm
     ;
 /* skip */
 skip    :   KW_SKIP expectedSemi;
@@ -285,14 +284,34 @@ gate    :   KW_GATE_X
                 }
         ;
 /* conditional statement */
-condStm :   KW_IF condExp KW_THEN stmList KW_ELSE stmList KW_FI expectedSemi;
+condStm :   KW_IF condExp KW_THEN stmList KW_ELSE stmList KW_FI expectedSemi
+                {
+                    $$ = new CondStmNode($2, $4, $6);
+                }
+        ;
 /* loop statement */
-loopStm :   KW_WHILE condExp KW_DO stmList KW_OD expectedSemi;
+loopStm :   KW_WHILE condExp KW_DO stmList KW_OD expectedSemi
+                {
+                    $$ = new WhileStmNode($2, $4);
+                }
+        ;
 
 /* measurement */
-measure :   KW_MEASURE '[' varName ']';
+measure :   KW_MEASURE '[' varName ']'
+                {
+                    if (!currentSyntaxProg->hasVarSymbol($3)) {
+                        printf("Error: variable %s is undefined", $3.name());
+                        exit(1);
+                    }
+                    $$ = new MeasExpNode(currentSyntaxProg->lookup($3));
+                }
+        ;
 /* conditional expression */
-condExp :   measure KW_EQUAL INTEGER;
+condExp :   measure KW_EQUAL number
+                {
+                    $$ = new CondExpNode($1, RelOpType::EQ, $3);
+                }
+        ;
 
 /* expected semicolon */
 expectedSemi    :   ';';

@@ -20,5 +20,5 @@ const char *KetExpNode::getName() const {
 }
 
 void KetExpNode::dump() {
-    std::cout << "KetExpNode: " << getName() << std::endl;
+    std::cout << getName() << std::endl;
 }

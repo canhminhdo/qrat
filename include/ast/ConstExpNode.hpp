@@ -6,7 +6,7 @@
 #define CONSTEXP_HPP
 
 #include "ast/ExpNode.hpp"
-#include "core/ConstSymbol.hpp"
+#include "core/Symbol.hpp"
 
 class ConstExpNode : public ExpNode {
 public:
@@ -18,7 +18,7 @@ public:
     void dump() override;
 
 private:
-    ConstSymbol *symbol;
+    Symbol *symbol;
 };
 
 #endif //CONSTEXP_HPP

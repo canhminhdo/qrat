@@ -16,3 +16,13 @@ NumExpNode::NumExpNode(NumType numType, const char *valStr) : type(numType) {
         std::cerr << "Invalid NumType" << std::endl;
     }
 }
+
+void NumExpNode::dump() {
+    if (type == NumType::INT) {
+        std::cout << v.valInt << std::endl;
+    } else if (type == NumType::REAL) {
+        std::cout << v.valFloat << std::endl;
+    } else {
+        std::cerr << "Invalid NumType" << std::endl;
+    }
+}

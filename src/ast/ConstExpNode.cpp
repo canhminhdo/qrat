@@ -7,9 +7,9 @@
 #include "ast/ConstExpNode.hpp"
 #include "core/Token.hpp"
 
-ConstExpNode::ConstExpNode(Symbol *symbol) : symbol(dynamic_cast<ConstSymbol *>(symbol)) {
+ConstExpNode::ConstExpNode(Symbol *symbol) : symbol(symbol) {
 }
 
 void ConstExpNode::dump() {
-    std::cout << "Const: " << Token::name(symbol->getName()) << std::endl;
+    std::cout << Token::name(symbol->getName()) << std::endl;
 }

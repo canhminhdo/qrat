@@ -5,6 +5,8 @@
 #include <iostream>
 #include "ast/StmSeqNode.hpp"
 
+#include "ast/CondStmNode.hpp"
+
 void StmSeqNode::addStm(StmNode *stm) {
     stmSeq.push_back(stm);
 }

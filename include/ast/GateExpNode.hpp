@@ -13,7 +13,7 @@
 
 class GateExpNode : public ExpNode {
 public:
-    GateExpNode(Gate *gate, std::vector<VarSymbol *> vars);
+    GateExpNode(Gate *gate, std::vector<Symbol *> vars);
 
     virtual ~GateExpNode();
 
@@ -24,6 +24,6 @@ public:
 
 private:
     Gate *gate;
-    std::vector<VarSymbol *> vars;
+    std::vector<Symbol *> vars;
 };
 #endif //GATEEXPNODE_HPP

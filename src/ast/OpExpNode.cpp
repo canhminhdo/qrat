@@ -11,34 +11,20 @@ static const char *opExpNames[] = {
     "SUB",
     "MUL",
     "DIV",
-    "MOD",
-    "AND",
-    "OR",
-    "NOT",
-    "GT",
-    "LT",
-    "GE",
-    "LE",
-    "EQ",
-    "NE",
-    "ASSIGN"
+    "MOD"
 };
 
 OpExpNode::OpExpNode(OpExpType type, ExpNode *left, ExpNode *right) : type{type}, left{left}, right{right} {
 }
 
 void OpExpNode::dump() {
-    std::cout << "<========== OpExpNode - Start ==========>" << std::endl;
     std::cout << "OpType: " << getOpName() << std::endl;
-    std::cout << "Left: " << std::endl;
     if (left != nullptr) {
         left->dump();
     }
-    std::cout << "Right: " << std::endl;
     if (right != nullptr) {
         right->dump();
     }
-    std::cout << "<========== OpExpNode - End ==========>" << std::endl;
 }
 
 const char *OpExpNode::getOpName() {

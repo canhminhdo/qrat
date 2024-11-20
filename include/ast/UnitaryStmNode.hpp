@@ -10,7 +10,7 @@
 #include "core/Gate.hpp"
 #include "core/SyntaxProg.hpp"
 #include "core/Token.hpp"
-#include "core/VarSymbol.hpp"
+#include "core/Symbol.hpp"
 
 class UnitaryStmNode : public StmNode {
 public:
@@ -24,7 +24,7 @@ public:
     void dump() override;
 
 private:
-    std::vector<VarSymbol *> vars;
+    std::vector<Symbol *> vars;
     GateExpNode *gateExp;
 };
 

@@ -7,7 +7,7 @@
 #include "ast/GateExpNode.hpp"
 #include "core/Token.hpp"
 
-GateExpNode::GateExpNode(Gate *gate, std::vector<VarSymbol *> vars) : gate{gate}, vars{vars} {
+GateExpNode::GateExpNode(Gate *gate, std::vector<Symbol *> vars) : gate{gate}, vars{vars} {
 }
 
 GateExpNode::~GateExpNode() {
@@ -16,9 +16,9 @@ GateExpNode::~GateExpNode() {
 }
 
 void GateExpNode::dump() {
-    std::cout << gate->getName() << "(";
+    std::cout << gate->getName() << "[";
     for (int i = 0; i < vars.size(); i++) {
         std::cout << Token::name(vars[i]->getName()) << ((i < vars.size() - 1) ? ", " : "");
     }
-    std::cout << ")" << std::endl;
+    std::cout << "]" << std::endl;
 }

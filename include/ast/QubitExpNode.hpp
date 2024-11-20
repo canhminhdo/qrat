@@ -6,11 +6,10 @@
 #define QUBITNODE_HPP
 
 #include "ast/ExpNode.hpp"
-#include "ast/KetExpNode.hpp"
 
 class QubitExpNode : public ExpNode {
 public:
-    QubitExpNode(ExpNode *exp, KetExpNode *ket);
+    QubitExpNode(ExpNode *exp, ExpNode *ket);
 
     void eval() override {
     }
@@ -19,7 +18,7 @@ public:
 
 private:
     ExpNode *exp;
-    KetExpNode *ket;
+    ExpNode *ket;
 };
 
 #endif //QUBITNODE_HPP

@@ -20,6 +20,10 @@
 #include "ast/SkipStmNode.hpp"
 #include "ast/GateExpNode.hpp"
 #include "ast/UnitaryStmNode.hpp"
+#include "ast/MeasExpNode.hpp"
+#include "ast/CondExpNode.hpp"
+#include "ast/CondStmNode.hpp"
+#include "ast/WhileStmNode.hpp"
 
 #include "core/Gate.hpp"
 
