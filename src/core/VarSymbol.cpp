@@ -27,5 +27,5 @@ void VarSymbol::setValue(Node *value) {
 
 void VarSymbol::dump() const {
     std::cout << "\tVariable: " << Token::name(name) << ", type: " << getTypeName(type) << std::endl;
-    value->dump();
+    // value->dump();
 }

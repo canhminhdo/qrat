@@ -2,9 +2,9 @@
 // Created by CanhDo on 2024/11/15.
 //
 
+
 #include "core/SyntaxProg.hpp"
 #include <iostream>
-
 #include "core/ConstSymbol.hpp"
 #include "core/VarSymbol.hpp"
 
@@ -39,6 +39,10 @@ void SyntaxProg::addInit(Token variable, Node *value) {
     }
 }
 
+void SyntaxProg::addStmSeq(StmSeqNode *stmSeq) {
+    this->stmSeq = stmSeq;
+}
+
 int SyntaxProg::getName() const {
     return name;
 }
@@ -57,7 +61,7 @@ bool SyntaxProg::hasConstSymbol(const Token &token) {
     return false;
 }
 
-Symbol * SyntaxProg::lookup(const Token &token) {
+Symbol *SyntaxProg::lookup(const Token &token) {
     return symTab.lookup(token.code());
 }
 
@@ -65,4 +69,6 @@ void SyntaxProg::dump() const {
     std::cout << "Prog: " << Token::name(name) << std::endl;
     std::cout << "Symbol Table: " << std::endl;
     symTab.dump();
+    std::cout << "Statements: " << std::endl;
+    stmSeq->dump();
 }

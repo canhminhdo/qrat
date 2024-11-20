@@ -5,7 +5,7 @@
 #ifndef CONSTEXP_HPP
 #define CONSTEXP_HPP
 
-#include "ExpNode.hpp"
+#include "ast/ExpNode.hpp"
 #include "core/ConstSymbol.hpp"
 
 class ConstExpNode : public ExpNode {

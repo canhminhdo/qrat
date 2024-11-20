@@ -4,7 +4,8 @@
 
 #ifndef NUMEXPNODE_HPP
 #define NUMEXPNODE_HPP
-#include "ExpNode.hpp"
+
+#include "ast/ExpNode.hpp"
 
 enum class NumType {
     INT,

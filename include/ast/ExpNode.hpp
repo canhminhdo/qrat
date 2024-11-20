@@ -5,7 +5,7 @@
 #ifndef EXPNODE_HPP
 #define EXPNODE_HPP
 
-#include "Node.hpp"
+#include "ast/Node.hpp"
 
 class ExpNode : public Node {
 };

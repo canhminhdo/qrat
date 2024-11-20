@@ -8,6 +8,7 @@
 class Node {
 public:
     virtual void eval() = 0;
+
     virtual void dump() = 0;
 };
 

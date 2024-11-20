@@ -5,18 +5,24 @@
 #ifndef CONSTSYMBOL_HPP
 #define CONSTSYMBOL_HPP
 
-#include "Symbol.hpp"
 #include "ast/Node.hpp"
+#include "core/Symbol.hpp"
 #include "core/type.hpp"
 
 class ConstSymbol : public Symbol {
 public:
     ConstSymbol(int name, Type type, Node *value = nullptr, Node *conditions = nullptr);
+
     ~ConstSymbol();
+
     int getName() const override;
+
     Type getType() const;
+
     Node *getValue() const;
+
     Node *getConditions() const;
+
     void dump() const override;
 
 private:

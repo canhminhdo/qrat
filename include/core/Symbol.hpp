@@ -4,11 +4,11 @@
 
 #ifndef SYMBOL_HPP
 #define SYMBOL_HPP
-#include <ostream>
 
 class Symbol {
 public:
     virtual int getName() const = 0;
+
     virtual void dump() const = 0;
 };
 

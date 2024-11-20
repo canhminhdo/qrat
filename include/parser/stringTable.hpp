@@ -11,11 +11,14 @@
 class StringTable {
 public:
     // insert a string and return a pointer to the stored string
-    const std::string* insert(const std::string& str);
+    const std::string *insert(const std::string &str);
+
     // look up a string in the table
-    const std::string* lookup(const std::string& str) const;
+    const std::string *lookup(const std::string &str) const;
+
     // print out the contents of the string table
     void dump() const;
+
 private:
     std::unordered_map<std::string, std::string> table;
 };

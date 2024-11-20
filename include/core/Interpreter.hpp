@@ -11,6 +11,7 @@
 class Interpreter {
 public:
     void setCurrentProg(Token progName);
+
     SyntaxProg *getCurrentProg() const;
 
 private:

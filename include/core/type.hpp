@@ -9,6 +9,7 @@ enum class Type {
     Qubit,
     Complex
 };
+
 extern const char *typeNames[];
 
 inline const char *getTypeName(Type type) {

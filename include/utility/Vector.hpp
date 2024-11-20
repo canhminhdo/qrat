@@ -25,7 +25,7 @@ public:
 
     // copy assignment
     Vector &operator=(const Vector &rhs) {
-        Vector copy = rhs;// calling to the copy constructor
+        Vector copy = rhs; // calling to the copy constructor
         std::swap(*this, copy);
         return *this;
     }
@@ -100,7 +100,8 @@ public:
     void push_back(Object &&x) {
         if (theSize == theCapacity)
             reserve(2 * theCapacity + 1);
-        objects[theSize++] = std::move(x);// still need to use std::move(x) to make it an rvalue since x is actually a lvalue with a rvalue reference type.
+        objects[theSize++] = std::move(x);
+        // still need to use std::move(x) to make it an rvalue since x is actually a lvalue with a rvalue reference type.
     }
 
     void pop_back() {

@@ -17,7 +17,8 @@ StringTable::hash(const char *name) {
 }
 
 inline int
-StringTable::hash2(const char *name) {// 2nd hash function always returns an odd value
+StringTable::hash2(const char *name) {
+    // 2nd hash function always returns an odd value
     int h = 0;
     for (const char *p = name; *p; p++) {
         h = (5 * h) ^ *p;
@@ -65,7 +66,7 @@ int StringTable::encode(const char *name) {
         if (strcmp(name, stringTable[code]) == 0)
             break;
         if (step == 0)
-            step = hash2(name);// hash2(name) & mask ???
+            step = hash2(name); // hash2(name) & mask ???
     }
     return code;
 }
@@ -104,7 +105,7 @@ void StringTable::resize() {
         char *s = stringTable[i];
         int j = hash(s) & mask;
         if (hashTable[j] != UNUSED) {
-            int step = hash2(s);// hash2(s) & mask ???
+            int step = hash2(s); // hash2(s) & mask ???
             do
                 j = (j + step) & mask;
             while (hashTable[j] != UNUSED);

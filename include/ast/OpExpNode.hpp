@@ -5,7 +5,7 @@
 #ifndef OPEXPNODE_HPP
 #define OPEXPNODE_HPP
 
-#include "ExpNode.hpp"
+#include "ast/ExpNode.hpp"
 
 enum class OpExpType {
     MINUS,
@@ -25,8 +25,6 @@ enum class OpExpType {
     NE,
     ASSIGN
 };
-
-extern const char *opExpNames[];
 
 class OpExpNode : public ExpNode {
 public:

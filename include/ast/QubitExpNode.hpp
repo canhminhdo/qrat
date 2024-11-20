@@ -5,8 +5,8 @@
 #ifndef QUBITNODE_HPP
 #define QUBITNODE_HPP
 
-#include "ExpNode.hpp"
-#include "KetExpNode.hpp"
+#include "ast/ExpNode.hpp"
+#include "ast/KetExpNode.hpp"
 
 class QubitExpNode : public ExpNode {
 public:

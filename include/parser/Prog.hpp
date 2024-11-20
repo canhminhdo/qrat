@@ -11,13 +11,19 @@ class PROG {
 public:
     // start program declaration with a given name
     void begin(std::string name);
+
     void addVariables();
+
     void addConstants();
+
     void addInit(Token);
+
     void addStatments();
+
     // end program declaration
     void end();
+
 private:
-    std::string* name;
+    std::string *name;
 };
 #endif//QRAT_PROG_HPP

@@ -48,6 +48,11 @@ add_executable(
     ../ast/OpExpNode.cpp
     ../ast/ConstExpNode.cpp
     ../ast/NumExpNode.cpp
+    ../ast/GateExpNode.cpp
+    ../ast/UnitaryStmNode.cpp
+    ../core/Gate.cpp
+    ../ast/StmSeqNode.cpp
+    ../ast/SkipStmNode.cpp
 )
 
 target_include_directories(ParserRunner PUBLIC ${CMAKE_CURRENT_BINARY_DIR})

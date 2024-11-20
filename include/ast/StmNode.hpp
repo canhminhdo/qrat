@@ -5,7 +5,7 @@
 #ifndef STMNODE_HPP
 #define STMNODE_HPP
 
-#include "Node.hpp"
+#include "ast/Node.hpp"
 
 class StmNode : public Node {
 };

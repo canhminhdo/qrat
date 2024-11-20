@@ -5,7 +5,7 @@
 #ifndef GLOBAL_HPP
 #define GLOBAL_HPP
 
-#include "Interpreter.hpp"
+#include "core/Interpreter.hpp"
 
 extern Interpreter &interpreter;
 

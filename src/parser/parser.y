@@ -14,6 +14,13 @@
 #include "ast/OpExpNode.hpp"
 #include "ast/ConstExpNode.hpp"
 #include "ast/NumExpNode.hpp"
+#include "ast/StmNode.hpp"
+#include "ast/StmSeqNode.hpp"
+#include "ast/SkipStmNode.hpp"
+#include "ast/GateExpNode.hpp"
+#include "ast/UnitaryStmNode.hpp"
+
+#include "core/Gate.hpp"
 #include "utility/macros.hpp"
 
 // for interpreter and programs
@@ -34,9 +41,11 @@ extern int yylineno;
     int codeNr; // the code of the string encoded in the string table
     Type type; // type of variables and constants
     TokenList *yyTokenList;
+    Node *node;
     KetExpNode *ketBasis;
     QubitExpNode *qubit;
     ExpNode *expr;
+    Gate* gate;
 }
 
 /* declare tokens */
@@ -62,6 +71,8 @@ extern int yylineno;
 %nterm <ketBasis> basis
 %nterm <qubit> oneQubit
 %nterm <expr> expression NUMBER
+%nterm <node> stm stmList unitaryStm
+%nterm <gate> gate
 
 /* start symbol */
 %start prog
@@ -104,7 +115,8 @@ decl    :   varNameList ':' typeName expectedSemi
             ;
 varNameList :   varName
                     {
-                        $$ = new TokenList(); $$->push_back($1);
+                        $$ = new TokenList();
+                        $$->push_back($1);
                     }
             |   varNameList ',' varName
                     {
@@ -216,24 +228,61 @@ NUMBER      :   INTEGER
 /* statements */
 begin   :   /* empty */
         |   KW_BEGIN stmList
+                {
+                    currentSyntaxProg->addStmSeq(dynamic_cast<StmSeqNode *>($2));
+                }
         ;
 stmList :   stm
+                {
+                    $$ = new StmSeqNode();
+                    dynamic_cast<StmSeqNode *>($$)->addStm(dynamic_cast<StmNode *>$1);
+                }
         |   stmList stm
+                {
+                    dynamic_cast<StmSeqNode *>($1)->addStm(dynamic_cast<StmNode *>$2);
+                    $$ = $1;
+                }
         ;
 stm :   skip
+            {
+                $$ = new SkipStmNode();
+            }
     |   unitaryStm
-    |   condStm
-    |   loopStm
+            {
+                $$ = $1;
+                printf("unitaryStm\n");
+            }
+    |   condStm { printf("condStm\n"); }
+    |   loopStm { printf("loopStm\n"); }
     ;
 /* skip */
 skip    :   KW_SKIP expectedSemi;
 /* unitary transformation */
-unitaryStm  :   varNameList KW_ASSIGN gate '[' varNameList ']' expectedSemi;
+unitaryStm  :   varNameList KW_ASSIGN gate '[' varNameList ']' expectedSemi
+                    {
+                        $$ = new UnitaryStmNode(currentSyntaxProg, $1, $3, $5);
+                    }
+            ;
 gate    :   KW_GATE_X
+                {
+                    $$ = new Gate(GateType::X);
+                }
         |   KW_GATE_Y
+                {
+                    $$ = new Gate(GateType::Y);
+                }
         |   KW_GATE_Z
+                {
+                    $$ = new Gate(GateType::Z);
+                }
         |   KW_GATE_H
+                {
+                    $$ = new Gate(GateType::H);
+                }
         |   KW_GATE_CX
+                {
+                    $$ = new Gate(GateType::CX);
+                }
         ;
 /* conditional statement */
 condStm :   KW_IF condExp KW_THEN stmList KW_ELSE stmList KW_FI expectedSemi;

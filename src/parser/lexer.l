@@ -15,6 +15,13 @@
 #include "ast/OpExpNode.hpp"
 #include "ast/ConstExpNode.hpp"
 #include "ast/NumExpNode.hpp"
+#include "ast/StmNode.hpp"
+#include "ast/StmSeqNode.hpp"
+#include "ast/SkipStmNode.hpp"
+#include "ast/GateExpNode.hpp"
+#include "ast/UnitaryStmNode.hpp"
+
+#include "core/Gate.hpp"
 
 DeclMode declFlag = NONE_DECL;
 
