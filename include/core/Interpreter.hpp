@@ -7,6 +7,7 @@
 
 #include "core/SyntaxProg.hpp"
 #include "core/Token.hpp"
+#include "dd/DDSimulation.hpp"
 
 class Interpreter {
 public:
@@ -16,5 +17,6 @@ public:
 
 private:
     SyntaxProg *currentProg;
+    DDSimulation *ddSim;
 };
 #endif//INTERPRETER_HPP

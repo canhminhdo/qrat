@@ -1,3 +1,8 @@
+add_subdirectory(
+    "${PROJECT_SOURCE_DIR}/extern/mqt-core"
+    "extern/mqt-core"
+    EXCLUDE_FROM_ALL)
+
 # COPY FILE
 configure_file(prog.qw prog.qw)
 configure_file(lexerAux.cpp lexerAux.cpp)
@@ -57,7 +62,9 @@ add_executable(
     ../ast/CondExpNode.cpp
     ../ast/CondStmNode.cpp
     ../ast/WhileStmNode.cpp
+    ../dd/DDSimulation.cpp
 )
 
 target_include_directories(ParserRunner PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
 target_link_libraries(ParserRunner PUBLIC ${FLEX_LIBRARIES})
+target_link_libraries(ParserRunner PUBLIC MQT::CoreDD MQT::CoreZX)
