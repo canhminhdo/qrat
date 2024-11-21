@@ -10,7 +10,10 @@ enum class Type {
     Complex
 };
 
-extern const char *typeNames[];
+inline static const char *typeNames[] = {
+    "Qubit",
+    "Complex"
+};
 
 inline const char *getTypeName(Type type) {
     return typeNames[static_cast<int>(type)];

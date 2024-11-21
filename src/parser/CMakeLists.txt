@@ -44,7 +44,6 @@ add_executable(
     ../core/Interpreter.cpp
     ../core/SyntaxProg.cpp
     ../core/global.cpp
-    ../core/type.cpp
     ../core/SymbolTable.cpp
     ../core/VarSymbol.cpp
     ../core/ConstSymbol.cpp
