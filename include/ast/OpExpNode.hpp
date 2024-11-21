@@ -7,6 +7,7 @@
 
 #include "ast/ExpNode.hpp"
 
+// ODR-usable enum class
 enum class OpExpType {
     MINUS,
     ADD,
@@ -24,6 +25,16 @@ enum class OpExpType {
     EQ,
     NE,
     ASSIGN
+};
+
+// // inline initialization with ODR
+inline static const char *opExpNames[] = {
+    "MINUS",
+    "ADD",
+    "SUB",
+    "MUL",
+    "DIV",
+    "MOD"
 };
 
 class OpExpNode : public ExpNode {

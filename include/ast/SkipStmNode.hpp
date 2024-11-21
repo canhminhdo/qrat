@@ -17,9 +17,9 @@ public:
     const char *getName();
 
 private:
-    const char *name = "skip";
+    // no out-of-class definition required, ODR-usable (One Definition Rule)
+    inline static const char *name = "skip";
 };
-
 
 inline const char *SkipStmNode::getName() {
     return name;

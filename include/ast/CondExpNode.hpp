@@ -7,6 +7,7 @@
 
 #include "ast/ExpNode.hpp"
 
+// ODR-usable enum class
 enum class RelOpType {
     EQ,
     // todo: support the remaining relational operator
@@ -18,6 +19,19 @@ enum class RelOpType {
     AND,
     OR,
     NOT,
+};
+
+// inline initialization with ODR
+inline static const char *relOpNames[] = {
+    "EQ",
+    "NE",
+    "GT",
+    "LT",
+    "GE",
+    "LE",
+    "AND",
+    "OR",
+    "NOT"
 };
 
 class CondExpNode : public ExpNode {

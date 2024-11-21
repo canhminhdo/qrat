@@ -5,8 +5,6 @@
 #include <iostream>
 #include "ast/KetExpNode.hpp"
 
-const char *KetExpNode::KetNames[] = {"|0>", "|1>"};
-
 KetExpNode::KetExpNode(KetType type) : type{type} {
     // initialize the ket expression node
 }

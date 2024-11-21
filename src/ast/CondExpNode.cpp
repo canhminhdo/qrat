@@ -6,18 +6,6 @@
 
 #include <iostream>
 
-static const char *relOpNames[] = {
-    "EQ",
-    "NE",
-    "GT",
-    "LT",
-    "GE",
-    "LE",
-    "AND",
-    "OR",
-    "NOT"
-};
-
 CondExpNode::CondExpNode(ExpNode *left, RelOpType type, ExpNode *right) : left{left}, type{type}, right{right} {
 }
 

@@ -5,15 +5,6 @@
 #include <iostream>
 #include "ast/OpExpNode.hpp"
 
-static const char *opExpNames[] = {
-    "MINUS",
-    "ADD",
-    "SUB",
-    "MUL",
-    "DIV",
-    "MOD"
-};
-
 OpExpNode::OpExpNode(OpExpType type, ExpNode *left, ExpNode *right) : type{type}, left{left}, right{right} {
 }
 

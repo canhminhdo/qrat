@@ -3,11 +3,8 @@
 //
 
 #include "ast/MeasExpNode.hpp"
-
 #include <iostream>
-
 #include "core/Token.hpp"
-
 
 MeasExpNode::MeasExpNode(Symbol *variable) : var{variable} {
 }

@@ -7,10 +7,14 @@
 
 #include "ast/ExpNode.hpp"
 
+// ODR-usable enum class
 enum class KetType {
     KET_ZERO,
     KET_ONE
 };
+
+// inline initialization with ODR
+inline static const char *KetNames[] = {"|0>", "|1>"};
 
 class KetExpNode : public ExpNode {
 public:
@@ -26,7 +30,6 @@ public:
     void dump() override;
 
 private:
-    static const char *KetNames[];
     KetType type;
 };
 
