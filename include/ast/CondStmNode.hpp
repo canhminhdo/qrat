@@ -10,12 +10,24 @@
 
 class CondStmNode : public StmNode {
 public:
-
     CondStmNode() = default;
 
     CondStmNode(ExpNode *cond, StmNode *then_stm, StmNode *else_stm);
 
-    void eval() override {};
+    ~CondStmNode() override = default;
+
+    std::size_t getHash() const override;
+
+    bool isEqual(const Node &other) const override;
+
+    ExpNode *getCond() const;
+
+    StmNode *getThenStm() const;
+
+    StmNode *getElseStm() const;
+
+    void eval() override {
+    };
 
     void dump() override;
 

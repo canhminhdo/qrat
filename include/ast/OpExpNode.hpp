@@ -41,12 +41,22 @@ class OpExpNode : public ExpNode {
 public:
     OpExpNode(OpExpType type, ExpNode *left, ExpNode *right);
 
+    ~OpExpNode() override = default;
+
     const char *getOpName();
+
+    std::size_t getHash() const override;
+
+    bool isEqual(const Node &other) const override;
 
     void eval() override {
     }
 
     void dump() override;
+
+    ExpNode *getLeft() const;
+
+    ExpNode *getRight() const;
 
 private:
     OpExpType type;

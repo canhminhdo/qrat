@@ -38,6 +38,18 @@ class CondExpNode : public ExpNode {
 public:
     CondExpNode(ExpNode *left, RelOpType type, ExpNode *right);
 
+    ~CondExpNode() override = default;
+
+    std::size_t getHash() const override;
+
+    bool isEqual(const Node &other) const override;
+
+    ExpNode *get_left() const;
+
+    RelOpType get_type() const;
+
+    ExpNode *get_right() const;
+
     void eval() override {
     };
 

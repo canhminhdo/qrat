@@ -12,16 +12,22 @@ public:
     void eval() override {
     };
 
+    ~SkipStmNode() override = default;
+
+    std::size_t getHash() const override;
+
+    bool isEqual(const Node &other) const override;
+
     void dump() override;
 
-    const char *getName();
+    const char *getName() const;
 
 private:
     // no out-of-class definition required, ODR-usable (One Definition Rule)
     inline static const char *name = "skip";
 };
 
-inline const char *SkipStmNode::getName() {
+inline const char *SkipStmNode::getName() const {
     return name;
 }
 

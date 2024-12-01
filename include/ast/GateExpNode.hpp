@@ -15,10 +15,14 @@ class GateExpNode : public ExpNode {
 public:
     GateExpNode(Gate *gate, std::vector<Symbol *> vars);
 
-    virtual ~GateExpNode();
+    ~GateExpNode() override;
 
     void eval() override {
-    };
+    }
+
+    std::size_t getHash() const override;
+
+    bool isEqual(const Node &other) const override;;
 
     void dump() override;
 

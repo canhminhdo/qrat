@@ -20,9 +20,15 @@ class KetExpNode : public ExpNode {
 public:
     KetExpNode(KetType type);
 
+    ~KetExpNode() override = default;
+
     KetType getType() const;
 
     const char *getName() const;
+
+    std::size_t getHash() const override;
+
+    bool isEqual(const Node &other) const override;
 
     void eval() override {
     }

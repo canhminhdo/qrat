@@ -5,6 +5,7 @@
 #ifndef SYNTAXPROG_HPP
 #define SYNTAXPROG_HPP
 
+#include "ast/CachedNode.hpp"
 #include "ast/StmSeqNode.hpp"
 #include "core/SymbolTable.hpp"
 #include "core/Token.hpp"
@@ -34,6 +35,8 @@ public:
 
     Symbol *lookup(const Token &token);
 
+    Node *makeNode(Node *node);
+
     // for debugging
     void dump() const;
 
@@ -41,5 +44,6 @@ private:
     int name; // program name
     SymbolTable symTab; // store variables and constants
     StmSeqNode *stmSeq; // store statements (quantum programs)
+    CachedNode cachedNodes; // store nodes
 };
 #endif//SYNTAXPROG_HPP

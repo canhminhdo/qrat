@@ -12,6 +12,16 @@ class WhileStmNode : public StmNode {
 public:
     WhileStmNode(ExpNode *cond, StmNode *body);
 
+    ~WhileStmNode() override = default;
+
+    std::size_t getHash() const override;
+
+    bool isEqual(const Node &other) const override;
+
+    ExpNode *getCond() const;
+
+    StmNode *getBody() const;
+
     void eval() override {
     };
 

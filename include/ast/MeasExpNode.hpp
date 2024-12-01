@@ -12,6 +12,14 @@ class MeasExpNode : public ExpNode {
 public:
     explicit MeasExpNode(Symbol *variable);
 
+    ~MeasExpNode() override = default;
+
+    std::size_t getHash() const override;
+
+    bool isEqual(const Node &other) const override;
+
+    Symbol *getVar() const;
+
     void eval() override {
     };
 

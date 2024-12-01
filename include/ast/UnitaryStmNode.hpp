@@ -16,7 +16,15 @@ class UnitaryStmNode : public StmNode {
 public:
     UnitaryStmNode(SyntaxProg *currentSyntaxProg, TokenList *vars1, Gate *gate, TokenList *vars2);
 
-    virtual ~UnitaryStmNode();
+    ~UnitaryStmNode() override;
+
+    std::size_t getHash() const override;
+
+    bool isEqual(const Node &other) const override;
+
+    GateExpNode *getGateExp() const;
+
+    const std::vector<Symbol *>& getVars() const;
 
     void eval() override {
     };

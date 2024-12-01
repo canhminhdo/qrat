@@ -11,6 +11,7 @@ add_library(
     Person.cpp
     ../include/dd/DDSimulation.hpp
     dd/DDSimulation.cpp
+    ../include/ast/CachedNode.hpp
 )
 
 # set include directories

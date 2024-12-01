@@ -46,8 +46,6 @@ extern int yylineno;
     Type type; // type of variables and constants
     TokenList *yyTokenList;
     Node *node;
-    KetExpNode *ketBasis;
-    QubitExpNode *qubit;
     StmNode *stm;
     ExpNode *expr;
     Gate* gate;

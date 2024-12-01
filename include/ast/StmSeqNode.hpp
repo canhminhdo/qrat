@@ -11,7 +11,15 @@
 
 class StmSeqNode : public StmNode {
 public:
+    ~StmSeqNode() override = default;
+
     void addStm(StmNode *stm);
+
+    std::size_t getHash() const override;
+
+    bool isEqual(const Node &other) const override;
+
+    const std::vector<StmNode *> &getStmSeq() const;
 
     void eval() override {
     };

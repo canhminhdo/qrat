@@ -11,10 +11,19 @@ class QubitExpNode : public ExpNode {
 public:
     QubitExpNode(ExpNode *exp, ExpNode *ket);
 
+    ~QubitExpNode() override = default;
+
+    bool isEqual(const Node &other) const override;
+
+    std::size_t getHash() const override;
+
     void eval() override {
     }
 
     void dump() override;
+
+    ExpNode* getKet() const;
+    ExpNode* getExp() const;
 
 private:
     ExpNode *exp;

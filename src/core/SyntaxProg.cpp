@@ -65,10 +65,16 @@ Symbol *SyntaxProg::lookup(const Token &token) {
     return symTab.lookup(token.code());
 }
 
+Node *SyntaxProg::makeNode(Node *node) {
+    return cachedNodes.makeNode(node);
+}
+
 void SyntaxProg::dump() const {
     std::cout << "Prog: " << Token::name(name) << std::endl;
     std::cout << "Symbol Table: " << std::endl;
     symTab.dump();
     std::cout << "Statements: " << std::endl;
     stmSeq->dump();
+    std::cout << "CachedNodes: " << std::endl;
+    cachedNodes.dump();
 }

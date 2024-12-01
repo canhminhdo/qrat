@@ -62,6 +62,7 @@ add_executable(
     ../ast/CondStmNode.cpp
     ../ast/WhileStmNode.cpp
     ../dd/DDSimulation.cpp
+    ../ast/CachedNode.cpp
 )
 
 target_include_directories(ParserRunner PUBLIC ${CMAKE_CURRENT_BINARY_DIR})

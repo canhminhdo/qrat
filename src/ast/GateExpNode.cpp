@@ -15,6 +15,25 @@ GateExpNode::~GateExpNode() {
         delete gate;
 }
 
+std::size_t GateExpNode::getHash() const {
+    auto hash = combinedHash(seed, std::hash<Gate *>{}(gate));
+    for (auto var: vars) {
+        hash = combinedHash(hash, std::hash<Symbol *>{}(var));
+    }
+    return hash;
+}
+
+bool GateExpNode::isEqual(const Node &other) const {
+    const GateExpNode *otherGate = dynamic_cast<const GateExpNode *>(&other);
+    if (otherGate == nullptr || gate->getName() != otherGate->gate->getName() || vars.size() != otherGate->vars.size())
+        return false;
+    for (int i = 0; i < vars.size(); i++) {
+        if (vars[i] != otherGate->vars[i])
+            return false;
+    }
+    return true;
+}
+
 void GateExpNode::dump() {
     std::cout << gate->getName() << "[";
     for (int i = 0; i < vars.size(); i++) {

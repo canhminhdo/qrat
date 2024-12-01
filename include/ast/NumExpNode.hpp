@@ -17,19 +17,24 @@ class NumExpNode : public ExpNode {
 public:
     NumExpNode(NumType type, const char *valStr);
 
+    ~NumExpNode() override = default;
+
+    std::size_t getHash() const override;
+
+    bool isEqual(const Node &other) const override;
+
     void eval() override {
     }
 
     void dump() override;
 
 private:
-    union Value {
+    union {
         int valInt;
         float valFloat;
     };
 
     NumType type;
-    Value v;
 };
 
 #endif //NUMEXPNODE_HPP
