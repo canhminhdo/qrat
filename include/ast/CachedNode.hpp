@@ -5,9 +5,10 @@
 #ifndef CACHEDNODE_HPP
 #define CACHEDNODE_HPP
 
+#include "Node.hpp"
+#include "core/Gate.hpp"
 #include <unordered_map>
 #include <vector>
-#include "Node.hpp"
 
 class CachedNode {
 public:
@@ -23,14 +24,30 @@ public:
         }
     };
 
+    struct GateTypeHash {
+        std::size_t operator()(const GateType type) const {
+            return std::hash<int>()(static_cast<int>(type));
+        }
+    };
+
+    struct GateTypeEqual {
+        bool operator()(const GateType lhs, const GateType rhs) const {
+            return lhs == rhs;
+        }
+    };
+
     ~CachedNode();
 
     Node *makeNode(Node *node);
+
+    Gate *makeGate(Gate *gate);
 
     void dump() const;
 
 private:
     std::unordered_map<Node *, int, NodeHash, NodeEqual> nodeTab;
     std::vector<Node *> nodes;
+    std::unordered_map<GateType, int, GateTypeHash, GateTypeEqual> gateTab;
+    std::vector<Gate *> gates;
 };
-#endif //CACHEDNODE_HPP
+#endif//CACHEDNODE_HPP

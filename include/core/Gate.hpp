@@ -37,6 +37,10 @@ public:
 
     int getArgsNr();
 
+    GateType getType();
+
+    void dump();
+
 private:
     GateType type;
     int argsNr;

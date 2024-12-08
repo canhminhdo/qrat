@@ -9,6 +9,7 @@
 #include "utility/macros.hpp"
 #include "parser/lexerAux.hpp"
 #include "core/Token.hpp"
+#include "ast/Node.hpp"
 #include "ast/KetExpNode.hpp"
 #include "ast/QubitExpNode.hpp"
 #include "ast/ExpNode.hpp"

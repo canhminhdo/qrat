@@ -25,7 +25,7 @@ std::size_t GateExpNode::getHash() const {
 
 bool GateExpNode::isEqual(const Node &other) const {
     const GateExpNode *otherGate = dynamic_cast<const GateExpNode *>(&other);
-    if (otherGate == nullptr || gate->getName() != otherGate->gate->getName() || vars.size() != otherGate->vars.size())
+    if (otherGate == nullptr || gate != otherGate->gate)
         return false;
     for (int i = 0; i < vars.size(); i++) {
         if (vars[i] != otherGate->vars[i])

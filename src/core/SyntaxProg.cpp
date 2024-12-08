@@ -69,6 +69,10 @@ Node *SyntaxProg::makeNode(Node *node) {
     return cachedNodes.makeNode(node);
 }
 
+Gate *SyntaxProg::makeGate(Gate *gate) {
+    return cachedNodes.makeGate(gate);
+}
+
 void SyntaxProg::dump() const {
     std::cout << "Prog: " << Token::name(name) << std::endl;
     std::cout << "Symbol Table: " << std::endl;

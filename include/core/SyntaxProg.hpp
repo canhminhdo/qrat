@@ -37,6 +37,8 @@ public:
 
     Node *makeNode(Node *node);
 
+    Gate *makeGate(Gate *gate);
+
     // for debugging
     void dump() const;
 

@@ -25,3 +25,11 @@ const char *Gate::getName() {
 int Gate::getArgsNr() {
     return argsNr;
 }
+
+GateType Gate::getType() {
+    return type;
+}
+
+void Gate::dump() {
+    std::cout << getName() << std::endl;
+}
