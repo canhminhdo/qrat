@@ -15,7 +15,7 @@ class GateExpNode : public ExpNode {
 public:
     GateExpNode(Gate *gate, std::vector<Symbol *> vars);
 
-    ~GateExpNode() override;
+    ~GateExpNode() override = default;
 
     void eval() override {
     }

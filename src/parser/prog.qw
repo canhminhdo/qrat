@@ -1,21 +1,15 @@
 prog TELEPORT is
-var
-    q1, q2, q3, q4 : qubit;
+var q1, q2, q3 : qubit;
 const
     a, b: complex;
 init
-    q1 := (a . |0>) + (b . |1>);
+    q1 := a . |0> + b . |1>;
     q2 := |0>;
     q3 := |0>;
-    q4 := (a . |0>) + (b . |1>);
 begin
     q1 := X[q1];
-    q1 := X[q1];
-    q2, q3 := CX[q2, q3];
     q2, q3 := CX[q2, q3];
     q1, q2 := CX[q1, q2];
-    q1, q2 := CX[q1, q2];
-    q1 := H[q1];
     q1 := H[q1];
     if M[q2] = 1 then q3 := X[q3]; else skip; fi;
     if M[q1] = 1 then q3 := Z[q3]; else skip; fi;

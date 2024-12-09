@@ -32,12 +32,7 @@ UnitaryStmNode::UnitaryStmNode(SyntaxProg *currentSyntaxProg,
         }
         vars.push_back(dynamic_cast<VarSymbol *>(currentSyntaxProg->lookup(vars1->at(i))));
     }
-    Node *node = currentSyntaxProg->makeNode(new GateExpNode(gate, vars));
-    gateExp = dynamic_cast<GateExpNode *>(node);
-}
-
-UnitaryStmNode::~UnitaryStmNode() {
-    delete gateExp;
+    gateExp = new GateExpNode(gate, vars);
 }
 
 std::size_t UnitaryStmNode::getHash() const {

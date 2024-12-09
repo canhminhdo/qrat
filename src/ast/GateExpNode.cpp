@@ -10,11 +10,6 @@
 GateExpNode::GateExpNode(Gate *gate, std::vector<Symbol *> vars) : gate{gate}, vars{vars} {
 }
 
-GateExpNode::~GateExpNode() {
-    if (gate != nullptr)
-        delete gate;
-}
-
 std::size_t GateExpNode::getHash() const {
     auto hash = combinedHash(seed, std::hash<Gate *>{}(gate));
     for (auto var: vars) {

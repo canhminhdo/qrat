@@ -16,7 +16,7 @@ class UnitaryStmNode : public StmNode {
 public:
     UnitaryStmNode(SyntaxProg *currentSyntaxProg, TokenList *vars1, Gate *gate, TokenList *vars2);
 
-    ~UnitaryStmNode() override;
+    ~UnitaryStmNode() override = default;
 
     std::size_t getHash() const override;
 

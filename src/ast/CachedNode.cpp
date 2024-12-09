@@ -41,13 +41,15 @@ void CachedNode::dump() const {
 }
 
 Gate *CachedNode::makeGate(Gate *gate) {
-    auto it = gateTab.find(gate->getType());
+    GateType gType = gate->getType();
+    auto it = gateTab.find(gType);
     if (it != gateTab.end()) {
         std::cout << "Found gate in cache, then delete the newly created gate\n";
+        gate->dump();
+        std::cout << "-------------------\n";
         delete gate;
         return gates[it->second];
     }
-    GateType gType = gate->getType();
     gateTab[gType] = gates.size();
     gates.push_back(gate);
     return gate;

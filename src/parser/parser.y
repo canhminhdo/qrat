@@ -264,8 +264,7 @@ skip    :   KW_SKIP expectedSemi;
 /* unitary transformation */
 unitaryStm  :   varNameList KW_ASSIGN gate '[' varNameList ']' expectedSemi
                     {
-                        auto *stmNode = new UnitaryStmNode(currentSyntaxProg, $1, $3, $5);
-                        $$ = currentSyntaxProg->makeNode(stmNode);
+                        $$ = new UnitaryStmNode(currentSyntaxProg, $1, $3, $5);
                     }
             ;
 gate    :   KW_GATE_X
