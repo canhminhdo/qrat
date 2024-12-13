@@ -11,9 +11,15 @@
 
 class Interpreter {
 public:
+    Interpreter() = default;
+
     void setCurrentProg(Token progName);
 
     SyntaxProg *getCurrentProg() const;
+
+    void initDDSimulation();
+
+    void run();
 
 private:
     SyntaxProg *currentProg;

@@ -10,6 +10,7 @@
 
 SyntaxProg::SyntaxProg(Token prog) {
     name = prog.code();
+    nqubits = 0;
 }
 
 SyntaxProg::~SyntaxProg() {
@@ -22,6 +23,7 @@ void SyntaxProg::addVarDecl(TokenList *variables, Type type) {
     for (int i = 0; i < variables->size(); i++) {
         symTab.addVarSymbol(variables->at(i).code(), type);
     }
+    nqubits += variables->size();
 }
 
 void SyntaxProg::addConstDecl(TokenList *constants, Type type) {
@@ -73,8 +75,17 @@ Gate *SyntaxProg::makeGate(Gate *gate) {
     return cachedNodes.makeGate(gate);
 }
 
+std::size_t SyntaxProg::getNqubits() const {
+    return nqubits;
+}
+
+std::vector<VarSymbol *> SyntaxProg::getVars() const {
+    return symTab.getVars();
+}
+
 void SyntaxProg::dump() const {
     std::cout << "Prog: " << Token::name(name) << std::endl;
+    std::cout << "nQubits: " << nqubits << std::endl;
     std::cout << "Symbol Table: " << std::endl;
     symTab.dump();
     std::cout << "Statements: " << std::endl;

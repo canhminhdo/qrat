@@ -16,9 +16,9 @@ CachedNode::~CachedNode() {
 Node *CachedNode::makeNode(Node *node) {
     auto it = nodeTab.find(node);
     if (it != nodeTab.end()) {
-        std::cout << "Found node in cache, then delete the newly created node\n";
-        node->dump();
-        std::cout << "-------------------\n";
+        // std::cout << "Found node in cache, then delete the newly created node\n";
+        // node->dump();
+        // std::cout << "-------------------\n";
         delete node;
         return nodes[it->second];
     }
@@ -44,9 +44,9 @@ Gate *CachedNode::makeGate(Gate *gate) {
     GateType gType = gate->getType();
     auto it = gateTab.find(gType);
     if (it != gateTab.end()) {
-        std::cout << "Found gate in cache, then delete the newly created gate\n";
-        gate->dump();
-        std::cout << "-------------------\n";
+        // std::cout << "Found gate in cache, then delete the newly created gate\n";
+        // gate->dump();
+        // std::cout << "-------------------\n";
         delete gate;
         return gates[it->second];
     }

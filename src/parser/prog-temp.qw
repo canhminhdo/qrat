@@ -24,3 +24,7 @@ end
 search in TELEPORT =>* q1 (x) q2 (x) q3 such that q3 == a . |0> + b . |1> ;
 search in TELEPORT =>+ q1 (x) q2 (x) q3 such that q3 == a . |0> + b . |1> ;
 search in TELEPORT =>! q1 (x) q2 (x) q3 such that q3 == a . |0> + b . |1> ;
+
+search* in TELEPORT such that P(q1, a . |0> + b . |1>);
+search+ in TELEPORT such that P(q1, a . |0> + b . |1>);
+search! in TELEPORT such that P(q1, a . |0> + b . |1>);

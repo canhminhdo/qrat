@@ -344,8 +344,9 @@ int main(int argc, char **argv)
     printf("Code: %d\n", Token::code("b"));
     printf("Code: %d\n", Token::code("c"));
     Token::dump();
-    #endif
     currentSyntaxProg->dump();
+    #endif
+    interpreter.run();
 }
 
 void yyerror(const char *s)

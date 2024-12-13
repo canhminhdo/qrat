@@ -28,7 +28,9 @@ void SymbolTable::addVarSymbol(int name, Type type, Node *value) {
         std::cerr << "Error: " << Token::name(name) << " variable already exists." << std::endl;
         exit(1);
     }
-    simTab[name] = new VarSymbol(name, type, value);
+    auto *varPtr = new VarSymbol(name, type, value);
+    simTab[name] = varPtr;
+    vars.push_back(varPtr);
 }
 
 void SymbolTable::addConstSymbol(int name, Type type, Node *value, Node *conditions) {
@@ -50,4 +52,8 @@ void SymbolTable::dump() const {
     for (auto &entry: simTab) {
         entry.second->dump();
     }
+}
+
+std::vector<VarSymbol *> SymbolTable::getVars() const {
+    return vars;
 }

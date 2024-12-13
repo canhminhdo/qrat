@@ -6,10 +6,12 @@
 #define SYMBOLTABLE_HPP
 
 #include <unordered_map>
+#include <vector>
 
 #include "core/Symbol.hpp"
 #include "ast/Node.hpp"
 #include "core/type.hpp"
+#include "VarSymbol.hpp"
 
 class SymbolTable {
 public:
@@ -25,8 +27,11 @@ public:
 
     void dump() const;
 
+    std::vector<VarSymbol *> getVars() const;
+
 private:
     std::pmr::unordered_map<int, Symbol *> simTab;
+    std::vector<VarSymbol *> vars;
 };
 
 #endif//SYMBOLTABLE_HPP

@@ -39,13 +39,18 @@ public:
 
     Gate *makeGate(Gate *gate);
 
+    std::size_t getNqubits() const;
+
+    std::vector<VarSymbol *> getVars() const;
+
     // for debugging
     void dump() const;
 
 private:
     int name; // program name
+    std::size_t nqubits; // number of qubits
     SymbolTable symTab; // store variables and constants
     StmSeqNode *stmSeq; // store statements (quantum programs)
-    CachedNode cachedNodes; // store nodes
+    CachedNode cachedNodes; // cached nodes for some expressions in ASTs
 };
 #endif//SYNTAXPROG_HPP

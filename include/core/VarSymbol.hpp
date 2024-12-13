@@ -21,6 +21,8 @@ public:
 
     void setValue(Node *value);
 
+    Node* getValue();
+
     void dump() const override;
 
 private:
