@@ -17,10 +17,25 @@ DDSimulation::DDSimulation(SyntaxProg *prog) : prog{prog}, dd{std::make_unique<D
 }
 
 qc::VectorDD DDSimulation::generateRandomState() {
+
+    // Uniform distribution for theta in [0, pi]
+    std::uniform_real_distribution<dd::fp> dist_theta(0.0, dd::PI_4);
+    // Uniform distribution for phi in [0, 2*pi]
+    std::uniform_real_distribution<dd::fp> dist_phi(0.0, 2 * dd::PI_4);
+    // Generate random theta and phi
+    dd::fp theta = dist_theta(mt);
+    dd::fp phi = dist_phi(mt);
+    std::cout << "theta: " << theta << ", phi: " << phi << std::endl;
+
     std::vector<bool> stimulusBits(nqubits, false);
     auto v = dd->makeBasisState(nqubits, stimulusBits);
-    auto gateH0 = dd->makeGateDD(dd::H_MAT, 0);
-    auto v0 = dd->multiply(gateH0, v);
+    // Apply R_y and R_z gates to make a random state
+    auto gateRY = dd->makeGateDD(dd::ryMat(theta), 0);
+    auto gateRZ = dd->makeGateDD(dd::rzMat(phi), 0);
+    auto v00 = dd->multiply(gateRY, v);
+    auto v0 = dd->multiply(gateRZ, v00);
+//    auto gateH0 = dd->makeGateDD(dd::H_MAT, 0);
+//    auto v0 = dd->multiply(gateH0, v);
     auto gateH1 = dd->makeGateDD(dd::H_MAT, 1);
     auto v1 = dd->multiply(gateH1, v0);
     auto gateCX1 = dd->makeTwoQubitGateDD(dd::CX_MAT, 1, 2);

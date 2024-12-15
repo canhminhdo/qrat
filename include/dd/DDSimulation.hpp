@@ -12,6 +12,7 @@
 #include "core/SyntaxProg.hpp"
 #include "core/VarSymbol.hpp"
 #include "Configuration.hpp"
+#include "dd/DDDefinitions.hpp"
 
 class DDSimulation {
 public:
