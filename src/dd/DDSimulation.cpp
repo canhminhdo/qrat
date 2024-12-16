@@ -27,6 +27,23 @@ qc::VectorDD DDSimulation::generateRandomState() {
     dd::fp phi = dist_phi(mt);
     std::cout << "theta: " << theta << ", phi: " << phi << std::endl;
 
+
+    // for properties
+    std::vector<bool> stimulusBitsZero(1, false);
+    std::vector<bool> stimulusBitsOne(1, true);
+    auto vOne = dd->makeBasisState(1, stimulusBitsOne);
+    vOne.printVector<dd::vNode>();
+    auto outerProd = dd->outerProduct(vOne, 0);
+    auto vOne1 = dd->multiply(outerProd, vOne);
+    vOne1.printVector<dd::vNode>();
+    // auto gateRY12 = dd->makeGateDD(dd::ryMat(theta), 0);
+    // auto vOne1 = dd->multiply(gateRY12, vOne);
+    // vOne1.printVector<dd::vNode>();
+    auto vZero = dd->makeBasisState(1, stimulusBitsZero);
+    auto outerProd1 = dd->outerProduct(vZero, 0);
+    auto vZero1 = dd->multiply(outerProd1, vOne);
+    vZero1.printVector<dd::vNode>();
+
     std::vector<bool> stimulusBits(nqubits, false);
     auto v = dd->makeBasisState(nqubits, stimulusBits);
     // Apply R_y and R_z gates to make a random state
