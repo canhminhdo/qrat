@@ -1,7 +1,7 @@
 prog TELEPORT is
 var q0, q1, q2 : qubit;
 init
-    q0 := |1>;
+    q0 := random;
     q1 := |0>;
     q2 := |0>;
 begin

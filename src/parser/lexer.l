@@ -67,6 +67,7 @@ void lexerIdMode(void);
 ":="		{ return KW_ASSIGN; }
 "|0>"		{ return KW_KET_ZERO; }
 "|1>"		{ return KW_KET_ONE; }
+"random"	{ return KW_KET_RANDOM; }
 "X"		    { return KW_GATE_X; }
 "Y"		    { return KW_GATE_Y; }
 "Z"		    { return KW_GATE_Z; }

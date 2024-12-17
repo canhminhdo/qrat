@@ -4,6 +4,7 @@
 
 #include "dd/DDSimulation.hpp"
 
+#include "ast/KetExpNode.hpp"
 #include "core/Token.hpp"
 #include "core/VarSymbol.hpp"
 #include "dd/Package.hpp"
@@ -11,13 +12,31 @@
 #include "dd/Edge.hpp"
 
 // using DDPackage = typename dd::Package<DDSimulationPackageConfig>;
-DDSimulation::DDSimulation(SyntaxProg *prog) : prog{prog}, dd{std::make_unique<DDPackage>(prog->getNqubits())}, nqubits{prog->getNqubits()} {
+DDSimulation::DDSimulation(SyntaxProg *prog) : prog{prog}, dd{std::make_unique<DDPackage>(prog->getNqubits())},
+                                               nqubits{prog->getNqubits()} {
     mt.seed(config.simulation.seed);
     initialize();
 }
 
 qc::VectorDD DDSimulation::generateRandomState() {
+    // Uniform distribution for theta in [0, pi]
+    std::uniform_real_distribution<dd::fp> dist_theta(0.0, dd::PI_4);
+    // Uniform distribution for phi in [0, 2*pi]
+    std::uniform_real_distribution<dd::fp> dist_phi(0.0, 2 * dd::PI_4);
+    // Generate random theta and phi
+    dd::fp theta = dist_theta(mt);
+    dd::fp phi = dist_phi(mt);
 
+    // Apply R_y and R_z gates to make a random state
+    auto v = dd->makeBasisState(1, std::vector<bool>{false});
+    auto gateRY = dd->makeGateDD(dd::ryMat(theta), 0);
+    auto gateRZ = dd->makeGateDD(dd::rzMat(phi), 0);
+    auto v1 = dd->multiply(gateRY, v);
+    auto v2 = dd->multiply(gateRZ, v1);
+    return v2;
+}
+
+qc::VectorDD DDSimulation::generateRandomState1() {
     // Uniform distribution for theta in [0, pi]
     std::uniform_real_distribution<dd::fp> dist_theta(0.0, dd::PI_4);
     // Uniform distribution for phi in [0, 2*pi]
@@ -26,7 +45,6 @@ qc::VectorDD DDSimulation::generateRandomState() {
     dd::fp theta = dist_theta(mt);
     dd::fp phi = dist_phi(mt);
     std::cout << "theta: " << theta << ", phi: " << phi << std::endl;
-
 
     // for properties
     std::vector<bool> stimulusBitsZero(1, false);
@@ -51,8 +69,27 @@ qc::VectorDD DDSimulation::generateRandomState() {
     auto gateRZ = dd->makeGateDD(dd::rzMat(phi), 0);
     auto v00 = dd->multiply(gateRY, v);
     auto v0 = dd->multiply(gateRZ, v00);
-//    auto gateH0 = dd->makeGateDD(dd::H_MAT, 0);
-//    auto v0 = dd->multiply(gateH0, v);
+
+    // tensor product
+    auto q0 = dd->makeBasisState(1, std::vector<bool>{false});
+    auto q1 = dd->makeBasisState(1, std::vector<bool>{false});
+    auto q2 = dd->makeBasisState(1, std::vector<bool>{false});
+    auto q01 = dd->multiply(gateRY, q0);
+    auto q02 = dd->multiply(gateRZ, q01);
+    auto v12 = dd->kronecker(q2, q1, 1);
+    auto v123 = dd->kronecker(v12, q02, 1);
+    std::cout << "----- q01 -----" << std::endl;
+    q01.printVector<dd::vNode>();
+    std::cout << "----- q02 -----" << std::endl;
+    q02.printVector<dd::vNode>();
+    std::cout << "----- v12 -----" << std::endl;
+    v12.printVector<dd::vNode>();
+    std::cout << "----- v123 -----" << std::endl;
+    v123.printVector<dd::vNode>();
+
+
+    //    auto gateH0 = dd->makeGateDD(dd::H_MAT, 0);
+    //    auto v0 = dd->multiply(gateH0, v);
     auto gateH1 = dd->makeGateDD(dd::H_MAT, 1);
     auto v1 = dd->multiply(gateH1, v0);
     auto gateCX1 = dd->makeTwoQubitGateDD(dd::CX_MAT, 1, 2);
@@ -65,6 +102,12 @@ qc::VectorDD DDSimulation::generateRandomState() {
     // 00
     auto v5_0 = dd->measureOneQubit(v4, 1, true);
     auto v6_0 = dd->measureOneQubit(v5_0, 0, true);
+
+    auto testGate = dd->outerProduct(q02, 2);
+    auto vTest = dd->multiply(testGate, v6_0);
+    std::cout << "----- vTest -----" << std::endl;
+    vTest.printVector<dd::vNode>();
+    auto fd = dd->fidelity(vTest, v6_0);
 
     // 01
     // auto v5_0 = dd->measureOneQubit(v4, 1, true);
@@ -102,6 +145,10 @@ qc::VectorDD DDSimulation::generateRandomState() {
     v5_0.printVector<dd::vNode>();
     std::cout << "----- v6_0 -----" << std::endl;
     v6_0.printVector<dd::vNode>();
+    std::cout << "----- vTest -----" << std::endl;
+    vTest.printVector<dd::vNode>();
+    std::cout << "fidelity = " << fd << std::endl;
+
 
     // 01
     // std::cout << "----- v5_0 -----" << std::endl;
@@ -132,9 +179,6 @@ qc::VectorDD DDSimulation::generateRandomState() {
     return v0;
 }
 
-void DDSimulation::setInitialState() {
-}
-
 void DDSimulation::initialize() {
     initQVarMap();
     initQState();
@@ -142,27 +186,59 @@ void DDSimulation::initialize() {
 
 void DDSimulation::initQVarMap() {
     std::vector<VarSymbol *> vars = prog->getVars();
-    // sort variables by names
+    // lexically sort variables by names in lexicographical order
     sort(vars.begin(), vars.end(), [](VarSymbol *v1, VarSymbol *v2) {
-        return std::strcmp(Token::name(v1->getName()), Token::name(v2->getName()));
+        return std::strcmp(Token::name(v1->getName()), Token::name(v2->getName())) < 0;
     });
     for (int i = 0; i < vars.size(); i++) {
         qVarMap.insert({vars[i]->getName(), i});
+        revQVarMap.insert({i, vars[i]->getName()});
     }
 }
 
 void DDSimulation::initQState() {
     std::vector<VarSymbol *> vars = prog->getVars();
     for (int i = 0; i < vars.size(); i++) {
-        if (vars[i]->getValue()) {
-            vars[i]->getValue()->dump();
+        if (Node *node = vars[i]->getValue(); node != nullptr) {
+            if (KetExpNode *ketNode = dynamic_cast<KetExpNode *>(node); ketNode != nullptr) {
+                switch (ketNode->getType()) {
+                    case KetType::KET_ZERO:
+                        initStateMap[vars[i]->getName()] = dd->makeBasisState(1, std::vector<bool>{false});
+                        break;
+                    case KetType::KET_ONE:
+                        initStateMap[vars[i]->getName()] = dd->makeBasisState(1, std::vector<bool>{true});
+                        break;
+                    case KetType::KET_RANDOM:
+                        initStateMap[vars[i]->getName()] = generateRandomState();
+                        break;
+                    default:
+                        throw std::runtime_error("Only support initialization with |0>, |1> or random state");
+                }
+                dd->incRef(initStateMap[vars[i]->getName()]);
+            }
+        } else {
+            // not initialized, then set to |0> as default
+            initStateMap[vars[i]->getName()] = dd->makeBasisState(1, std::vector<bool>{false});
         }
     }
+    assert(vars.size() > 0);
+    // building initial state
+    initialState = initStateMap[vars[0]->getName()];
+    for (int i = 1; i < vars.size(); i++) {
+        initialState = dd->kronecker(initStateMap[vars[i]->getName()], initialState, i);
+    }
+    dd->incRef(initialState);
 }
 
 void DDSimulation::dump() {
-    generateRandomState();
     for (auto &qVar: qVarMap) {
         std::cout << Token::name(qVar.first) << " -> " << qVar.second << std::endl;
+    }
+    for (auto &refQVar: revQVarMap) {
+        std::cout << refQVar.first << " -> " << Token::name(refQVar.second) << std::endl;
+    }
+    for (auto &qVarVal: initStateMap) {
+        std::cout << Token::name(qVarVal.first) << " -> " << std::endl;
+        qVarVal.second.printVector<dd::vNode>();
     }
 }

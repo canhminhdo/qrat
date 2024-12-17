@@ -10,11 +10,12 @@
 // ODR-usable enum class
 enum class KetType {
     KET_ZERO,
-    KET_ONE
+    KET_ONE,
+    KET_RANDOM
 };
 
 // inline initialization with ODR
-inline static const char *KetNames[] = {"|0>", "|1>"};
+inline static const char *KetNames[] = {"|0>", "|1>", "random"};
 
 class KetExpNode : public ExpNode {
 public:

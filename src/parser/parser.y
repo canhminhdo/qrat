@@ -65,6 +65,7 @@ extern int yylineno;
 %token KW_ASSIGN
 %token KW_KET_ZERO
 %token KW_KET_ONE
+%token KW_KET_RANDOM
 %token INTEGER RATIONAL REAL
 %token KW_GATE_X KW_GATE_Y KW_GATE_Z KW_GATE_H KW_GATE_I KW_GATE_CX
 %token KW_MEASURE
@@ -175,6 +176,10 @@ basis   :   KW_KET_ZERO
         |   KW_KET_ONE
                 {
                     $$ = currentSyntaxProg->makeNode(new KetExpNode(KetType::KET_ONE));
+                }
+        |   KW_KET_RANDOM
+                {
+                    $$ = currentSyntaxProg->makeNode(new KetExpNode(KetType::KET_RANDOM));
                 }
         ;
 expression  :   '(' expression ')'

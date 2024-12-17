@@ -20,7 +20,7 @@ public:
 
     qc::VectorDD generateRandomState();
 
-    void setInitialState();
+    qc::VectorDD generateRandomState1();
 
     void initialize();
 
@@ -31,18 +31,26 @@ public:
     void dump();
 
 private:
+    // program
     SyntaxProg *prog;
+    std::size_t nqubits{};
+
+    // dd package
     using DDPackage = typename dd::Package<DDSimulationPackageConfig>;
     std::unique_ptr<DDPackage> dd;
-    std::size_t nqubits{};
-    qc::QuantumComputation *qc;
 
-    using VectorDDMap = std::map<std::size_t, qc::VectorDD>;
+    // mapping from variable to qubit and vice versa
     using QuantumVariableMap = std::map<int, std::size_t>;
+    using RevQuantumVariableMap = std::map<int, std::size_t>;
     QuantumVariableMap qVarMap;
-    VectorDDMap stateMap;
+    RevQuantumVariableMap revQVarMap;
+
+    // storing initial values
+    using VectorDDMap = std::map<int, qc::VectorDD>;
+    VectorDDMap initStateMap;
     qc::VectorDD initialState{};
 
+    // for random state generation
     Configuration config{};
     std::mt19937_64 mt{};
 };
