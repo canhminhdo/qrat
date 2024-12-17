@@ -9,6 +9,7 @@
 #include "core/Token.hpp"
 #include "dd/DDSimulation.hpp"
 
+
 class Interpreter {
 public:
     Interpreter() = default;
@@ -20,6 +21,8 @@ public:
     void initDDSimulation();
 
     void run();
+
+    void buildInitialState();
 
 private:
     SyntaxProg *currentProg;

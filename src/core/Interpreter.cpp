@@ -26,6 +26,9 @@ void Interpreter::run() {
         // currentProg->dump();
         initDDSimulation();
     }
-    if (ddSim)
-        ddSim->dump();
+    assert(ddSim != nullptr);
+    ddSim->dump();
+}
+
+void Interpreter::buildInitialState() {
 }

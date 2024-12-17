@@ -18,6 +18,10 @@ DDSimulation::DDSimulation(SyntaxProg *prog) : prog{prog}, dd{std::make_unique<D
     initialize();
 }
 
+qc::VectorDD DDSimulation::getInitialState() const {
+    return initialState;
+}
+
 qc::VectorDD DDSimulation::generateRandomState() {
     // Uniform distribution for theta in [0, pi]
     std::uniform_real_distribution<dd::fp> dist_theta(0.0, dd::PI_4);
@@ -241,4 +245,6 @@ void DDSimulation::dump() {
         std::cout << Token::name(qVarVal.first) << " -> " << std::endl;
         qVarVal.second.printVector<dd::vNode>();
     }
+    std::cout << "Initial state: " << std::endl;
+    initialState.printVector<dd::vNode>();
 }
