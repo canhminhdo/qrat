@@ -4,9 +4,10 @@
 
 
 #include "core/SyntaxProg.hpp"
-#include <iostream>
+#include "ast/EndStmNode.hpp"
 #include "core/ConstSymbol.hpp"
 #include "core/VarSymbol.hpp"
+#include <iostream>
 
 SyntaxProg::SyntaxProg(Token prog) {
     name = prog.code();
@@ -43,6 +44,7 @@ void SyntaxProg::addInit(Token variable, Node *value) {
 
 void SyntaxProg::addStmSeq(StmSeq *stmSeq) {
     this->stmSeq = stmSeq;
+    this->stmSeq->addStm(new EndStmNode());
 }
 
 StmSeq * SyntaxProg::getStmSeq() const {

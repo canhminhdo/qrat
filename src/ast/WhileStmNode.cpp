@@ -3,12 +3,12 @@
 //
 
 #include "ast/WhileStmNode.hpp"
-#include "ast/EndWhileStmNode.hpp"
+#include "ast/EndStmNode.hpp"
 #include <iostream>
 
 
 WhileStmNode::WhileStmNode(ExpNode *cond, StmSeq *body) : cond{cond}, body{body} {
-    EndWhileStmNode *endWhile = new EndWhileStmNode();
+    EndStmNode *endWhile = new EndStmNode();
     endWhile->setNext(this);
     body->addStm(endWhile);
 }

@@ -3,6 +3,10 @@
 //
 
 #include "core/StateTransitionGraph.hpp"
+#include "ast/CondStmNode.hpp"
+#include "ast/EndStmNode.hpp"
+#include "ast/SkipStmNode.hpp"
+#include "ast/WhileStmNode.hpp"
 
 StateTransitionGraph::StateTransitionGraph(SyntaxProg *currentProg, DDSimulation *ddSim) {
     this->currentProg = currentProg;
@@ -21,30 +25,73 @@ void StateTransitionGraph::buildInitialState() {
 void StateTransitionGraph::execute() {
     buildInitialState();
     std::vector<State *> results;
-    int solNr = 1;
+    int numSols = 1;
     int found = 0;
 
     assert(savedStateId < seenStates.size());
-    State *s = seenStates[savedStateId];
-    if (s->pc == nullptr) {
-        // there are no more statements to execute
-        std::cout << "No more statements to execute\n";
-    }
-    if (dynamic_cast<UnitaryStmNode *>(s->pc)) {
-        std::cout << "Unitary transformation\n";
-        s->pc->dump(false);
-        auto v = ddSim->applyGate(s->pc, s->current);
-        v.printVector<dd::vNode>();
-        State *newState = new State(s->pc->getNext(), v, s->stateNr);
-        bool inCached = false;
-        State *s1 = makeState(newState, inCached);
-        if (inCached) {
-            std::cout << "State already exists\n";
-        } else {
-            s->nextStates.push_back(s1->stateNr);
-            std::cout << "New state created: " << s1->stateNr << "\n";
+    while (savedStateId < seenStates.size()) {
+        State *currentState = seenStates[savedStateId];
+        StmNode *stm = currentState->pc;
+        if (dynamic_cast<EndStmNode *>(stm)) {
+            std::cout << "End of program\n";
+            savedStateId++;
+            continue;
         }
+        StmNode *nextStm = stm->getNext();
+        auto *endStm = dynamic_cast<EndStmNode *>(stm->getNext());
+        if (endStm != nullptr && endStm->getNext() != nullptr) {
+            nextStm = endStm->getNext();
+        }
+        // SkipStmNode
+        auto *skipStm = dynamic_cast<SkipStmNode *>(nextStm);
+        if (skipStm != nullptr) {
+            std::cout << "Skip statement\n";
+            savedStateId++;
+            continue;
+        }
+        // UnitaryStmNode
+        auto *unitaryStm = dynamic_cast<UnitaryStmNode *>(nextStm);
+        if (unitaryStm != nullptr) {
+            std::cout << "Unitary transformation\n";
+            savedStateId++;
+            continue;
+        }
+        // CondStmNode
+        auto *condStm = dynamic_cast<CondStmNode *>(nextStm);
+        if (condStm != nullptr) {
+            std::cout << "Conditional statement\n";
+            savedStateId++;
+            continue;
+        }
+        // WhileStmNode
+        auto *whileStm = dynamic_cast<WhileStmNode *>(nextStm);
+        if (whileStm != nullptr) {
+            std::cout << "While statement\n";
+            savedStateId++;
+            continue;
+        }
+        throw std::runtime_error("Unknown statement type");
     }
+
+//    if (s->pc == nullptr) {
+//        // there are no more statements to execute
+//        std::cout << "No more statements to execute\n";
+//    }
+//    if (dynamic_cast<UnitaryStmNode *>(s->pc)) {
+//        std::cout << "Unitary transformation\n";
+//        s->pc->dump(false);
+//        auto v = ddSim->applyGate(s->pc, s->current);
+//        v.printVector<dd::vNode>();
+//        State *newState = new State(s->pc->getNext(), v, s->stateNr);
+//        bool inCached = false;
+//        State *s1 = makeState(newState, inCached);
+//        if (inCached) {
+//            std::cout << "State already exists\n";
+//        } else {
+//            s->nextStates.push_back(s1->stateNr);
+//            std::cout << "New state created: " << s1->stateNr << "\n";
+//        }
+//    }
 
     // while (found < solNr) {
     //     State *s = seenStates[savedStateId];

@@ -63,7 +63,7 @@ add_executable(
     ../ast/WhileStmNode.cpp
     ../dd/DDSimulation.cpp
     ../ast/CachedNode.cpp
-    ../ast/EndWhileStmNode.cpp
+        ../ast/EndStmNode.cpp
     ../core/StateTransitionGraph.cpp
 )
 

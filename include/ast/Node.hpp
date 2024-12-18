@@ -11,7 +11,7 @@ public:
 
     virtual void eval() = 0;
 
-    virtual void dump(bool recursive = false) = 0;
+    virtual void dump(bool recursive = true) = 0;
 };
 
 #endif //ASTNODE_HPP
