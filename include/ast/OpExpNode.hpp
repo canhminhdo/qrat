@@ -52,7 +52,7 @@ public:
     void eval() override {
     }
 
-    void dump() override;
+    void dump(bool recursive = false) override;
 
     ExpNode *getLeft() const;
 

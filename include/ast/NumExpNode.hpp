@@ -26,7 +26,7 @@ public:
     void eval() override {
     }
 
-    void dump() override;
+    void dump(bool recursive = false) override;
 
 private:
     union {

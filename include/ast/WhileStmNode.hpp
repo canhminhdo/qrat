@@ -5,31 +5,28 @@
 #ifndef WHILESTMNODE_HPP
 #define WHILESTMNODE_HPP
 
+#include "StmSeq.hpp"
 #include "ast/ExpNode.hpp"
 #include "ast/StmNode.hpp"
 
 class WhileStmNode : public StmNode {
 public:
-    WhileStmNode(ExpNode *cond, StmNode *body);
+    WhileStmNode(ExpNode *cond, StmSeq *body);
 
     ~WhileStmNode() override = default;
 
-    std::size_t getHash() const override;
-
-    bool isEqual(const Node &other) const override;
-
     ExpNode *getCond() const;
 
-    StmNode *getBody() const;
+    StmSeq *getBody() const;
 
     void eval() override {
     };
 
-    void dump() override;
+    void dump(bool recursive = false) override;
 
 private:
     ExpNode *cond;
-    StmNode *body;
+    StmSeq *body;
 };
 
 #endif //WHILESTMNODE_HPP

@@ -7,34 +7,31 @@
 
 #include "ExpNode.hpp"
 #include "StmNode.hpp"
+#include "StmSeq.hpp"
 
 class CondStmNode : public StmNode {
 public:
     CondStmNode() = default;
 
-    CondStmNode(ExpNode *cond, StmNode *then_stm, StmNode *else_stm);
+    CondStmNode(ExpNode *cond, StmSeq *then_stm, StmSeq *else_stm);
 
     ~CondStmNode() override = default;
 
-    std::size_t getHash() const override;
-
-    bool isEqual(const Node &other) const override;
-
     ExpNode *getCond() const;
 
-    StmNode *getThenStm() const;
+    StmSeq *getThenStm() const;
 
-    StmNode *getElseStm() const;
+    StmSeq *getElseStm() const;
 
     void eval() override {
     };
 
-    void dump() override;
+    void dump(bool recursive = false) override;
 
 private:
     ExpNode *cond;
-    StmNode *thenStm;
-    StmNode *elseStm;
+    StmSeq *thenStm;
+    StmSeq *elseStm;
 };
 
 #endif //CONDSTMNODE_HPP

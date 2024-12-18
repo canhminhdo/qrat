@@ -5,14 +5,8 @@
 #include <iostream>
 #include "ast/SkipStmNode.hpp"
 
-std::size_t SkipStmNode::getHash() const {
-    return combinedHash(seed, std::hash<const char *>{}(getName()));
-}
-
-bool SkipStmNode::isEqual(const Node &other) const {
-    return dynamic_cast<const SkipStmNode *>(&other) != nullptr;
-}
-
-void SkipStmNode::dump() {
+void SkipStmNode::dump(bool recursive) {
     std::cout << getName() << std::endl;
+    if (recursive && next)
+        next->dump();
 }

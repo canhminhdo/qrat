@@ -6,13 +6,15 @@
 
 #include <iostream>
 
+#include "utility/HashUtil.hpp"
+
 CondExpNode::CondExpNode(ExpNode *left, RelOpType type, ExpNode *right) : left{left}, type{type}, right{right} {
 }
 
 std::size_t CondExpNode::getHash() const {
-    auto hash = combinedHash(seed, std::hash<RelOpType>{}(type));
-    hash = combinedHash(hash, std::hash<ExpNode *>{}(left));
-    hash = combinedHash(hash, std::hash<ExpNode *>{}(right));
+    auto hash = HashUtil::combinedHash(seed, std::hash<RelOpType>{}(type));
+    hash = HashUtil::combinedHash(hash, std::hash<ExpNode *>{}(left));
+    hash = HashUtil::combinedHash(hash, std::hash<ExpNode *>{}(right));
     return hash;
 }
 
@@ -40,7 +42,7 @@ const char *CondExpNode::getRelOpName(RelOpType type) {
     return relOpNames[static_cast<int>(type)];
 }
 
-void CondExpNode::dump() {
+void CondExpNode::dump(bool recursive) {
     left->dump();
     std::cout << getRelOpName(type) << std::endl;
     right->dump();

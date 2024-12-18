@@ -20,7 +20,7 @@ public:
     void eval() override {
     }
 
-    void dump() override;
+    void dump(bool recursive = false) override;
 
     ExpNode* getKet() const;
     ExpNode* getExp() const;

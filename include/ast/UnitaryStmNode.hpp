@@ -18,10 +18,6 @@ public:
 
     ~UnitaryStmNode() override = default;
 
-    std::size_t getHash() const override;
-
-    bool isEqual(const Node &other) const override;
-
     GateExpNode *getGateExp() const;
 
     const std::vector<Symbol *>& getVars() const;
@@ -29,7 +25,7 @@ public:
     void eval() override {
     };
 
-    void dump() override;
+    void dump(bool recursive = false) override;
 
 private:
     std::vector<Symbol *> vars;

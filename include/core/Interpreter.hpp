@@ -5,6 +5,7 @@
 #ifndef INTERPRETER_HPP
 #define INTERPRETER_HPP
 
+#include "StateTransitionGraph.hpp"
 #include "core/SyntaxProg.hpp"
 #include "core/Token.hpp"
 #include "dd/DDSimulation.hpp"
@@ -20,6 +21,8 @@ public:
 
     void initDDSimulation();
 
+    void initGraphSearch();
+
     void run();
 
     void buildInitialState();
@@ -27,5 +30,6 @@ public:
 private:
     SyntaxProg *currentProg;
     DDSimulation *ddSim;
+    StateTransitionGraph *graphSearch;
 };
 #endif//INTERPRETER_HPP

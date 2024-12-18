@@ -55,7 +55,7 @@ add_executable(
     ../ast/GateExpNode.cpp
     ../ast/UnitaryStmNode.cpp
     ../core/Gate.cpp
-    ../ast/StmSeqNode.cpp
+    ../ast/StmSeq.cpp
     ../ast/SkipStmNode.cpp
     ../ast/MeasExpNode.cpp
     ../ast/CondExpNode.cpp
@@ -63,6 +63,8 @@ add_executable(
     ../ast/WhileStmNode.cpp
     ../dd/DDSimulation.cpp
     ../ast/CachedNode.cpp
+    ../ast/EndWhileStmNode.cpp
+    ../core/StateTransitionGraph.cpp
 )
 
 target_include_directories(ParserRunner PUBLIC ${CMAKE_CURRENT_BINARY_DIR})

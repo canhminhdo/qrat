@@ -5,7 +5,15 @@
 #include <iostream>
 #include "ast/QubitExpNode.hpp"
 
+#include "utility/HashUtil.hpp"
+
 QubitExpNode::QubitExpNode(ExpNode *exp, ExpNode *ket) : exp(exp), ket(ket) {
+}
+
+std::size_t QubitExpNode::getHash() const {
+    auto hash = HashUtil::combinedHash(seed, std::hash<ExpNode *>{}(ket));
+    hash = HashUtil::combinedHash(hash, std::hash<ExpNode *>{}(exp));
+    return hash;
 }
 
 bool QubitExpNode::isEqual(const Node &other) const {
@@ -15,13 +23,7 @@ bool QubitExpNode::isEqual(const Node &other) const {
     return true;
 }
 
-std::size_t QubitExpNode::getHash() const {
-    auto hash = combinedHash(seed, std::hash<ExpNode *>{}(ket));
-    hash = combinedHash(hash, std::hash<ExpNode *>{}(exp));
-    return hash;
-}
-
-void QubitExpNode::dump() {
+void QubitExpNode::dump(bool recursive) {
     if (exp != nullptr) {
         std::cout << "expr:" << std::endl;
         exp->dump();

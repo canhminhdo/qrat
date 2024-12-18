@@ -5,6 +5,8 @@
 #include <iostream>
 #include "ast/KetExpNode.hpp"
 
+#include "utility/HashUtil.hpp"
+
 KetExpNode::KetExpNode(KetType type) : type{type} {
     // initialize the ket expression node
 }
@@ -18,7 +20,7 @@ const char *KetExpNode::getName() const {
 }
 
 std::size_t KetExpNode::getHash() const {
-    auto hash = combinedHash(seed, std::hash<int>{}(static_cast<int>(type)));
+    auto hash = HashUtil::combinedHash(seed, std::hash<int>{}(static_cast<int>(type)));
     return hash;
 }
 
@@ -29,6 +31,6 @@ bool KetExpNode::isEqual(const Node &other) const {
     return true;
 }
 
-void KetExpNode::dump() {
+void KetExpNode::dump(bool recursive) {
     std::cout << getName() << std::endl;
 }

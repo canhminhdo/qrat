@@ -35,28 +35,6 @@ UnitaryStmNode::UnitaryStmNode(SyntaxProg *currentSyntaxProg,
     gateExp = new GateExpNode(gate, vars);
 }
 
-std::size_t UnitaryStmNode::getHash() const {
-    auto hash = combinedHash(seed, std::hash<GateExpNode *>{}(gateExp));
-    for (auto var: vars) {
-        hash = combinedHash(hash, std::hash<Symbol *>{}(var));
-    }
-    return hash;
-}
-
-bool UnitaryStmNode::isEqual(const Node &other) const {
-    const UnitaryStmNode *otherUnitary = dynamic_cast<const UnitaryStmNode *>(&other);
-    if (otherUnitary == nullptr || gateExp != otherUnitary->getGateExp())
-        return false;
-    const auto &vars2 = otherUnitary->getVars();
-    if (vars.size() != vars2.size())
-        return false;
-    for (int i = 0; i < vars.size(); i++) {
-        if (vars[i] != vars2[i])
-            return false;
-    }
-    return true;
-}
-
 GateExpNode *UnitaryStmNode::getGateExp() const {
     return gateExp;
 }
@@ -65,10 +43,12 @@ const std::vector<Symbol *> &UnitaryStmNode::getVars() const {
     return vars;
 }
 
-void UnitaryStmNode::dump() {
+void UnitaryStmNode::dump(bool recursive) {
     for (int i = 0; i < vars.size(); i++) {
         std::cout << Token::name(vars[i]->getName()) << ((i < vars.size() - 1) ? ", " : "");
     }
     std::cout << " = ";
     gateExp->dump();
+    if (recursive && next)
+        next->dump();
 }

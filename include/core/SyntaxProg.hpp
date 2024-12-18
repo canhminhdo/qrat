@@ -6,7 +6,7 @@
 #define SYNTAXPROG_HPP
 
 #include "ast/CachedNode.hpp"
-#include "ast/StmSeqNode.hpp"
+#include "ast/StmSeq.hpp"
 #include "core/SymbolTable.hpp"
 #include "core/Token.hpp"
 #include "core/type.hpp"
@@ -25,7 +25,9 @@ public:
 
     void addInit(Token variable, Node *value = nullptr);
 
-    void addStmSeq(StmSeqNode *stmSeq);
+    void addStmSeq(StmSeq *stmSeq);
+
+    StmSeq *getStmSeq() const;
 
     int getName() const;
 
@@ -35,7 +37,7 @@ public:
 
     Symbol *lookup(const Token &token);
 
-    Node *makeNode(Node *node);
+    ExpNode *makeNode(ExpNode *node);
 
     Gate *makeGate(Gate *gate);
 
@@ -50,7 +52,7 @@ private:
     int name; // program name
     std::size_t nqubits; // number of qubits
     SymbolTable symTab; // store variables and constants
-    StmSeqNode *stmSeq; // store statements (quantum programs)
+    StmSeq *stmSeq; // store statements (quantum programs)
     CachedNode cachedNodes; // cached nodes for some expressions in ASTs
 };
 #endif//SYNTAXPROG_HPP

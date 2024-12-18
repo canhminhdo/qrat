@@ -5,12 +5,13 @@
 #include "ast/MeasExpNode.hpp"
 #include <iostream>
 #include "core/Token.hpp"
+#include "utility/HashUtil.hpp"
 
 MeasExpNode::MeasExpNode(Symbol *variable) : var{variable} {
 }
 
 std::size_t MeasExpNode::getHash() const {
-    auto hash = combinedHash(seed, std::hash<Symbol *>{}(var));
+    auto hash = HashUtil::combinedHash(seed, std::hash<Symbol *>{}(var));
     return hash;
 }
 
@@ -25,6 +26,6 @@ Symbol * MeasExpNode::getVar() const {
     return var;
 }
 
-void MeasExpNode::dump() {
+void MeasExpNode::dump(bool recursive) {
     std::cout << "M[" << Token::name(var->getName()) << "]" << std::endl;
 }

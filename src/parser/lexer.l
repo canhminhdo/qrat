@@ -17,7 +17,7 @@
 #include "ast/ConstExpNode.hpp"
 #include "ast/NumExpNode.hpp"
 #include "ast/StmNode.hpp"
-#include "ast/StmSeqNode.hpp"
+#include "ast/StmSeq.hpp"
 #include "ast/SkipStmNode.hpp"
 #include "ast/GateExpNode.hpp"
 #include "ast/UnitaryStmNode.hpp"

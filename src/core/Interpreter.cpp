@@ -21,13 +21,20 @@ void Interpreter::initDDSimulation() {
     }
 }
 
+void Interpreter::initGraphSearch() {
+    graphSearch = new StateTransitionGraph(currentProg, ddSim);
+}
+
 void Interpreter::run() {
     if (currentProg) {
         // currentProg->dump();
         initDDSimulation();
+        initGraphSearch();
     }
     assert(ddSim != nullptr);
     ddSim->dump();
+    graphSearch->execute();
+    graphSearch->dump();
 }
 
 void Interpreter::buildInitialState() {

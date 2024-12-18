@@ -10,16 +10,18 @@
 #include <unordered_map>
 #include <vector>
 
+#include "ExpNode.hpp"
+
 class CachedNode {
 public:
     struct NodeHash {
-        std::size_t operator()(const Node *node) const {
+        std::size_t operator()(const ExpNode *node) const {
             return node->getHash();
         }
     };
 
     struct NodeEqual {
-        bool operator()(const Node *lhs, const Node *rhs) const {
+        bool operator()(const ExpNode *lhs, const ExpNode *rhs) const {
             return lhs->isEqual(*rhs);
         }
     };
@@ -38,15 +40,15 @@ public:
 
     ~CachedNode();
 
-    Node *makeNode(Node *node);
+    ExpNode *makeNode(ExpNode *node);
 
     Gate *makeGate(Gate *gate);
 
     void dump() const;
 
 private:
-    std::unordered_map<Node *, int, NodeHash, NodeEqual> nodeTab;
-    std::vector<Node *> nodes;
+    std::unordered_map<ExpNode *, int, NodeHash, NodeEqual> nodeTab;
+    std::vector<ExpNode *> nodes;
     std::unordered_map<GateType, int, GateTypeHash, GateTypeEqual> gateTab;
     std::vector<Gate *> gates;
 };

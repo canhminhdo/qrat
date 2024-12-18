@@ -13,7 +13,7 @@ CachedNode::~CachedNode() {
     nodeTab.clear();
 }
 
-Node *CachedNode::makeNode(Node *node) {
+ExpNode *CachedNode::makeNode(ExpNode *node) {
     auto it = nodeTab.find(node);
     if (it != nodeTab.end()) {
         // std::cout << "Found node in cache, then delete the newly created node\n";

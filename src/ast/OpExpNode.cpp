@@ -5,10 +5,12 @@
 #include <iostream>
 #include "ast/OpExpNode.hpp"
 
+#include "utility/HashUtil.hpp"
+
 OpExpNode::OpExpNode(OpExpType type, ExpNode *left, ExpNode *right) : type{type}, left{left}, right{right} {
 }
 
-void OpExpNode::dump() {
+void OpExpNode::dump(bool recursive) {
     std::cout << "OpType: " << getOpName() << std::endl;
     if (left != nullptr) {
         left->dump();
@@ -31,9 +33,9 @@ const char *OpExpNode::getOpName() {
 }
 
 std::size_t OpExpNode::getHash() const {
-    auto hash = combinedHash(seed, std::hash<int>{}(static_cast<int>(type)));
-    hash = combinedHash(hash, std::hash<ExpNode *>{}(left));
-    hash = combinedHash(hash, std::hash<ExpNode *>{}(right));
+    auto hash = HashUtil::combinedHash(seed, std::hash<int>{}(static_cast<int>(type)));
+    hash = HashUtil::combinedHash(hash, std::hash<ExpNode *>{}(left));
+    hash = HashUtil::combinedHash(hash, std::hash<ExpNode *>{}(right));
     return hash;
 }
 

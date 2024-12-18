@@ -22,9 +22,11 @@ public:
 
     std::size_t getHash() const override;
 
+    Gate *getGate() const;
+
     bool isEqual(const Node &other) const override;;
 
-    void dump() override;
+    void dump(bool recursive = false) override;
 
 private:
     Gate *gate;

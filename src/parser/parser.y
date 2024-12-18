@@ -16,7 +16,7 @@
 #include "ast/ConstExpNode.hpp"
 #include "ast/NumExpNode.hpp"
 #include "ast/StmNode.hpp"
-#include "ast/StmSeqNode.hpp"
+#include "ast/StmSeq.hpp"
 #include "ast/SkipStmNode.hpp"
 #include "ast/GateExpNode.hpp"
 #include "ast/UnitaryStmNode.hpp"
@@ -50,8 +50,9 @@ extern int yylineno;
     Type type; // type of variables and constants
     TokenList *yyTokenList;
     Node *node;
-    StmNode *stm;
     ExpNode *expr;
+    StmNode *stm;
+    StmSeq *stmSeq;
     Gate* gate;
 }
 
@@ -78,8 +79,9 @@ extern int yylineno;
 %nterm <yyTokenList> varNameList
 /* %nterm <expr> expression number oneQubit basis measure condExp
 %nterm <stm> stm stmList unitaryStm condStm loopStm */
-%nterm <node> expression number oneQubit basis measure condExp
-%nterm <node> stm stmList unitaryStm condStm loopStm
+%nterm <expr> expression number oneQubit basis measure condExp
+%nterm <stm> stm unitaryStm condStm loopStm
+%nterm <stmSeq> stmList
 %nterm <gate> gate
 
 /* start symbol */
@@ -161,11 +163,11 @@ init    :   varName KW_ASSIGN expression expectedSemi
             ;
 oneQubit    :   expression '.' basis
                     {
-                        $$ = currentSyntaxProg->makeNode(new QubitExpNode(EXPNODE($1), EXPNODE($3)));
+                        $$ = currentSyntaxProg->makeNode(new QubitExpNode($1, $3));
                     }
             |   basis
                     {
-                        $$ = $1; // new QubitExpNode(nullptr, EXPNODE($1));
+                        $$ = $1; // new QubitExpNode(nullptr, $1);
                     }
             ;
 basis   :   KW_KET_ZERO
@@ -188,23 +190,23 @@ expression  :   '(' expression ')'
                     }
             |   expression '+' expression
                     {
-                        $$ = currentSyntaxProg->makeNode(new OpExpNode(OpExpType::ADD, EXPNODE($1), EXPNODE($3)));
+                        $$ = currentSyntaxProg->makeNode(new OpExpNode(OpExpType::ADD, $1, $3));
                     }
             |   expression '-' expression
                     {
-                        $$ = currentSyntaxProg->makeNode(new OpExpNode(OpExpType::SUB, EXPNODE($1), EXPNODE($3)));
+                        $$ = currentSyntaxProg->makeNode(new OpExpNode(OpExpType::SUB, $1, $3));
                     }
             |   expression '*' expression
                     {
-                        $$ = currentSyntaxProg->makeNode(new OpExpNode(OpExpType::MUL, EXPNODE($1), EXPNODE($3)));
+                        $$ = currentSyntaxProg->makeNode(new OpExpNode(OpExpType::MUL, $1, $3));
                     }
             |   expression '/' expression
                     {
-                        $$ = currentSyntaxProg->makeNode(new OpExpNode(OpExpType::DIV, EXPNODE($1), EXPNODE($3)));
+                        $$ = currentSyntaxProg->makeNode(new OpExpNode(OpExpType::DIV, $1, $3));
                     }
             |   '-' expression  %prec UMINUS number
                     {
-                        $$ = currentSyntaxProg->makeNode(new OpExpNode(OpExpType::MINUS, nullptr, EXPNODE($2)));
+                        $$ = currentSyntaxProg->makeNode(new OpExpNode(OpExpType::MINUS, nullptr, $2));
                     }
             |   IDENTIFIER
                     {
@@ -242,23 +244,23 @@ number      :   INTEGER
 begin   :   /* empty */
         |   KW_BEGIN stmList
                 {
-                    currentSyntaxProg->addStmSeq(dynamic_cast<StmSeqNode *>($2));
+                    currentSyntaxProg->addStmSeq($2);
                 }
         ;
 stmList :   stm
                 {
-                    $$ = new StmSeqNode();
-                    dynamic_cast<StmSeqNode *>($$)->addStm(STMNODE($1));
+                    $$ = new StmSeq();
+                    $$->addStm($1);
                 }
         |   stmList stm
                 {
-                    dynamic_cast<StmSeqNode *>($1)->addStm(STMNODE($2));
+                    $1->addStm($2);
                     $$ = $1;
                 }
         ;
 stm :   skip
             {
-                $$ = currentSyntaxProg->makeNode(new SkipStmNode());
+                $$ = new SkipStmNode();
             }
     |   unitaryStm
     |   condStm
@@ -296,13 +298,13 @@ gate    :   KW_GATE_X
 /* conditional statement */
 condStm :   KW_IF condExp KW_THEN stmList KW_ELSE stmList KW_FI expectedSemi
                 {
-                    $$ = new CondStmNode(EXPNODE($2), STMNODE($4), STMNODE($6));
+                    $$ = new CondStmNode($2, $4, $6);
                 }
         ;
 /* loop statement */
 loopStm :   KW_WHILE condExp KW_DO stmList KW_OD expectedSemi
                 {
-                    $$ = new WhileStmNode(EXPNODE($2), STMNODE($4));
+                    $$ = new WhileStmNode($2, $4);
                 }
         ;
 
@@ -319,7 +321,7 @@ measure :   KW_MEASURE '[' varName ']'
 /* conditional expression */
 condExp :   measure KW_EQUAL number
                 {
-                    $$ = new CondExpNode(EXPNODE($1), RelOpType::EQ, EXPNODE($3));
+                    $$ = new CondExpNode($1, RelOpType::EQ, $3);
                 }
         ;
 

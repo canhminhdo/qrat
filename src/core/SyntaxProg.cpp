@@ -41,8 +41,12 @@ void SyntaxProg::addInit(Token variable, Node *value) {
     }
 }
 
-void SyntaxProg::addStmSeq(StmSeqNode *stmSeq) {
+void SyntaxProg::addStmSeq(StmSeq *stmSeq) {
     this->stmSeq = stmSeq;
+}
+
+StmSeq * SyntaxProg::getStmSeq() const {
+    return stmSeq;
 }
 
 int SyntaxProg::getName() const {
@@ -67,7 +71,7 @@ Symbol *SyntaxProg::lookup(const Token &token) {
     return symTab.lookup(token.code());
 }
 
-Node *SyntaxProg::makeNode(Node *node) {
+ExpNode *SyntaxProg::makeNode(ExpNode *node) {
     return cachedNodes.makeNode(node);
 }
 

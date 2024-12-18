@@ -8,19 +8,13 @@
 #include <set>
 
 enum class GateType {
-    X,
-    Y,
-    Z,
-    H,
-    CX,
+    X, Y, Z, H,
+    CX, CZ,
 };
 
 inline static const char *gateNames[] = {
-    "X",
-    "Y",
-    "Z",
-    "H",
-    "CX",
+    "X", "Y", "Z", "H",
+    "CX", "CZ",
 };
 
 inline static const std::set<GateType> gateArgs[] = {

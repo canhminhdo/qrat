@@ -7,6 +7,8 @@
 #include <cstdlib>
 #include <iostream>
 
+#include "utility/HashUtil.hpp"
+
 NumExpNode::NumExpNode(NumType numType, const char *valStr) : type(numType) {
     if (type == NumType::INT) {
         valInt = atoi(valStr);
@@ -18,12 +20,12 @@ NumExpNode::NumExpNode(NumType numType, const char *valStr) : type(numType) {
 }
 
 std::size_t NumExpNode::getHash() const {
-    auto hash = combinedHash(seed, std::hash<int>{}(static_cast<int>(type)));
+    auto hash = HashUtil::combinedHash(seed, std::hash<int>{}(static_cast<int>(type)));
     switch (type) {
         case NumType::INT:
-            return combinedHash(hash, std::hash<int>{}(valInt));
+            return HashUtil::combinedHash(hash, std::hash<int>{}(valInt));
         case NumType::REAL:
-            return combinedHash(hash, std::hash<float>{}(valFloat));
+            return HashUtil::combinedHash(hash, std::hash<float>{}(valFloat));
         default:
             throw std::invalid_argument("Invalid NumType");
     }
@@ -47,7 +49,7 @@ bool NumExpNode::isEqual(const Node &other) const {
     }
 }
 
-void NumExpNode::dump() {
+void NumExpNode::dump(bool recursive) {
     if (type == NumType::INT) {
         std::cout << valInt << std::endl;
     } else if (type == NumType::REAL) {

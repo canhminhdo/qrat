@@ -5,6 +5,7 @@
 #include "dd/DDSimulation.hpp"
 
 #include "ast/KetExpNode.hpp"
+#include "ast/UnitaryStmNode.hpp"
 #include "core/Token.hpp"
 #include "core/VarSymbol.hpp"
 #include "dd/Package.hpp"
@@ -232,6 +233,80 @@ void DDSimulation::initQState() {
         initialState = dd->kronecker(initStateMap[vars[i]->getName()], initialState, i);
     }
     dd->incRef(initialState);
+}
+
+void DDSimulation::initProperty() {
+    projector = dd->outerProduct(initStateMap[0], 2);
+}
+
+qc::VectorDD DDSimulation::applyGate(StmNode *stm, qc::VectorDD v) {
+    auto unitaryStm = dynamic_cast<UnitaryStmNode *>(stm);
+    assert(unitaryStm != nullptr);
+    auto vars = unitaryStm->getVars();
+    auto nArgs = vars.size();
+    if (nArgs == 1) {
+        auto target = qVarMap[vars[0]->getName()];
+        auto gateMat = getGateMatrix(unitaryStm);
+        auto gate = dd->makeGateDD(gateMat, target);
+        auto v1 = dd->multiply(gate, v);
+        return v1;
+    }
+    if (nArgs == 2) {
+        auto target1 = qVarMap[vars[0]->getName()];
+        auto target2 = qVarMap[vars[1]->getName()];
+        auto gateTwoQubitMat = getTwoQubitGateMatrix(unitaryStm);
+        auto gateTwoQubit = dd->makeTwoQubitGateDD(gateTwoQubitMat, target1, target2);
+        auto v2 = dd->multiply(gateTwoQubit, v);
+        return v2;
+    }
+    throw std::runtime_error("Only support 1 or 2 qubit gate");
+}
+
+dd::GateMatrix DDSimulation::getGateMatrix(UnitaryStmNode *stm) {
+    auto vars = stm->getVars();
+    assert(vars.size() == 1);
+    switch (stm->getGateExp()->getGate()->getType()) {
+        case GateType::X:
+            return dd::X_MAT;
+        case GateType::Y:
+            return dd::Y_MAT;
+        case GateType::Z:
+            return dd::Z_MAT;
+        case GateType::H:
+            return dd::H_MAT;
+        default:
+            throw std::runtime_error("Unsupported gate type");
+    }
+}
+
+dd::TwoQubitGateMatrix DDSimulation::getTwoQubitGateMatrix(UnitaryStmNode *stm) {
+    auto vars = stm->getVars();
+    assert(vars.size() == 2);
+    switch (stm->getGateExp()->getGate()->getType()) {
+        case GateType::CX:
+            return dd::CX_MAT;
+        case GateType::CZ:
+            return dd::CZ_MAT;
+        default:
+            throw std::runtime_error("Unsupported gate type");
+    }
+}
+
+qc::MatrixDD DDSimulation::getProjector() const {
+    return projector;
+}
+
+bool DDSimulation::test(qc::VectorDD v) {
+    auto v1 = dd->multiply(projector, v);
+    if (v.p == v1.p) {
+        return true;
+    }
+    auto fd = dd->fidelity(v1, v);
+    return std::abs(fd - 1) > config.simulation.fidelityThreshold;
+}
+
+bool DDSimulation::test(qc::VectorDD v1, qc::VectorDD v2) {
+    return v1.p == v2.p;
 }
 
 void DDSimulation::dump() {
