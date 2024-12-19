@@ -35,126 +35,6 @@ void StateTransitionGraph::execute() {
         printState(s, false);
         // showPath(s->stateNr);
     }
-    // buildInitialState();
-    // std::vector<State *> results;
-    // numSols = 1;
-    // assert(savedStateId < seenStates.size());
-    // while (results.size() <= numSols && savedStateId < seenStates.size()) {
-    //     State *currentState = seenStates[savedStateId];
-    //     if (currentState->depth >= depthBound) {
-    //         break;
-    //     }
-    //     processState(currentState, results);
-    //     int stateNr = currentState->stateNr;
-    //     int depth = currentState->depth;
-    //     StmNode *stm = currentState->pc;
-    //     qc::VectorDD v = currentState->current;
-    //     bool inCache = false;
-    //     std::cout << "---------" << stateNr << "----------\n";
-    //     // EndStmNode
-    //     auto *endProg = dynamic_cast<EndStmNode *>(stm);
-    //     if (endProg != nullptr && endProg->getNext() == nullptr) {
-    //         std::cout << "End of program\n";
-    //         savedStateId++;
-    //         continue;
-    //     }
-    //
-    //     // find next statement
-    //     StmNode *nextStm = stm->getNext();
-    //     auto *endStm = dynamic_cast<EndStmNode *>(stm->getNext());
-    //     if (endStm != nullptr && endStm->getNext() != nullptr) {
-    //         nextStm = endStm->getNext();
-    //     }
-    //     // SkipStmNode
-    //     auto *skipStm = dynamic_cast<SkipStmNode *>(stm);
-    //     if (skipStm != nullptr) {
-    //         std::cout << "Skip statement\n";
-    //         auto *newState = makeState(new State(nextStm, v, stateNr, depth + 1), inCache);
-    //         if (!inCache) {
-    //             currentState->nextStates.push_back(newState->stateNr);
-    //             checkState(newState, results);
-    //         }
-    //         savedStateId++;
-    //         continue;
-    //     }
-    //     // UnitaryStmNode
-    //     auto *unitaryStm = dynamic_cast<UnitaryStmNode *>(stm);
-    //     if (unitaryStm != nullptr) {
-    //         std::cout << "Unitary transformation\n";
-    //         auto v1 = ddSim->applyGate(unitaryStm, v);
-    //         auto *newState = makeState(new State(nextStm, v1, stateNr, depth + 1), inCache);
-    //         if (!inCache) {
-    //             currentState->nextStates.push_back(newState->stateNr);
-    //             checkState(newState, results);
-    //         }
-    //         savedStateId++;
-    //         continue;
-    //     }
-    //     // CondStmNode
-    //     auto *condStm = dynamic_cast<CondStmNode *>(stm);
-    //     if (condStm != nullptr) {
-    //         std::cout << "Conditional statement\n";
-    //         // only support conditional measurement for now
-    //         auto *measExp = dynamic_cast<MeasExpNode *>(condStm->getCond());
-    //         assert(measExp != nullptr);
-    //         auto [v0, v1] = ddSim->measure(measExp, v);
-    //         if (!v0.isZeroTerminal()) {
-    //             auto *newState = makeState(new State(condStm->getElseStm()->getHead(), v0, stateNr, depth + 1), inCache);
-    //             if (!inCache) {
-    //                 currentState->nextStates.push_back(newState->stateNr);
-    //                 checkState(newState, results);
-    //                 if (results.size() >= numSols) {
-    //                     break;
-    //                 }
-    //             }
-    //         }
-    //         if (!v1.isZeroTerminal()) {
-    //             inCache = false;
-    //             auto *newState = makeState(new State(condStm->getThenStm()->getHead(), v1, stateNr, depth + 1), inCache);
-    //             if (!inCache) {
-    //                 currentState->nextStates.push_back(newState->stateNr);
-    //                 checkState(newState, results);
-    //             }
-    //         }
-    //         savedStateId++;
-    //         continue;
-    //     }
-    //     // WhileStmNode
-    //     auto *whileStm = dynamic_cast<WhileStmNode *>(stm);
-    //     if (whileStm != nullptr) {
-    //         std::cout << "While statement\n";
-    //         // only support conditional measurement for now
-    //         auto *measExp = dynamic_cast<MeasExpNode *>(whileStm->getCond());
-    //         assert(measExp != nullptr);
-    //         auto [v0, v1] = ddSim->measure(measExp, v);
-    //         if (!v0.isZeroTerminal()) {
-    //             auto *newState = makeState(new State(nextStm, v0, stateNr, depth + 1), inCache);
-    //             if (!inCache) {
-    //                 currentState->nextStates.push_back(newState->stateNr);
-    //                 checkState(newState, results);
-    //                 if (results.size() >= numSols) {
-    //                     break;
-    //                 }
-    //             }
-    //         }
-    //         if (!v1.isZeroTerminal()) {
-    //             inCache = false;
-    //             auto *newState = makeState(new State(whileStm->getBody()->getHead(), v1, stateNr, depth + 1), inCache);
-    //             if (!inCache) {
-    //                 currentState->nextStates.push_back(newState->stateNr);
-    //                 checkState(newState, results);
-    //             }
-    //         }
-    //         savedStateId++;
-    //         continue;
-    //     }
-    //     throw std::runtime_error("Unknown statement type");
-    // }
-    //
-    // std::cout << "Number of solutions found: " << results.size() << "\n";
-    // for (auto *s : results) {
-    //     printState(s, false);
-    // }
 }
 
 void StateTransitionGraph::processState(State *currentState, std::vector<State *> &results) {
@@ -256,7 +136,6 @@ std::pair<StateTransitionGraph::State *, bool> StateTransitionGraph::makeState(S
     auto it = stateTab.find(s);
     if (it != stateTab.end()) {
         std::cout << "Found state in cache, then delete the newly created state\n";
-        std::cout << "-------------------\n";
         delete s;
         return {seenStates[it->second], true};
     }
