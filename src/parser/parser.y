@@ -79,7 +79,7 @@ extern int yylineno;
 %nterm <yyTokenList> varNameList
 /* %nterm <expr> expression number oneQubit basis measure condExp
 %nterm <stm> stm stmList unitaryStm condStm loopStm */
-%nterm <expr> expression number oneQubit basis measure condExp
+%nterm <expr> expression number oneQubit basis measure
 %nterm <stm> stm unitaryStm condStm loopStm
 %nterm <stmSeq> stmList
 %nterm <gate> gate
@@ -296,13 +296,13 @@ gate    :   KW_GATE_X
                 }
         ;
 /* conditional statement */
-condStm :   KW_IF condExp KW_THEN stmList KW_ELSE stmList KW_FI expectedSemi
+condStm :   KW_IF measure KW_THEN stmList KW_ELSE stmList KW_FI expectedSemi
                 {
                     $$ = new CondStmNode($2, $4, $6);
                 }
         ;
 /* loop statement */
-loopStm :   KW_WHILE condExp KW_DO stmList KW_OD expectedSemi
+loopStm :   KW_WHILE measure KW_DO stmList KW_OD expectedSemi
                 {
                     $$ = new WhileStmNode($2, $4);
                 }
@@ -318,12 +318,13 @@ measure :   KW_MEASURE '[' varName ']'
                     $$ = new MeasExpNode(currentSyntaxProg->lookup($3));
                 }
         ;
-/* conditional expression */
+/* conditional expression
 condExp :   measure KW_EQUAL number
                 {
                     $$ = new CondExpNode($1, RelOpType::EQ, $3);
                 }
         ;
+*/
 
 /* expected semicolon */
 expectedSemi    :   ';';

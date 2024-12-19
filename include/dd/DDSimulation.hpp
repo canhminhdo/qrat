@@ -12,6 +12,7 @@
 #include "core/SyntaxProg.hpp"
 #include "core/VarSymbol.hpp"
 #include "Configuration.hpp"
+#include "ast/MeasExpNode.hpp"
 #include "ast/UnitaryStmNode.hpp"
 #include "dd/DDDefinitions.hpp"
 
@@ -43,7 +44,11 @@ public:
 
     dd::TwoQubitGateMatrix getTwoQubitGateMatrix(UnitaryStmNode *stm);
 
-    qc::VectorDD applyGate(StmNode *stm, qc::VectorDD v);
+    qc::VectorDD applyGate(UnitaryStmNode *stm, qc::VectorDD v);
+
+    std::pair<qc::VectorDD, qc::VectorDD> measure(MeasExpNode *expr, qc::VectorDD v);
+
+    qc::VectorDD project(qc::MatrixDD projector, qc::VectorDD v);
 
     qc::MatrixDD getProjector() const;
 

@@ -26,7 +26,7 @@ public:
 
     bool isEqual(const Node &other) const override;;
 
-    void dump(bool recursive = false) override;
+    void dump(bool recursive = true) override;
 
 private:
     Gate *gate;

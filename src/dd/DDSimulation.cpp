@@ -184,9 +184,14 @@ qc::VectorDD DDSimulation::generateRandomState1() {
     return v0;
 }
 
+void DDSimulation::initProperty() {
+    projector = dd->outerProduct(initStateMap[Token::code("q0")], 2);
+}
+
 void DDSimulation::initialize() {
     initQVarMap();
     initQState();
+    initProperty();
 }
 
 void DDSimulation::initQVarMap() {
@@ -235,18 +240,12 @@ void DDSimulation::initQState() {
     dd->incRef(initialState);
 }
 
-void DDSimulation::initProperty() {
-    projector = dd->outerProduct(initStateMap[0], 2);
-}
-
-qc::VectorDD DDSimulation::applyGate(StmNode *stm, qc::VectorDD v) {
-    auto unitaryStm = dynamic_cast<UnitaryStmNode *>(stm);
-    assert(unitaryStm != nullptr);
-    auto vars = unitaryStm->getVars();
+qc::VectorDD DDSimulation::applyGate(UnitaryStmNode *stm, qc::VectorDD v) {
+    auto vars = stm->getVars();
     auto nArgs = vars.size();
     if (nArgs == 1) {
         auto target = qVarMap[vars[0]->getName()];
-        auto gateMat = getGateMatrix(unitaryStm);
+        auto gateMat = getGateMatrix(stm);
         auto gate = dd->makeGateDD(gateMat, target);
         auto v1 = dd->multiply(gate, v);
         return v1;
@@ -254,12 +253,24 @@ qc::VectorDD DDSimulation::applyGate(StmNode *stm, qc::VectorDD v) {
     if (nArgs == 2) {
         auto target1 = qVarMap[vars[0]->getName()];
         auto target2 = qVarMap[vars[1]->getName()];
-        auto gateTwoQubitMat = getTwoQubitGateMatrix(unitaryStm);
+        auto gateTwoQubitMat = getTwoQubitGateMatrix(stm);
         auto gateTwoQubit = dd->makeTwoQubitGateDD(gateTwoQubitMat, target1, target2);
         auto v2 = dd->multiply(gateTwoQubit, v);
         return v2;
     }
     throw std::runtime_error("Only support 1 or 2 qubit gate");
+}
+
+std::pair<qc::VectorDD, qc::VectorDD> DDSimulation::measure(MeasExpNode *expr, qc::VectorDD v) {
+    auto var = expr->getVar();
+    auto target = qVarMap[var->getName()];
+    auto v0 = dd->measureOneQubit(v, target, true);
+    auto v1 = dd->measureOneQubit(v, target, false);
+    return {v0, v1};
+}
+
+qc::VectorDD DDSimulation::project(qc::MatrixDD projector, qc::VectorDD v) {
+    return dd->multiply(projector, v);
 }
 
 dd::GateMatrix DDSimulation::getGateMatrix(UnitaryStmNode *stm) {
@@ -302,7 +313,8 @@ bool DDSimulation::test(qc::VectorDD v) {
         return true;
     }
     auto fd = dd->fidelity(v1, v);
-    return std::abs(fd - 1) > config.simulation.fidelityThreshold;
+    std::cout << "Fidelity: " << fd << std::endl;
+    return std::abs(fd - 1) < config.simulation.fidelityThreshold;
 }
 
 bool DDSimulation::test(qc::VectorDD v1, qc::VectorDD v2) {

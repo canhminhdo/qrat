@@ -34,7 +34,7 @@ public:
     void eval() override {
     }
 
-    void dump(bool recursive = false) override;
+    void dump(bool recursive = true) override;
 
 private:
     KetType type;

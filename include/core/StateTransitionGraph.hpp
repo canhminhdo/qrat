@@ -5,14 +5,25 @@
 #ifndef STATETRANSITIONGRAPH_HPP
 #define STATETRANSITIONGRAPH_HPP
 
-#include <unordered_set>
-#include "utility/HashUtil.hpp"
+#include "ast/CondStmNode.hpp"
+#include "ast/EndStmNode.hpp"
 #include "ast/StmNode.hpp"
+#include "ast/SkipStmNode.hpp"
+#include "ast/WhileStmNode.hpp"
 #include "dd/DDSimulation.hpp"
+#include "utility/HashUtil.hpp"
+#include "utility/macros.hpp"
 
 class StateTransitionGraph {
 public:
     StateTransitionGraph(SyntaxProg *currentProg, DDSimulation *ddSim);
+
+    enum class SearchType {
+        ONE_STEP,
+        ZERO_OR_MORE_STEPS,
+        ONE_OR_MORE_STEPS,
+        FINAL_STATES
+    };
 
     struct State {
         int stateNr;
@@ -20,11 +31,20 @@ public:
         qc::VectorDD current{}; // current quantum state
         int parent;
         std::vector<int> nextStates;
-        bool fullyExplored;
+        int depth{0};
 
-        State(StmNode *pc, qc::VectorDD current, int parent = -1)
-            : pc{pc}, current{std::move(current)}, parent{parent}, fullyExplored{false} {
+        State(StmNode *pc, qc::VectorDD current, int parent = -1, int depth = 0)
+            : pc{pc}, current{std::move(current)}, parent{parent}, depth{depth} {
         }
+
+        bool isFinalState() {
+            auto *endStm = dynamic_cast<EndStmNode *>(pc);
+            if (endStm != nullptr && endStm->getNext() == nullptr) {
+                return true;
+            }
+            return false;
+        }
+
         void setId(int id) {
             stateNr = id;
         }
@@ -47,7 +67,27 @@ public:
 
     void execute();
 
-    State *makeState(State *s, bool &found);
+    void processState(State *currentState, std::vector<State *> &results);
+
+    void processSkipStm([[maybe_unused]] SkipStmNode *skipStm, State *currentState, StmNode *nextStm,
+                        std::vector<State *> &results);
+
+    void processUnitaryStm(UnitaryStmNode *unitaryStm, State *currentState, StmNode *nextStm,
+                           std::vector<State *> &results);
+
+    void processCondStm(CondStmNode *condStm, State *currentState, std::vector<State *> &results);
+
+    void processWhileStm(WhileStmNode *whileStm, State *currentState, StmNode *nextStm, std::vector<State *> &results);
+
+    void processCondBranch(State *currentState, StmNode *nextStm, qc::VectorDD &v, std::vector<State *> &results);
+
+    StmNode *getNextStatement(StmNode *stm);
+
+    void showPath(int stateId);
+
+    std::pair<State *, bool> makeState(State *s);
+
+    void checkState(State *s, std::vector<State *> &results);
 
     bool exist(State *s);
 
@@ -55,7 +95,7 @@ public:
 
     void dump() const;
 
-    void printState(State *s) const;
+    void printState(State *s, bool recursive = true) const;
 
 private:
     // for analysis
@@ -65,6 +105,10 @@ private:
 
     SyntaxProg *currentProg;
     DDSimulation *ddSim;
+
+    SearchType searchType{SearchType::FINAL_STATES};
+    int numSols{UNBOUNDED};
+    int depthBound{UNBOUNDED};
 };
 
 #endif //STATETRANSITIONGRAPH_HPP

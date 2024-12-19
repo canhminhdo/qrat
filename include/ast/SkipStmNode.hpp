@@ -14,7 +14,7 @@ public:
 
     ~SkipStmNode() override = default;
 
-    void dump(bool recursive = false) override;
+    void dump(bool recursive = true) override;
 
     const char *getName() const;
 

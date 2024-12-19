@@ -10,12 +10,15 @@
 class EndStmNode : public StmNode {
 public:
     EndStmNode() = default;
+
+    EndStmNode(StmNode *next);
+
     ~EndStmNode() override = default;
 
     void eval() override {
     };
 
-    void dump(bool recursive = false) override;
+    void dump(bool recursive = true) override;
 };
 
 #endif //ENDSTMNODE_HPP

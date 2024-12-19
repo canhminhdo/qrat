@@ -6,6 +6,10 @@
 #include <functional>
 #include <iostream>
 
+EndStmNode::EndStmNode(StmNode *next) {
+    this->next = next;
+}
+
 void EndStmNode::dump(bool recursive) {
     std::cout << "End" << std::endl;
 }

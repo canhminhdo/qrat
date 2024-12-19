@@ -32,9 +32,9 @@ void Interpreter::run() {
         initGraphSearch();
     }
     assert(ddSim != nullptr);
-    ddSim->dump();
+    // ddSim->dump();
     graphSearch->execute();
-    graphSearch->dump();
+    // graphSearch->dump();
 }
 
 void Interpreter::buildInitialState() {

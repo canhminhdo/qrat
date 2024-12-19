@@ -23,13 +23,16 @@ StmSeq *CondStmNode::getElseStm() const {
 }
 
 void CondStmNode::dump(bool recursive) {
-    std::cout << "If: " << std::endl;
+    std::cout << "if" << std::endl;
     cond->dump();
-    std::cout << "Then: " << std::endl;
-    thenStm->dump();
-    std::cout << "Else: " << std::endl;
-    elseStm->dump();
-    std::cout << "Fi: " << std::endl;
-    if (recursive && next)
+    if (recursive) {
+        std::cout << "then" << std::endl;
+        thenStm->dump();
+        std::cout << "else" << std::endl;
+        elseStm->dump();
+        std::cout << "fi" << std::endl;
         next->dump();
+    } else {
+        std::cout << "then ... else ... fi" << std::endl;
+    }
 }

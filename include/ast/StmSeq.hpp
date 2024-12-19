@@ -17,7 +17,9 @@ public:
 
     StmNode *getHead() const;
 
-    void dump(bool recursive = false);
+    StmNode *getTail() const;
+
+    void dump(bool recursive = true);
 
 private:
     StmNode *head;

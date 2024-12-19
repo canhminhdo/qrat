@@ -23,6 +23,10 @@ StmNode * StmSeq::getHead() const {
     return head;
 }
 
+StmNode * StmSeq::getTail() const {
+    return tail;
+}
+
 void StmSeq::dump(bool recursive) {
     if (head)
         head->dump();

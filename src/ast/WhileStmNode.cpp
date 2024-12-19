@@ -6,7 +6,6 @@
 #include "ast/EndStmNode.hpp"
 #include <iostream>
 
-
 WhileStmNode::WhileStmNode(ExpNode *cond, StmSeq *body) : cond{cond}, body{body} {
     EndStmNode *endWhile = new EndStmNode();
     endWhile->setNext(this);
@@ -22,11 +21,14 @@ StmSeq *WhileStmNode::getBody() const {
 }
 
 void WhileStmNode::dump(bool recursive) {
-    std::cout << "While: " << std::endl;
+    std::cout << "while " << std::endl;
     cond->dump();
-    std::cout << "Do: " << std::endl;
-    body->dump();
-    std::cout << "Od: " << std::endl;
-    if (recursive && next)
+    if (recursive) {
+        std::cout << "do " << std::endl;
+        body->dump();
+        std::cout << "od " << std::endl;
         next->dump();
+    } else {
+        std::cout << "do ... od" << std::endl;
+    }
 }

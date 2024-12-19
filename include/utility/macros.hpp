@@ -12,7 +12,8 @@ using namespace std;
 enum DeclMode { NONE_DECL, VAR_DECL, CONST_DECL };
 
 enum SpecialConstants {
-    UNUSED = -1
+    UNUSED = -1,
+    UNBOUNDED = INT_MAX,
 };
 
 #define Assert(condition, message)                                     \

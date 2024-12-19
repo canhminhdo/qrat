@@ -27,6 +27,8 @@ public:
 
     void addStmSeq(StmSeq *stmSeq);
 
+    void addEndStm(StmSeq *stmSeq);
+
     StmSeq *getStmSeq() const;
 
     int getName() const;

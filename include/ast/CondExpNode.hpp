@@ -55,7 +55,7 @@ public:
 
     const char *getRelOpName(RelOpType type);
 
-    void dump(bool recursive = false) override;
+    void dump(bool recursive = true) override;
 
 private:
     ExpNode *left;

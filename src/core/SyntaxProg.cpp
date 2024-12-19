@@ -9,6 +9,8 @@
 #include "core/VarSymbol.hpp"
 #include <iostream>
 
+#include "ast/CondStmNode.hpp"
+
 SyntaxProg::SyntaxProg(Token prog) {
     name = prog.code();
     nqubits = 0;
@@ -44,7 +46,28 @@ void SyntaxProg::addInit(Token variable, Node *value) {
 
 void SyntaxProg::addStmSeq(StmSeq *stmSeq) {
     this->stmSeq = stmSeq;
+    // add EndStmNode to the end of stmSeq recursively
     this->stmSeq->addStm(new EndStmNode());
+    addEndStm(stmSeq);
+}
+
+void SyntaxProg::addEndStm(StmSeq *stmSeq) {
+    auto head = stmSeq->getHead();
+    while (head != nullptr) {
+        if (dynamic_cast<EndStmNode *>(head)) {
+            break;
+        }
+        StmNode* next = head->getNext();
+        auto *condStm = dynamic_cast<CondStmNode *>(head);
+        if (condStm != nullptr) {
+            auto *endStm = new EndStmNode(next);
+            condStm->getThenStm()->addStm(endStm);
+            condStm->getElseStm()->addStm(endStm);
+            addEndStm(condStm->getThenStm());
+            addEndStm(condStm->getElseStm());
+        }
+        head = next;
+    }
 }
 
 StmSeq * SyntaxProg::getStmSeq() const {
