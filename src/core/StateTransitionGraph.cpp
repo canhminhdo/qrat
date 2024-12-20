@@ -158,7 +158,7 @@ std::pair<StateTransitionGraph::State *, bool> StateTransitionGraph::makeState(S
 }
 
 void StateTransitionGraph::checkState(State *s, std::unordered_set<int> &results) {
-    if (searchType == SearchType::FINAL_STATES) {
+    if (searchType == Type::ARROW_EXCLAMATION) {
         if (!s->isFinalState())
             return;
     }

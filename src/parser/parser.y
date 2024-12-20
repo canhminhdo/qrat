@@ -8,6 +8,7 @@
 #include "core/Token.hpp"
 #include "core/global.hpp"
 #include "core/type.hpp"
+#include "core/Search.hpp"
 #include "ast/Node.hpp"
 #include "ast/KetExpNode.hpp"
 #include "ast/QubitExpNode.hpp"
@@ -55,9 +56,11 @@ extern int yylineno;
     StmNode *stm;
     StmSeq *stmSeq;
     Gate* gate;
+    Search::Type searchType;
 }
 
 /* declare tokens */
+/* for programs */
 %token KW_PROG KW_IS KW_VAR KW_CONST KW_WHERE KW_INIT KW_BEGIN KW_END
 %token KW_QUBIT KW_COMPLEX
 %token <yyToken> IDENTIFIER
@@ -72,6 +75,10 @@ extern int yylineno;
 %token KW_GATE_X KW_GATE_Y KW_GATE_Z KW_GATE_H KW_GATE_I KW_GATE_CX
 %token KW_MEASURE
 %token KW_EQUAL
+/* for commands */
+%token KW_SEARCH KW_IN KW_WITH KW_SUCH KW_THAT
+%token KW_ARROW_ONE KW_ARROW_STAR KW_ARROW_PLUS KW_ARROW_EXCLAMATION
+%token KW_TRUE KW_FALSE
 %token EOL
 
 /* types for nonterminal sysmbols */
@@ -86,9 +93,9 @@ extern int yylineno;
 %nterm <stm> stm unitaryStm condStm loopStm
 %nterm <stmSeq> stmList
 %nterm <gate> gate
-
+%nterm <searchType> arrow
 /* start symbol */
-%start prog
+%start top
 
 /* precedence and associativity */
 %left '-' '+'
@@ -98,13 +105,22 @@ extern int yylineno;
 
 /* Section 2: BNF rules and actions */
 %%
+top :   /* empty */
+    |   top item
+    ;
+
+item    :   prog
+        |   command
+        ;
+
 prog    :   KW_PROG
             token
                 {
                     interpreter.setCurrentProg($2);
                     currentSyntaxProg = interpreter.getCurrentProg();
                 }
-            KW_IS startDecl startConst startWhere startInit begin KW_END;
+            KW_IS startDecl startConst startWhere startInit begin KW_END
+        ;
 token   :   IDENTIFIER;
 
 /* declaration */
@@ -342,6 +358,46 @@ condExp :   measure KW_EQUAL number
 
 /* expected semicolon */
 expectedSemi    :   ';';
+
+command :   KW_SEARCH KW_IN
+            token
+                {
+                    if (currentSyntaxProg == nullptr || currentSyntaxProg->getName() != $3.code()) {
+                        yyerror(("Search in an undefined program: " + std::string($3.name())).c_str());
+                        exit(SEMANTIC_ERROR);
+                    }
+                    printf("Search in program: %s\n", $3.name());
+                }
+            KW_WITH
+            arrow
+                {
+                    printf("Arrow: %d\n", $6);
+                }
+            KW_SUCH KW_THAT
+            property
+            expectedSemi
+        ;
+arrow   :   KW_ARROW_ONE
+                {
+                    $$ = Search::Type::ARROW_ONE;
+                }
+        |   KW_ARROW_STAR
+                {
+                    $$ = Search::Type::ARROW_STAR;
+                }
+        |   KW_ARROW_PLUS
+                {
+                    $$ = Search::Type::ARROW_PLUS;
+                }
+        |   KW_ARROW_EXCLAMATION
+                {
+                    $$ = Search::Type::ARROW_EXCLAMATION;
+                }
+        ;
+
+property    :   KW_TRUE
+            |   KW_FALSE
+            ;
 
 %%
 

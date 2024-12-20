@@ -9,6 +9,7 @@
 #include "utility/macros.hpp"
 #include "parser/lexerAux.hpp"
 #include "core/Token.hpp"
+#include "core/Search.hpp"
 #include "ast/Node.hpp"
 #include "ast/KetExpNode.hpp"
 #include "ast/QubitExpNode.hpp"
@@ -65,6 +66,19 @@ void lexerIdMode(void);
 [+\-*/:;,\[\]().]       { return *yytext; }
 "="		    { return KW_EQUAL; }
 ":="		{ return KW_ASSIGN; }
+
+"search"    { return KW_SEARCH; }
+"in"        { return KW_IN; }
+"with"      { return KW_WITH; }
+"such"      { return KW_SUCH; }
+"that"      { return KW_THAT; }
+"=>1"       { return KW_ARROW_ONE; }
+"=>*"       { return KW_ARROW_STAR; }
+"=>+"       { return KW_ARROW_PLUS; }
+"=>!"       { return KW_ARROW_EXCLAMATION; }
+"true"      { return KW_TRUE; }
+"false"     { return KW_FALSE; }
+
 "|0>"		{ return KW_KET_ZERO; }
 "|1>"		{ return KW_KET_ONE; }
 "random"	{ return KW_KET_RANDOM; }

@@ -13,17 +13,11 @@
 #include "dd/DDSimulation.hpp"
 #include "utility/HashUtil.hpp"
 #include "utility/macros.hpp"
+#include "Search.hpp"
 
-class StateTransitionGraph {
+class StateTransitionGraph : public Search {
 public:
     StateTransitionGraph(SyntaxProg *currentProg, DDSimulation *ddSim);
-
-    enum class SearchType {
-        ONE_STEP,
-        ZERO_OR_MORE_STEPS,
-        ONE_OR_MORE_STEPS,
-        FINAL_STATES
-    };
 
     struct State {
         int stateNr;
@@ -102,7 +96,7 @@ private:
     SyntaxProg *currentProg;
     DDSimulation *ddSim;
 
-    SearchType searchType{SearchType::FINAL_STATES};
+    Type searchType{Type::ARROW_EXCLAMATION};
     int numSols{UNBOUNDED};
     int depthBound{UNBOUNDED};
 };
