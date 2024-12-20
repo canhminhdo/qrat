@@ -23,7 +23,7 @@ public:
 
     void initGraphSearch();
 
-    void run();
+    void execute();
 
     void buildInitialState();
 

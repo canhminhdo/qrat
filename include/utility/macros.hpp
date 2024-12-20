@@ -11,6 +11,14 @@ using namespace std;
 
 enum DeclMode { NONE_DECL, VAR_DECL, CONST_DECL };
 
+enum ErrorCode {
+    NO_ERROR,
+    SYNTAX_ERROR,
+    SEMANTIC_ERROR,
+    RUNTIME_ERROR,
+    INTERNAL_ERROR,
+};
+
 enum SpecialConstants {
     UNUSED = -1,
     UNBOUNDED = INT_MAX,

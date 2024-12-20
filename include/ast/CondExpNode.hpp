@@ -44,11 +44,11 @@ public:
 
     bool isEqual(const Node &other) const override;
 
-    ExpNode *get_left() const;
+    ExpNode *getLeft() const;
 
-    RelOpType get_type() const;
+    RelOpType getRelOpType() const;
 
-    ExpNode *get_right() const;
+    ExpNode *getRight() const;
 
     void eval() override {
     };

@@ -5,6 +5,8 @@
 #ifndef NUMEXPNODE_HPP
 #define NUMEXPNODE_HPP
 
+#include <variant>
+
 #include "ast/ExpNode.hpp"
 
 enum class NumType {
@@ -23,17 +25,28 @@ public:
 
     bool isEqual(const Node &other) const override;
 
+    int getIntVal() const;
+
+    float getFloatVal() const;
+
+    bool isZeroOrOne() const;
+
+    bool isZero() const;
+
+    bool isOne() const;
+
     void eval() override {
     }
 
     void dump(bool recursive = true) override;
 
 private:
-    union {
-        int valInt;
-        float valFloat;
+    union NumVal {
+        int intV;
+        float floatV;
     };
 
+    NumVal val;
     NumType type;
 };
 

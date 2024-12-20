@@ -65,21 +65,21 @@ public:
 
     void buildInitialState();
 
-    void execute();
+    void search();
 
-    void processState(State *currentState, std::vector<State *> &results);
+    void procState(State *currentState, std::unordered_set<int> &results);
 
-    void processSkipStm([[maybe_unused]] SkipStmNode *skipStm, State *currentState, StmNode *nextStm,
-                        std::vector<State *> &results);
+    void procSkipStm([[maybe_unused]] SkipStmNode *skipStm, State *currentState, StmNode *nextStm,
+                     std::unordered_set<int> &results);
 
-    void processUnitaryStm(UnitaryStmNode *unitaryStm, State *currentState, StmNode *nextStm,
-                           std::vector<State *> &results);
+    void procUnitaryStm(UnitaryStmNode *unitaryStm, State *currentState, StmNode *nextStm,
+                        std::unordered_set<int> &results);
 
-    void processCondStm(CondStmNode *condStm, State *currentState, std::vector<State *> &results);
+    void procCondStm(CondStmNode *condStm, State *currentState, std::unordered_set<int> &results);
 
-    void processWhileStm(WhileStmNode *whileStm, State *currentState, StmNode *nextStm, std::vector<State *> &results);
+    void procWhileStm(WhileStmNode *whileStm, State *currentState, StmNode *nextStm, std::unordered_set<int> &results);
 
-    void processCondBranch(State *currentState, StmNode *nextStm, qc::VectorDD &v, std::vector<State *> &results);
+    void procCondBranch(State *currentState, StmNode *nextStm, qc::VectorDD &v, std::unordered_set<int> &results);
 
     StmNode *getNextStatement(StmNode *stm);
 
@@ -87,11 +87,7 @@ public:
 
     std::pair<State *, bool> makeState(State *s);
 
-    void checkState(State *s, std::vector<State *> &results);
-
-    bool exist(State *s);
-
-    State *getNextState();
+    void checkState(State *s, std::unordered_set<int> &results);
 
     void dump() const;
 

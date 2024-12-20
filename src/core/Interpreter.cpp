@@ -25,15 +25,15 @@ void Interpreter::initGraphSearch() {
     graphSearch = new StateTransitionGraph(currentProg, ddSim);
 }
 
-void Interpreter::run() {
+void Interpreter::execute() {
     if (currentProg) {
         // currentProg->dump();
         initDDSimulation();
         initGraphSearch();
     }
     assert(ddSim != nullptr);
-    // ddSim->dump();
-    graphSearch->execute();
+    ddSim->dump();
+    // graphSearch->search();
     // graphSearch->dump();
 }
 

@@ -11,11 +11,11 @@
 
 NumExpNode::NumExpNode(NumType numType, const char *valStr) : type(numType) {
     if (type == NumType::INT) {
-        valInt = atoi(valStr);
+        val.intV = atoi(valStr);
     } else if (type == NumType::REAL) {
-        valFloat = atof(valStr);
+        val.floatV = atof(valStr);
     } else {
-        std::cerr << "Invalid NumType" << std::endl;
+        throw std::invalid_argument("Unsupported NumType");
     }
 }
 
@@ -23,11 +23,11 @@ std::size_t NumExpNode::getHash() const {
     auto hash = HashUtil::combinedHash(seed, std::hash<int>{}(static_cast<int>(type)));
     switch (type) {
         case NumType::INT:
-            return HashUtil::combinedHash(hash, std::hash<int>{}(valInt));
+            return HashUtil::combinedHash(hash, std::hash<int>{}(val.intV));
         case NumType::REAL:
-            return HashUtil::combinedHash(hash, std::hash<float>{}(valFloat));
+            return HashUtil::combinedHash(hash, std::hash<float>{}(val.floatV));
         default:
-            throw std::invalid_argument("Invalid NumType");
+            throw std::invalid_argument("Unsupported NumType");
     }
 }
 
@@ -41,20 +41,58 @@ bool NumExpNode::isEqual(const Node &other) const {
     }
     switch (type) {
         case NumType::INT:
-            return valInt == otherNum->valInt;
+            return val.intV == otherNum->val.intV;
         case NumType::REAL:
-            return std::fabs(valFloat - otherNum->valFloat) < 1e-6;
+            return std::fabs(val.floatV - otherNum->val.floatV) < 1e-6;
         default:
-            throw std::invalid_argument("Invalid NumType");
+            throw std::invalid_argument("Unsupported NumType");
+    }
+}
+
+int NumExpNode::getIntVal() const {
+    return val.intV;
+}
+
+float NumExpNode::getFloatVal() const {
+    return val.floatV;
+}
+
+bool NumExpNode::isZeroOrOne() const {
+    if (type == NumType::INT) {
+        return val.intV == 0 || val.intV == 1;
+    } else if (type == NumType::REAL) {
+        return val.floatV == 0.0 || val.floatV == 1.0;
+    } else {
+        throw std::invalid_argument("Unsupported NumType");
+    }
+}
+
+bool NumExpNode::isZero() const {
+    if (type == NumType::INT) {
+        return val.intV == 0;
+    } else if (type == NumType::REAL) {
+        return val.floatV == 0.0;
+    } else {
+        throw std::invalid_argument("Unsupported NumType");
+    }
+}
+
+bool NumExpNode::isOne() const {
+    if (type == NumType::INT) {
+        return val.intV == 1;
+    } else if (type == NumType::REAL) {
+        return val.floatV == 1.0;
+    } else {
+        throw std::invalid_argument("Unsupported NumType");
     }
 }
 
 void NumExpNode::dump(bool recursive) {
     if (type == NumType::INT) {
-        std::cout << valInt << std::endl;
+        std::cout << val.intV << std::endl;
     } else if (type == NumType::REAL) {
-        std::cout << valFloat << std::endl;
+        std::cout << val.floatV << std::endl;
     } else {
-        std::cerr << "Invalid NumType" << std::endl;
+        throw std::invalid_argument("Unsupported NumType");
     }
 }

@@ -4,6 +4,9 @@
 
 #include "core/StateTransitionGraph.hpp"
 
+#include "ast/CondExpNode.hpp"
+#include "ast/NumExpNode.hpp"
+
 StateTransitionGraph::StateTransitionGraph(SyntaxProg *currentProg, DDSimulation *ddSim) {
     this->currentProg = currentProg;
     this->ddSim = ddSim;
@@ -17,40 +20,42 @@ void StateTransitionGraph::buildInitialState() {
     savedStateId = 0;
 }
 
-void StateTransitionGraph::execute() {
+void StateTransitionGraph::search() {
     buildInitialState();
     int depth = 0;
-    std::vector<State *> results;
+    std::unordered_set<int> results;
     // numSols = 1;
     // depthBound = 1;
     // searchType = SearchType::ONE_OR_MORE_STEPS;
     while (results.size() < numSols && depth < depthBound && savedStateId < seenStates.size()) {
         State *currentState = seenStates[savedStateId];
         depth = currentState->depth;
-        processState(currentState, results);
+        procState(currentState, results);
         savedStateId++;
     }
     std::cout << "Number of solutions found: " << results.size() << "\n";
-    for (auto *s: results) {
-        printState(s, false);
-        // showPath(s->stateNr);
+    for (auto stateNr: results) {
+        printState(seenStates[stateNr], false);
+        // std::cout << "----------- S-Show path: " << stateNr << " -----------\n";
+        // showPath(stateNr);
+        // std::cout << "----------- E-Show path: " << stateNr << " -----------\n";
     }
 }
 
-void StateTransitionGraph::processState(State *currentState, std::vector<State *> &results) {
+void StateTransitionGraph::procState(State *currentState, std::unordered_set<int> &results) {
     StmNode *stm = currentState->pc;
     if (auto *endProg = dynamic_cast<EndStmNode *>(stm); endProg != nullptr && endProg->getNext() == nullptr) {
         return;
     }
     StmNode *nextStm = getNextStatement(stm);
     if (auto *skipStm = dynamic_cast<SkipStmNode *>(stm); skipStm != nullptr) {
-        processSkipStm(skipStm, currentState, nextStm, results);
+        procSkipStm(skipStm, currentState, nextStm, results);
     } else if (auto *unitaryStm = dynamic_cast<UnitaryStmNode *>(stm); unitaryStm != nullptr) {
-        processUnitaryStm(unitaryStm, currentState, nextStm, results);
+        procUnitaryStm(unitaryStm, currentState, nextStm, results);
     } else if (auto *condStm = dynamic_cast<CondStmNode *>(stm); condStm != nullptr) {
-        processCondStm(condStm, currentState, results);
+        procCondStm(condStm, currentState, results);
     } else if (auto *whileStm = dynamic_cast<WhileStmNode *>(stm); whileStm != nullptr) {
-        processWhileStm(whileStm, currentState, nextStm, results);
+        procWhileStm(whileStm, currentState, nextStm, results);
     } else {
         throw std::runtime_error("Unknown statement type");
     }
@@ -64,56 +69,63 @@ StmNode *StateTransitionGraph::getNextStatement(StmNode *stm) {
     return nextStm;
 }
 
-void StateTransitionGraph::processSkipStm(SkipStmNode *skipStm, State *currentState, StmNode *nextStm, std::vector<State *> &results) {
+void StateTransitionGraph::procSkipStm(SkipStmNode *skipStm, State *currentState, StmNode *nextStm, std::unordered_set<int> &results) {
     auto [newState, inCache] = makeState(new State(nextStm, currentState->current, currentState->stateNr,
                                                    currentState->depth + 1));
+    currentState->nextStates.push_back(newState->stateNr);
     if (!inCache) {
-        currentState->nextStates.push_back(newState->stateNr);
         checkState(newState, results);
     }
 }
 
-void StateTransitionGraph::processUnitaryStm(UnitaryStmNode *unitaryStm, State *currentState, StmNode *nextStm,
-                                             std::vector<State *> &results) {
+void StateTransitionGraph::procUnitaryStm(UnitaryStmNode *unitaryStm, State *currentState, StmNode *nextStm,
+                                             std::unordered_set<int> &results) {
     auto v = currentState->current;
     auto v1 = ddSim->applyGate(unitaryStm, v);
     auto [newState, inCache] = makeState(new State(nextStm, v1, currentState->stateNr, currentState->depth + 1));
+    currentState->nextStates.push_back(newState->stateNr);
     if (!inCache) {
-        currentState->nextStates.push_back(newState->stateNr);
         checkState(newState, results);
     }
 }
 
-void StateTransitionGraph::processCondStm(CondStmNode *condStm, State *currentState, std::vector<State *> &results) {
-    auto *measExp = dynamic_cast<MeasExpNode *>(condStm->getCond());
-    assert(measExp != nullptr);
+void StateTransitionGraph::procCondStm(CondStmNode *condStm, State *currentState, std::unordered_set<int> &results) {
+    auto *condExp = dynamic_cast<CondExpNode *>(condStm->getCond());
+    auto *measExp = dynamic_cast<MeasExpNode *>(condExp->getLeft());
+    auto *numExp = dynamic_cast<NumExpNode *>(condExp->getRight());
+    assert(condExp != nullptr && measExp != nullptr && numExp != nullptr);
+    auto isZero = numExp->isZero();
     auto [v0, v1] = ddSim->measure(measExp, currentState->current);
-    processCondBranch(currentState, condStm->getElseStm()->getHead(), v0, results);
+
+    procCondBranch(currentState, isZero ? condStm->getThenStm()->getHead() : condStm->getElseStm()->getHead(), v0, results);
     if (results.size() < numSols) {
-        processCondBranch(currentState, condStm->getThenStm()->getHead(), v1, results);
+        procCondBranch(currentState, isZero ? condStm->getElseStm()->getHead() : condStm->getThenStm()->getHead(), v1, results);
     }
 }
 
-void StateTransitionGraph::processCondBranch(State *currentState, StmNode *nextStm, qc::VectorDD &v,
-                                             std::vector<State *> &results) {
+void StateTransitionGraph::procCondBranch(State *currentState, StmNode *nextStm, qc::VectorDD &v,
+                                             std::unordered_set<int> &results) {
     if (!v.isZeroTerminal()) {
         bool inCache = false;
         auto [newState, cache] = makeState(new State(nextStm, v, currentState->stateNr, currentState->depth + 1));
+        currentState->nextStates.push_back(newState->stateNr);
         if (!inCache) {
-            currentState->nextStates.push_back(newState->stateNr);
             checkState(newState, results);
         }
     }
 }
 
-void StateTransitionGraph::processWhileStm(WhileStmNode *whileStm, State *currentState, StmNode *nextStm,
-                                           std::vector<State *> &results) {
-    auto *measExp = dynamic_cast<MeasExpNode *>(whileStm->getCond());
-    assert(measExp != nullptr);
+void StateTransitionGraph::procWhileStm(WhileStmNode *whileStm, State *currentState, StmNode *nextStm,
+                                           std::unordered_set<int> &results) {
+    auto *condExp = dynamic_cast<CondExpNode *>(whileStm->getCond());
+    auto *measExp = dynamic_cast<MeasExpNode *>(condExp->getLeft());
+    auto *numExp = dynamic_cast<NumExpNode *>(condExp->getRight());
+    assert(condExp != nullptr && measExp != nullptr && numExp != nullptr);
+    auto isZero = numExp->isZero();
     auto [v0, v1] = ddSim->measure(measExp, currentState->current);
-    processCondBranch(currentState, nextStm, v0, results);
+    procCondBranch(currentState, isZero ? whileStm->getBody()->getHead() : nextStm, v0, results);
     if (results.size() < numSols) {
-        processCondBranch(currentState, whileStm->getBody()->getHead(), v1, results);
+        procCondBranch(currentState, isZero ? nextStm : whileStm->getBody()->getHead(), v1, results);
     }
 }
 
@@ -145,23 +157,14 @@ std::pair<StateTransitionGraph::State *, bool> StateTransitionGraph::makeState(S
     return {s, false};
 }
 
-void StateTransitionGraph::checkState(State *s, std::vector<State *> &results) {
+void StateTransitionGraph::checkState(State *s, std::unordered_set<int> &results) {
     if (searchType == SearchType::FINAL_STATES) {
         if (!s->isFinalState())
             return;
     }
     if (ddSim->test(s->current)) {
-        results.push_back(s);
+        results.insert(s->stateNr);
     }
-}
-
-bool StateTransitionGraph::exist(State *s) {
-    auto it = stateTab.find(s);
-    return it != stateTab.end();
-}
-
-StateTransitionGraph::State *StateTransitionGraph::getNextState() {
-    return nullptr;
 }
 
 void StateTransitionGraph::dump() const {
@@ -192,6 +195,11 @@ void StateTransitionGraph::printState(State *s, bool recursive) const {
     std::cout << "\n";
     if (recursive) {
         for (const int i: s->nextStates) {
+            if (i <= s->stateNr) {
+                // do not print backward states
+                std::cout << "Backward state detected\n";
+                continue;
+            };
             printState(seenStates[i]);
         }
     }

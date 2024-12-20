@@ -40,8 +40,9 @@ extern FILE *yyin;
 extern char *yytext;
 extern int yylineno;
 
-#define EXPNODE(node) dynamic_cast<ExpNode *>(node)
-#define STMNODE(node) dynamic_cast<StmNode *>(node)
+#define EXP_NODE(node) dynamic_cast<ExpNode *>(node)
+#define STM_NODE(node) dynamic_cast<StmNode *>(node)
+#define NUM_EXP_NODE(node) dynamic_cast<NumExpNode *>(node)
 %}
 
 %union {
@@ -77,9 +78,11 @@ extern int yylineno;
 %nterm <yyToken> token varName
 %nterm <type> typeName
 %nterm <yyTokenList> varNameList
-/* %nterm <expr> expression number oneQubit basis measure condExp
-%nterm <stm> stm stmList unitaryStm condStm loopStm */
-%nterm <expr> expression number oneQubit basis measure
+/*
+%nterm <expr> expression number oneQubit basis measure condExp
+%nterm <stm> stm stmList unitaryStm condStm loopStm
+*/
+%nterm <expr> expression number oneQubit basis measure condExp
 %nterm <stm> stm unitaryStm condStm loopStm
 %nterm <stmSeq> stmList
 %nterm <gate> gate
@@ -296,13 +299,13 @@ gate    :   KW_GATE_X
                 }
         ;
 /* conditional statement */
-condStm :   KW_IF measure KW_THEN stmList KW_ELSE stmList KW_FI expectedSemi
+condStm :   KW_IF condExp KW_THEN stmList KW_ELSE stmList KW_FI expectedSemi
                 {
                     $$ = new CondStmNode($2, $4, $6);
                 }
         ;
 /* loop statement */
-loopStm :   KW_WHILE measure KW_DO stmList KW_OD expectedSemi
+loopStm :   KW_WHILE condExp KW_DO stmList KW_OD expectedSemi
                 {
                     $$ = new WhileStmNode($2, $4);
                 }
@@ -318,13 +321,24 @@ measure :   KW_MEASURE '[' varName ']'
                     $$ = new MeasExpNode(currentSyntaxProg->lookup($3));
                 }
         ;
-/* conditional expression
+/* conditional expression */
 condExp :   measure KW_EQUAL number
                 {
                     $$ = new CondExpNode($1, RelOpType::EQ, $3);
+                    if (!NUM_EXP_NODE($3)->isZeroOrOne()) {
+                        yyerror("the measurement result must be 0 or 1");
+                        exit(SEMANTIC_ERROR);
+                    }
+                }
+        |   number KW_EQUAL measure
+                {
+                    $$ = new CondExpNode($3, RelOpType::EQ, $1);
+                    if (!NUM_EXP_NODE($1)->isZeroOrOne()) {
+                        yyerror("the measurement result must be 0 or 1");
+                        exit(SEMANTIC_ERROR);
+                    }
                 }
         ;
-*/
 
 /* expected semicolon */
 expectedSemi    :   ';';
@@ -354,10 +368,10 @@ int main(int argc, char **argv)
     Token::dump();
     currentSyntaxProg->dump();
     #endif
-    interpreter.run();
+    interpreter.execute();
 }
 
 void yyerror(const char *s)
 {
-    fprintf(stderr, "error: %s at line %d\n", s, yylineno);
+    fprintf(stderr, "Error: %s at line %d\n", s, yylineno);
 }
