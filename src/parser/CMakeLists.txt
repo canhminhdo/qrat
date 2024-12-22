@@ -10,7 +10,7 @@ configure_file(lexerAux.cpp lexerAux.cpp)
 # FLEX & BISON
 find_package(BISON)
 find_package(FLEX)
-BISON_TARGET(Parser parser.y ${CMAKE_CURRENT_BINARY_DIR}/parser.cpp) # Optional param: DEFINES_FILE ${CMAKE_CURRENT_BINARY_DIR}/parser.hpp
+BISON_TARGET(Parser parser.y ${CMAKE_CURRENT_BINARY_DIR}/parser.cpp COMPILE_FLAGS -Wcounterexamples) # Optional param: DEFINES_FILE ${CMAKE_CURRENT_BINARY_DIR}/parser.hpp
 FLEX_TARGET(Scanner lexer.l ${CMAKE_CURRENT_BINARY_DIR}/lexer.cpp)
 ADD_FLEX_BISON_DEPENDENCY(Scanner Parser)
 
@@ -65,6 +65,8 @@ add_executable(
     ../ast/CachedNode.cpp
         ../ast/EndStmNode.cpp
     ../core/StateTransitionGraph.cpp
+        ../ast/PropExpNode.cpp
+        ../ast/InitExpNode.cpp
 )
 
 target_include_directories(ParserRunner PUBLIC ${CMAKE_CURRENT_BINARY_DIR})

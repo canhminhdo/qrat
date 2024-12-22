@@ -102,6 +102,7 @@ extern int yylineno;
 %left '*' '/'
 %left UMINUS    /* precedence for unary minus */
 %right '^'
+%nonassoc '.'  /* %precedence '.' */
 
 /* Section 2: BNF rules and actions */
 %%

@@ -27,6 +27,8 @@ public:
 
     void buildInitialState();
 
+    void initializeSearch();
+
 private:
     SyntaxProg *currentProg;
     DDSimulation *ddSim;

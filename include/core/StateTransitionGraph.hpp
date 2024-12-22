@@ -99,6 +99,8 @@ private:
     Type searchType{Type::ARROW_EXCLAMATION};
     int numSols{UNBOUNDED};
     int depthBound{UNBOUNDED};
+
+    CachedNode cachedNodes; // cached nodes for properties
 };
 
 #endif //STATETRANSITIONGRAPH_HPP
