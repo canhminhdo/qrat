@@ -67,6 +67,7 @@ add_executable(
     ../core/StateTransitionGraph.cpp
         ../ast/PropExpNode.cpp
         ../ast/InitExpNode.cpp
+    ../ast/BoolExpNode.cpp
 )
 
 target_include_directories(ParserRunner PUBLIC ${CMAKE_CURRENT_BINARY_DIR})

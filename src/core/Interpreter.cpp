@@ -21,21 +21,25 @@ void Interpreter::initDDSimulation() {
     }
 }
 
-void Interpreter::initGraphSearch() {
-    graphSearch = new StateTransitionGraph(currentProg, ddSim);
+void Interpreter::initGraphSearch(ExpNode *propExp, Search::Type type, int numSols, int maxDepth) {
+    graphSearch = new StateTransitionGraph(currentProg, ddSim, propExp, type, numSols, maxDepth);
 }
 
 void Interpreter::execute() {
-    if (currentProg) {
-        // currentProg->dump();
-        initDDSimulation();
-        initGraphSearch();
-    }
     assert(ddSim != nullptr);
-    ddSim->dump();
-    // graphSearch->search();
-    // graphSearch->dump();
+    assert(graphSearch != nullptr);
+    // ddSim->dump();
+    graphSearch->dump();
+    graphSearch->search();
 }
 
 void Interpreter::buildInitialState() {
+}
+
+void Interpreter::initializeSearch(int progName, ExpNode *propExp, Search::Type type, int numSols, int maxDepth) {
+    if (progName != currentProg->getName()) {
+        throw std::runtime_error("Error: program name does not match.");
+    }
+    initDDSimulation();
+    initGraphSearch(propExp, type, numSols, maxDepth);
 }

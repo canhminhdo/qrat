@@ -11,6 +11,8 @@
 
 class InitExpNode : public ExpNode {
 public:
+    explicit InitExpNode(Symbol *var);
+
     bool isEqual(const Node &other) const override;
 
     size_t getHash() const override;

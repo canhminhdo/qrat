@@ -312,10 +312,11 @@ bool DDSimulation::test(qc::VectorDD v) {
     if (v.p == v1.p) {
         return true;
     }
+    return false;
     // todo: should check structure similarity during checking fidelity for fast comparison
-    auto fd = dd->fidelity(v1, v);
-    std::cout << "Fidelity: " << fd << std::endl;
-    return std::abs(fd - 1) < config.simulation.fidelityThreshold;
+    // auto fd = dd->fidelity(v1, v);
+    // std::cout << "Fidelity: " << fd << std::endl;
+    // return std::abs(fd - 1) < config.simulation.fidelityThreshold;
 }
 
 bool DDSimulation::test(qc::VectorDD v1, qc::VectorDD v2) {

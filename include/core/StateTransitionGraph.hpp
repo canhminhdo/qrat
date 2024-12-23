@@ -17,7 +17,8 @@
 
 class StateTransitionGraph : public Search {
 public:
-    StateTransitionGraph(SyntaxProg *currentProg, DDSimulation *ddSim);
+    StateTransitionGraph(SyntaxProg *currentProg, DDSimulation *ddSim, ExpNode *propExp, Search::Type type, int numSols,
+                         int maxDepth);
 
     struct State {
         int stateNr;
@@ -83,6 +84,8 @@ public:
 
     void checkState(State *s, std::unordered_set<int> &results);
 
+    const char *getSearchType() const;
+
     void dump() const;
 
     void printState(State *s, bool recursive = true) const;
@@ -96,11 +99,10 @@ private:
     SyntaxProg *currentProg;
     DDSimulation *ddSim;
 
+    ExpNode *propExp{nullptr};
     Type searchType{Type::ARROW_EXCLAMATION};
     int numSols{UNBOUNDED};
     int depthBound{UNBOUNDED};
-
-    CachedNode cachedNodes; // cached nodes for properties
 };
 
 #endif //STATETRANSITIONGRAPH_HPP

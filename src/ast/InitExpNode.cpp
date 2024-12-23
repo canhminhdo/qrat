@@ -7,6 +7,9 @@
 #include "utility/HashUtil.hpp"
 #include <iostream>
 
+InitExpNode::InitExpNode(Symbol *var) : var{var} {
+}
+
 size_t InitExpNode::getHash() const {
     auto hash = HashUtil::combinedHash(seed, std::hash<const char *>{}(getName()));
     hash = HashUtil::combinedHash(hash, std::hash<Symbol *>{}(var));
@@ -21,5 +24,5 @@ bool InitExpNode::isEqual(const Node &other) const {
 }
 
 void InitExpNode::dump(bool recursive) {
-    std::cout << name << "(" << Token::name(var->getName()) << ")";
+    std::cout << name << "[" << Token::name(var->getName()) << "]";
 }

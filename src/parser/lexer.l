@@ -26,6 +26,9 @@
 #include "ast/CondExpNode.hpp"
 #include "ast/CondStmNode.hpp"
 #include "ast/WhileStmNode.hpp"
+#include "ast/BoolExpNode.hpp"
+#include "ast/InitExpNode.hpp"
+#include "ast/PropExpNode.hpp"
 
 #include "core/Gate.hpp"
 
@@ -41,6 +44,7 @@ void lexerIdMode(void);
 
 /* start conditions */
 %s ID_MODE
+%x COMMENT_MODE
 %s CMD_MODE
 
 /* Section 2: A list of patterns and actions */
@@ -78,6 +82,10 @@ void lexerIdMode(void);
 "=>!"       { return KW_ARROW_EXCLAMATION; }
 "true"      { return KW_TRUE; }
 "false"     { return KW_FALSE; }
+"P"         { return KW_PROP; }
+"not"       { return KW_NOT; }
+"and"       { return KW_AND; }
+"or"        { return KW_OR; }
 
 "|0>"		{ return KW_KET_ZERO; }
 "|1>"		{ return KW_KET_ONE; }
@@ -97,6 +105,11 @@ void lexerIdMode(void);
 [+-]?[0-9]+"/"[+-]?[0-9]+   { return RATIONAL; }
 [+-]?[0-9]+"."[0-9]*        { return REAL; }
 [+-]?("."[0-9]+)            { return REAL; }
+
+"//".*                  { /* Ignore single-line comment */ }
+"/*"                    { lexerCommentMode(); }
+<COMMENT_MODE>[^*]+     { /* Ignore content inside comments */ }
+<COMMENT_MODE>"*/"      { lexerInitialMode(); }
 
 [ \t\f\v\t\r]       /* ignore whitespaces */
 \n          /* ignore EOL, otherwise return EOL; */

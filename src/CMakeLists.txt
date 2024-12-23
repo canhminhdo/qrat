@@ -9,7 +9,6 @@ add_library(
     main.cpp
     getch.cpp
     Person.cpp
-    dd/DDSimulation.cpp
 )
 
 # set include directories

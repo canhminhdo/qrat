@@ -49,6 +49,10 @@ bool NumExpNode::isEqual(const Node &other) const {
     }
 }
 
+bool NumExpNode::isInt() {
+    return type == NumType::INT;
+}
+
 int NumExpNode::getIntVal() const {
     return val.intV;
 }

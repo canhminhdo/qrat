@@ -13,5 +13,13 @@ public:
         ARROW_PLUS,
         ARROW_EXCLAMATION
     };
+
+    inline static const char *typeNames[] = {
+        "=>1",
+        "=>*",
+        "=>+",
+        "=>!"
+    };
 };
+
 #endif //SEARCH_HPP

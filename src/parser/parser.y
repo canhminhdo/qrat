@@ -25,6 +25,9 @@
 #include "ast/CondExpNode.hpp"
 #include "ast/CondStmNode.hpp"
 #include "ast/WhileStmNode.hpp"
+#include "ast/BoolExpNode.hpp"
+#include "ast/InitExpNode.hpp"
+#include "ast/PropExpNode.hpp"
 
 #include "core/Gate.hpp"
 #include "utility/macros.hpp"
@@ -78,7 +81,7 @@ extern int yylineno;
 /* for commands */
 %token KW_SEARCH KW_IN KW_WITH KW_SUCH KW_THAT
 %token KW_ARROW_ONE KW_ARROW_STAR KW_ARROW_PLUS KW_ARROW_EXCLAMATION
-%token KW_TRUE KW_FALSE
+%token KW_TRUE KW_FALSE KW_AND KW_OR KW_NOT KW_PROP
 %token EOL
 
 /* types for nonterminal sysmbols */
@@ -89,7 +92,7 @@ extern int yylineno;
 %nterm <expr> expression number oneQubit basis measure condExp
 %nterm <stm> stm stmList unitaryStm condStm loopStm
 */
-%nterm <expr> expression number oneQubit basis measure condExp
+%nterm <expr> expression number oneQubit basis measure condExp property basisProp
 %nterm <stm> stm unitaryStm condStm loopStm
 %nterm <stmSeq> stmList
 %nterm <gate> gate
@@ -103,6 +106,9 @@ extern int yylineno;
 %left UMINUS    /* precedence for unary minus */
 %right '^'
 %nonassoc '.'  /* %precedence '.' */
+%left KW_OR
+%left KW_AND
+%left KW_NOT
 
 /* Section 2: BNF rules and actions */
 %%
@@ -224,7 +230,7 @@ expression  :   '(' expression ')'
                     {
                         $$ = currentSyntaxProg->makeNode(new OpExpNode(OpExpType::DIV, $1, $3));
                     }
-            |   '-' expression  %prec UMINUS number
+            |   '-' expression  %prec UMINUS
                     {
                         $$ = currentSyntaxProg->makeNode(new OpExpNode(OpExpType::MINUS, nullptr, $2));
                     }
@@ -367,16 +373,87 @@ command :   KW_SEARCH KW_IN
                         yyerror(("Search in an undefined program: " + std::string($3.name())).c_str());
                         exit(SEMANTIC_ERROR);
                     }
-                    printf("Search in program: %s\n", $3.name());
                 }
             KW_WITH
             arrow
-                {
-                    printf("Arrow: %d\n", $6);
-                }
             KW_SUCH KW_THAT
             property
             expectedSemi
+                {
+                    interpreter.initializeSearch($3.code(), $9, $6, UNBOUNDED, UNBOUNDED);
+                    interpreter.execute();
+                }
+        |   KW_SEARCH '[' number ']' KW_IN
+            token
+                {
+                    if (currentSyntaxProg == nullptr || currentSyntaxProg->getName() != $6.code()) {
+                        yyerror(("Search in an undefined program: " + std::string($6.name())).c_str());
+                        exit(SEMANTIC_ERROR);
+                    }
+                }
+            KW_WITH
+            arrow
+            KW_SUCH KW_THAT
+            property
+            expectedSemi
+                {
+                    if (!NUM_EXP_NODE($3)->isInt()) {
+                        yyerror("The number of solutions must be an integer");
+                        exit(SEMANTIC_ERROR);
+                    }
+                    interpreter.initializeSearch($6.code(), $12, $9, NUM_EXP_NODE($3)->getIntVal(), UNBOUNDED);
+                    delete $3;
+                    interpreter.execute();
+                }
+        |   KW_SEARCH '[' ',' number ']' KW_IN
+            token
+                {
+                    if (currentSyntaxProg == nullptr || currentSyntaxProg->getName() != $7.code()) {
+                        yyerror(("Search in an undefined program: " + std::string($7.name())).c_str());
+                        exit(SEMANTIC_ERROR);
+                    }
+                }
+            KW_WITH
+            arrow
+            KW_SUCH KW_THAT
+            property
+            expectedSemi
+                {
+                    if (!NUM_EXP_NODE($4)->isInt()) {
+                        yyerror("The bounded depth must be an integer");
+                        exit(SEMANTIC_ERROR);
+                    }
+                    interpreter.initializeSearch($7.code(), $13, $10, UNBOUNDED, NUM_EXP_NODE($4)->getIntVal());
+                    delete $4;
+                    interpreter.execute();
+                }
+        |   KW_SEARCH '[' number ',' number ']' KW_IN
+            token
+                {
+                    if (currentSyntaxProg == nullptr || currentSyntaxProg->getName() != $8.code()) {
+                        yyerror(("Search in an undefined program: " + std::string($8.name())).c_str());
+                        exit(SEMANTIC_ERROR);
+                    }
+                }
+            KW_WITH
+            arrow
+            KW_SUCH KW_THAT
+            property
+            expectedSemi
+                {
+                    if (!NUM_EXP_NODE($3)->isInt()) {
+                        yyerror("The number of solutions must be an integer");
+                        exit(SEMANTIC_ERROR);
+                    }
+                    if (!NUM_EXP_NODE($5)->isInt()) {
+                        yyerror("The bounded depth must be an integer");
+                        exit(SEMANTIC_ERROR);
+                    }
+                    interpreter.initializeSearch($8.code(), $14, $11, NUM_EXP_NODE($3)->getIntVal(), NUM_EXP_NODE($5)->getIntVal());
+                    delete $3;
+                    delete $5;
+                    interpreter.execute();
+                }
         ;
 arrow   :   KW_ARROW_ONE
                 {
@@ -396,10 +473,50 @@ arrow   :   KW_ARROW_ONE
                 }
         ;
 
-property    :   KW_TRUE
+property    :   '(' property ')'
+                    {
+                        $$ = $2;
+                    }
+            |   KW_TRUE
+                    {
+                        $$ = currentSyntaxProg->makeNode(new BoolExpNode(BoolType::TRUE));
+                    }
             |   KW_FALSE
+                    {
+                        $$ = currentSyntaxProg->makeNode(new BoolExpNode(BoolType::FALSE));
+                    }
+            |   KW_PROP '(' varName ',' basisProp ')'
+                    {
+                        if (!currentSyntaxProg->hasVarSymbol($3)) {
+                            printf("Error: variable %s is undefined", $3.name());
+                            exit(1);
+                        }
+                        $$ = currentSyntaxProg->makeNode(new PropExpNode(currentSyntaxProg->lookup($3), $5));
+                    }
+            |   property KW_AND property
+                    {
+                        $$ = currentSyntaxProg->makeNode(new OpExpNode(OpExpType::AND, $1, $3));
+                    }
+            |   property KW_OR property
+                    {
+                        $$ = currentSyntaxProg->makeNode(new OpExpNode(OpExpType::OR, $1, $3));
+                    }
+            |   KW_NOT property %prec KW_NOT
+                    {
+                        $$ = currentSyntaxProg->makeNode(new OpExpNode(OpExpType::NOT, nullptr, $2));
+                    }
             ;
 
+basisProp   :   basis
+            |   KW_INIT '[' varName ']'
+                    {
+                        if (!currentSyntaxProg->hasVarSymbol($3)) {
+                            printf("Error: variable %s is undefined", $3.name());
+                            exit(1);
+                        }
+                        $$ = currentSyntaxProg->makeNode(new InitExpNode(currentSyntaxProg->lookup($3)));
+                    }
+            ;
 %%
 
 /* Section 3: C code */
@@ -424,8 +541,8 @@ int main(int argc, char **argv)
     printf("Code: %d\n", Token::code("c"));
     Token::dump();
     currentSyntaxProg->dump();
-    #endif
     interpreter.execute();
+    #endif
 }
 
 void yyerror(const char *s)

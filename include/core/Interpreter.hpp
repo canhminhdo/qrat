@@ -21,13 +21,13 @@ public:
 
     void initDDSimulation();
 
-    void initGraphSearch();
+    void initGraphSearch(ExpNode *propExp, Search::Type type, int numSols, int maxDepth);
 
     void execute();
 
     void buildInitialState();
 
-    void initializeSearch();
+    void initializeSearch(int progName, ExpNode *propExp, Search::Type type, int numSols, int maxDepth);
 
 private:
     SyntaxProg *currentProg;

@@ -15,3 +15,7 @@ void lexerCmdMode() {
 void lexerInitialMode() {
     BEGIN(INITIAL);
 }
+
+void lexerCommentMode() {
+    BEGIN(COMMENT_MODE);
+}

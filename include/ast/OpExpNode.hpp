@@ -34,7 +34,10 @@ inline static const char *opExpNames[] = {
     "SUB",
     "MUL",
     "DIV",
-    "MOD"
+    "MOD",
+    "AND",
+    "OR",
+    "NOT",
 };
 
 class OpExpNode : public ExpNode {

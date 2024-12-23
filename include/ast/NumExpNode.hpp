@@ -25,6 +25,8 @@ public:
 
     bool isEqual(const Node &other) const override;
 
+    bool isInt();
+
     int getIntVal() const;
 
     float getFloatVal() const;

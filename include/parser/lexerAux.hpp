@@ -11,4 +11,6 @@ void lexerCmdMode(void);
 
 void lexerInitialMode(void);
 
+void lexerCommentMode(void);
+
 #endif

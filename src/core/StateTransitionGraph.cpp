@@ -7,33 +7,38 @@
 #include "ast/CondExpNode.hpp"
 #include "ast/NumExpNode.hpp"
 
-StateTransitionGraph::StateTransitionGraph(SyntaxProg *currentProg, DDSimulation *ddSim) {
+StateTransitionGraph::StateTransitionGraph(SyntaxProg *currentProg, DDSimulation *ddSim, ExpNode *propExp, Search::Type type, int numSols, int maxDepth) {
     this->currentProg = currentProg;
     this->ddSim = ddSim;
+    this->propExp = propExp;
+    this->searchType = type;
+    this->numSols = numSols;
+    this->depthBound = maxDepth;
 }
 
 void StateTransitionGraph::buildInitialState() {
     auto *initialState = new State(currentProg->getStmSeq()->getHead(), ddSim->getInitialState());
     assert(seenStates.empty());
-    bool inCached = false;
     makeState(initialState);
     savedStateId = 0;
 }
 
 void StateTransitionGraph::search() {
     buildInitialState();
-    int depth = 0;
     std::unordered_set<int> results;
-    // numSols = 1;
-    // depthBound = 1;
-    // searchType = SearchType::ONE_OR_MORE_STEPS;
-    while (results.size() < numSols && depth < depthBound && savedStateId < seenStates.size()) {
+    if (searchType == Type::ARROW_STAR) {
+        checkState(seenStates[0], results);
+    }
+    while (results.size() < numSols && savedStateId < seenStates.size()) {
         State *currentState = seenStates[savedStateId];
-        depth = currentState->depth;
+        if (currentState->depth >= depthBound || (searchType == Type::ARROW_ONE && currentState->depth > 1)) {
+            break;
+        }
         procState(currentState, results);
         savedStateId++;
     }
-    std::cout << "Number of solutions found: " << results.size() << "\n";
+    std::cout << "----------- SEARCH SUMMARY -----------\n";
+    std::cout << "#Solutions: " << results.size() << "\n";
     for (auto stateNr: results) {
         printState(seenStates[stateNr], false);
         // std::cout << "----------- S-Show path: " << stateNr << " -----------\n";
@@ -167,13 +172,34 @@ void StateTransitionGraph::checkState(State *s, std::unordered_set<int> &results
     }
 }
 
+const char* StateTransitionGraph::getSearchType() const {
+    return typeNames[static_cast<int>(searchType)];
+}
+
 void StateTransitionGraph::dump() const {
-    std::cout << "State Transition Graph\n";
-    std::cout << "State ID being considered: " << savedStateId << "\n";
-    std::cout << "-------------------\n";
-    if (seenStates.size() != 0) {
-        printState(seenStates[0]);
+    std::cout << "Initial state: \n";
+    ddSim->getInitialState().printVector<dd::vNode>();
+    std::cout << "Property: \n";
+    propExp->dump();
+    std::cout << "Search type: " << getSearchType() << "\n";
+    std::cout << "Solution bound: ";
+    if (numSols == UNBOUNDED) {
+        std::cout << "unbounded\n";
+    } else {
+        std::cout << numSols << "\n";
     }
+    std::cout << "Depth bound: ";
+    if (depthBound == UNBOUNDED) {
+        std::cout << "unbounded\n";
+    } else {
+        std::cout << depthBound << "\n";
+    }
+    // std::cout << "State Transition Graph\n";
+    // std::cout << "State ID being considered: " << savedStateId << "\n";
+    // std::cout << "-------------------\n";
+    // if (seenStates.size() != 0) {
+    //     printState(seenStates[0]);
+    // }
 }
 
 void StateTransitionGraph::printState(State *s, bool recursive) const {

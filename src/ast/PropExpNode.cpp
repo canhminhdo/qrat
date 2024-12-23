@@ -7,6 +7,10 @@
 #include "core/Token.hpp"
 #include <iostream>
 
+PropExpNode::PropExpNode(Symbol *var, ExpNode *expr) : expr{expr} {
+    vars.push_back(var);
+}
+
 bool PropExpNode::isEqual(const Node &other) const {
     const auto *otherProp = dynamic_cast<const PropExpNode *>(&other);
     if (otherProp == nullptr || vars.size() != otherProp->vars.size() || !expr->isEqual(*otherProp->expr))
@@ -29,8 +33,8 @@ size_t PropExpNode::getHash() const {
 void PropExpNode::dump(bool recursive) {
     std::cout << "P(";
     for (int i = 0; i < vars.size(); i++) {
-        std::cout << Token::name(vars[i]->getName()) << ((i < vars.size() - 1) ? ", " : "");
+        std::cout << Token::name(vars[i]->getName()) << ", ";
     }
-    std::cout << ") = ";
     expr->dump();
+    std::cout << ")\n";
 }
