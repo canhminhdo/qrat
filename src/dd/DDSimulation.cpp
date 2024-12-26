@@ -4,7 +4,10 @@
 
 #include "dd/DDSimulation.hpp"
 
+#include "ast/BoolExpNode.hpp"
+#include "ast/InitExpNode.hpp"
 #include "ast/KetExpNode.hpp"
+#include "ast/OpExpNode.hpp"
 #include "ast/UnitaryStmNode.hpp"
 #include "core/Token.hpp"
 #include "core/VarSymbol.hpp"
@@ -184,14 +187,54 @@ qc::VectorDD DDSimulation::generateRandomState1() {
     return v0;
 }
 
-void DDSimulation::initProperty() {
-    projector = dd->outerProduct(initStateMap[Token::code("q0")], 2);
+void DDSimulation::initProperty(ExpNode *expNode) {
+    if (auto *propNode = dynamic_cast<PropExpNode *>(expNode)) {
+        if (projectorMap.find(propNode) == projectorMap.end()) {
+            projectorMap[propNode] = buildProjector(propNode);
+        }
+        return;
+    }
+    if (auto *opExpNode = dynamic_cast<OpExpNode *>(expNode)) {
+        switch (opExpNode->getType()) {
+            case OpExpType::NOT:
+                initProperty(opExpNode->getRight());
+                break;
+            case OpExpType::AND:
+            case OpExpType::OR:
+                initProperty(opExpNode->getLeft());
+                initProperty(opExpNode->getRight());
+                break;
+            default:
+                throw std::runtime_error("Unsupported property type");
+        }
+    }
+}
+
+qc::MatrixDD DDSimulation::buildProjector(PropExpNode *propNode) {
+    if (propNode->getVars().size() != 1) {
+        throw std::runtime_error("Only support property with one variable");
+    }
+    auto target = qVarMap[propNode->getVars()[0]->getName()];
+    if (auto *ketNode = dynamic_cast<KetExpNode *>(propNode->getExpr())) {
+        if (ketNode->getType() == KetType::KET_ZERO) {
+            auto v0 = dd->makeBasisState(1, std::vector<bool>{false});
+            return dd->outerProduct(v0, target);
+        }
+        if (ketNode->getType() == KetType::KET_ONE) {
+            auto v1 = dd->makeBasisState(1, std::vector<bool>{true});
+            return dd->outerProduct(v1, target);
+        }
+        throw std::runtime_error("Only support initialization with |0>, |1> or initial state");
+    }
+    if (auto *initNode = dynamic_cast<InitExpNode *>(propNode->getExpr())) {
+        return dd->outerProduct(initStateMap[initNode->getVar()->getName()], target);
+    }
+    throw std::runtime_error("Only support projector from |0>, |1> or initial state");
 }
 
 void DDSimulation::initialize() {
     initQVarMap();
     initQState();
-    initProperty();
 }
 
 void DDSimulation::initQVarMap() {
@@ -303,24 +346,47 @@ dd::TwoQubitGateMatrix DDSimulation::getTwoQubitGateMatrix(UnitaryStmNode *stm) 
     }
 }
 
-qc::MatrixDD DDSimulation::getProjector() const {
-    return projector;
-}
-
-bool DDSimulation::test(qc::VectorDD v) {
-    auto v1 = dd->multiply(projector, v);
-    if (v.p == v1.p) {
-        return true;
+bool DDSimulation::test(qc::VectorDD v, ExpNode *expNode) {
+    if (auto *boolExp = dynamic_cast<BoolExpNode *>(expNode)) {
+        if (boolExp->getVal() == BoolType::TRUE) {
+            return true;
+        } else if (boolExp->getVal() == BoolType::FALSE) {
+            return false;
+        } else {
+            throw std::runtime_error("Unsupported boolean expression");
+        }
     }
-    return false;
-    // todo: should check structure similarity during checking fidelity for fast comparison
-    // auto fd = dd->fidelity(v1, v);
-    // std::cout << "Fidelity: " << fd << std::endl;
-    // return std::abs(fd - 1) < config.simulation.fidelityThreshold;
-}
-
-bool DDSimulation::test(qc::VectorDD v1, qc::VectorDD v2) {
-    return v1.p == v2.p;
+    if (auto *propNode = dynamic_cast<PropExpNode *>(expNode)) {
+        auto projector = projectorMap[propNode];
+        auto v1 = dd->multiply(projector, v);
+        if (v.p == v1.p) {
+            return true;
+        }
+        return false;
+        // todo: should check structure similarity during checking fidelity for fast comparison
+        // auto fd = dd->fidelity(v1, v);
+        // std::cout << "Fidelity: " << fd << std::endl;
+        // return std::abs(fd - 1) < config.simulation.fidelityThreshold;
+    }
+    if (auto *opExpNode = dynamic_cast<OpExpNode *>(expNode)) {
+        switch (opExpNode->getType()) {
+            case OpExpType::NOT:
+                return not test(v, opExpNode->getRight());
+            case OpExpType::AND:
+                if (test(v, opExpNode->getLeft())) {
+                    return test(v, opExpNode->getRight());
+                }
+                return false;
+            case OpExpType::OR:
+                if (test(v, opExpNode->getLeft())) {
+                    return true;
+                }
+                return test(v, opExpNode->getRight());
+            default:
+                throw std::runtime_error("Unsupported property type");
+        }
+    }
+    throw std::runtime_error("Unsupported expression type");
 }
 
 void DDSimulation::dump() {
@@ -336,4 +402,10 @@ void DDSimulation::dump() {
     }
     std::cout << "Initial state: " << std::endl;
     initialState.printVector<dd::vNode>();
+    std::cout << "Projectors " << std::endl;
+    for (auto &projector: projectorMap) {
+        std::cout << "Property: " << std::endl;
+        projector.first->dump(true);
+        projector.second.printMatrix<dd::mNode>(nqubits);
+    }
 }

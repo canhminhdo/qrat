@@ -523,8 +523,9 @@ basisProp   :   basis
 int main(int argc, char **argv)
 {
     // reading from a file for testing
-    if (!(yyin = fopen("prog.qw", "r"))) {
-        printf("Could not open the file prog.qw");
+    const char* fileName = "prog-loop.qw";
+    if (!(yyin = fopen(fileName, "r"))) {
+        fprintf(stderr, "Error opening file '%s': %s\n", fileName, strerror(errno));
         return 1;
     }
     yyparse();

@@ -17,9 +17,13 @@ public:
 
     bool isEqual(const Node &other) const override;
 
+    std::vector<Symbol *> getVars() const;
+
+    ExpNode *getExpr() const;
+
     void eval() override {
     }
-    void dump(bool recursive) override;
+    void dump(bool recursive = true) override;
 
 private:
     std::vector<Symbol *> vars;

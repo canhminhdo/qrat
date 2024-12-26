@@ -28,7 +28,7 @@ void Interpreter::initGraphSearch(ExpNode *propExp, Search::Type type, int numSo
 void Interpreter::execute() {
     assert(ddSim != nullptr);
     assert(graphSearch != nullptr);
-    // ddSim->dump();
+    ddSim->dump();
     graphSearch->dump();
     graphSearch->search();
 }

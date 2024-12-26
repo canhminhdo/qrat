@@ -8,13 +8,13 @@
 #include "ir/QuantumComputation.hpp"
 #include "dd/Package_fwd.hpp"
 #include "DDSimulationPackageConfig.hpp"
-#include "core/SymbolTable.hpp"
 #include "core/SyntaxProg.hpp"
-#include "core/VarSymbol.hpp"
 #include "Configuration.hpp"
 #include "ast/MeasExpNode.hpp"
 #include "ast/UnitaryStmNode.hpp"
 #include "dd/DDDefinitions.hpp"
+#include <unordered_map>
+#include "ast/PropExpNode.hpp"
 
 using dd::Qubit;
 using qc::StandardOperation;
@@ -38,7 +38,9 @@ public:
 
     void initQState();
 
-    void initProperty();
+    void initProperty(ExpNode *expNode);
+
+    qc::MatrixDD buildProjector(PropExpNode *propNode);
 
     dd::GateMatrix getGateMatrix(UnitaryStmNode *stm);
 
@@ -50,11 +52,7 @@ public:
 
     qc::VectorDD project(qc::MatrixDD projector, qc::VectorDD v);
 
-    qc::MatrixDD getProjector() const;
-
-    bool test(qc::VectorDD v);
-
-    bool test(qc::VectorDD v1, qc::VectorDD v2);
+    bool test(qc::VectorDD v, ExpNode *expNode);
 
     void dump();
 
@@ -65,9 +63,9 @@ public:
     }
 
 
-///---------------------------------------------------------------------------
-///                            \n Operations \n
-///---------------------------------------------------------------------------
+    ///---------------------------------------------------------------------------
+    ///                            \n Operations \n
+    ///---------------------------------------------------------------------------
 
 #define DEFINE_SINGLE_TARGET_OPERATION(op)                                                  \
     StandardOperation op(const Qubit target) {                                              \
@@ -116,8 +114,21 @@ private:
     using VectorDDMap = std::map<int, qc::VectorDD>;
     VectorDDMap initStateMap;
     qc::VectorDD initialState{};
+
     // for properties
-    qc::MatrixDD projector;
+    struct PropHash {
+        std::size_t operator()(const PropExpNode *node) const {
+            return node->getHash();
+        }
+    };
+
+    struct PropEqual {
+        bool operator()(const PropExpNode *lhs, const PropExpNode *rhs) const {
+            return lhs->isEqual(*rhs);
+        }
+    };
+
+    std::unordered_map<PropExpNode *, qc::MatrixDD, PropHash, PropEqual> projectorMap;
 
     // for random state generation
     Configuration config{};

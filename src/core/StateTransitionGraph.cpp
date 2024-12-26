@@ -14,6 +14,7 @@ StateTransitionGraph::StateTransitionGraph(SyntaxProg *currentProg, DDSimulation
     this->searchType = type;
     this->numSols = numSols;
     this->depthBound = maxDepth;
+    this->ddSim->initProperty(propExp);
 }
 
 void StateTransitionGraph::buildInitialState() {
@@ -31,7 +32,7 @@ void StateTransitionGraph::search() {
     }
     while (results.size() < numSols && savedStateId < seenStates.size()) {
         State *currentState = seenStates[savedStateId];
-        if (currentState->depth >= depthBound || (searchType == Type::ARROW_ONE && currentState->depth > 1)) {
+        if (currentState->depth >= depthBound || (searchType == Type::ARROW_ONE && currentState->depth >= 1)) {
             break;
         }
         procState(currentState, results);
@@ -167,7 +168,7 @@ void StateTransitionGraph::checkState(State *s, std::unordered_set<int> &results
         if (!s->isFinalState())
             return;
     }
-    if (ddSim->test(s->current)) {
+    if (ddSim->test(s->current, propExp)) {
         results.insert(s->stateNr);
     }
 }

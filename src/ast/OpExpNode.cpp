@@ -28,6 +28,10 @@ ExpNode * OpExpNode::getRight() const {
     return right;
 }
 
+OpExpType OpExpNode::getType() const {
+    return type;
+}
+
 const char *OpExpNode::getOpName() {
     return opExpNames[static_cast<int>(type)];
 }

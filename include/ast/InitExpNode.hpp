@@ -17,12 +17,14 @@ public:
 
     size_t getHash() const override;
 
+    Symbol *getVar() const;
+
     void eval() override {
     }
 
     const char *getName() const;
 
-    void dump(bool recursive) override;
+    void dump(bool recursive = true) override;
 
 private:
     Symbol *var;

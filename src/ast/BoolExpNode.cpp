@@ -14,6 +14,10 @@ std::size_t BoolExpNode::getHash() const {
     return HashUtil::combinedHash(seed, std::hash<int>{}(static_cast<int>(val)));
 }
 
+BoolType BoolExpNode::getVal() const {
+    return val;
+}
+
 bool BoolExpNode::isEqual(const Node &other) const {
     auto *otherBool = dynamic_cast<const BoolExpNode *>(&other);
     if (otherBool == nullptr || val != otherBool->val)

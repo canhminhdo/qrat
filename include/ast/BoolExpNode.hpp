@@ -23,12 +23,14 @@ public:
 
     std::size_t getHash() const override;
 
+    BoolType getVal() const;
+
     bool isEqual(const Node &other) const override;
 
     void eval() override {
     }
 
-    void dump(bool recursive) override;
+    void dump(bool recursive = true) override;
 
 private:
     BoolType val;

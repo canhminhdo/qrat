@@ -61,6 +61,8 @@ public:
 
     ExpNode *getRight() const;
 
+    OpExpType getType() const;
+
 private:
     OpExpType type;
     ExpNode *left;

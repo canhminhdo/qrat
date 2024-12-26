@@ -5,6 +5,7 @@ add_subdirectory(
 
 # COPY FILE
 configure_file(prog.qw prog.qw)
+configure_file(prog-loop.qw prog-loop.qw)
 configure_file(lexerAux.cpp lexerAux.cpp)
 
 # FLEX & BISON

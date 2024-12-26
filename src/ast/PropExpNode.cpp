@@ -22,6 +22,14 @@ bool PropExpNode::isEqual(const Node &other) const {
     return true;
 }
 
+std::vector<Symbol *> PropExpNode::getVars() const {
+    return vars;
+}
+
+ExpNode * PropExpNode::getExpr() const {
+    return expr;
+}
+
 size_t PropExpNode::getHash() const {
     auto hash = HashUtil::combinedHash(seed, std::hash<ExpNode *>{}(expr));
     for (auto var: vars) {
