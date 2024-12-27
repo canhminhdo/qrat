@@ -20,7 +20,6 @@
 #include "ast/StmNode.hpp"
 #include "ast/StmSeq.hpp"
 #include "ast/SkipStmNode.hpp"
-#include "ast/GateExpNode.hpp"
 #include "ast/UnitaryStmNode.hpp"
 #include "ast/MeasExpNode.hpp"
 #include "ast/CondExpNode.hpp"
@@ -29,8 +28,7 @@
 #include "ast/BoolExpNode.hpp"
 #include "ast/InitExpNode.hpp"
 #include "ast/PropExpNode.hpp"
-
-#include "core/Gate.hpp"
+#include "dd/DDOperation.hpp"
 
 DeclMode declFlag = NONE_DECL;
 
@@ -41,6 +39,9 @@ void lexerIdMode(void);
 #define RETURN(token) \
   { yylval.yyToken.tokenize(yytext, yylineno); return (token); }
 %}
+
+/* reusable patterns */
+SingleTargetOP  I|X|Y|Z|H|S|SDB|T|TDG|V|VDG|SX|SXDG
 
 /* start conditions */
 %s ID_MODE
@@ -90,11 +91,11 @@ void lexerIdMode(void);
 "|0>"		{ return KW_KET_ZERO; }
 "|1>"		{ return KW_KET_ONE; }
 "random"	{ return KW_KET_RANDOM; }
-"X"		    { return KW_GATE_X; }
-"Y"		    { return KW_GATE_Y; }
-"Z"		    { return KW_GATE_Z; }
-"H"		    { return KW_GATE_H; }
-"CX"		{ return KW_GATE_CX; }
+
+{SingleTargetOP}        { Token token; token.tokenize(yytext, yylineno); yylval.gateInfo = {token, SINGLE_TARGET_OP}; return KW_SINGLE_TARGET_OP; }
+"C"{SingleTargetOP}     { Token token; token.tokenize(yytext, yylineno); yylval.gateInfo = {token, SINGLE_TARGET_COP}; return KW_SINGLE_TARGET_COP; }
+"MC"{SingleTargetOP}    { Token token; token.tokenize(yytext, yylineno); yylval.gateInfo = {token, SINGLE_TARGET_MCOP}; return KW_SINGLE_TARGET_MCOP; }
+
 "M"         { return KW_MEASURE; }
 [_a-zA-Z]([_a-zA-Z0-9])*    {
                 // printf("identifier: %s at line %d\n", yytext, yylineno);

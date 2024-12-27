@@ -19,7 +19,6 @@
 #include "ast/StmNode.hpp"
 #include "ast/StmSeq.hpp"
 #include "ast/SkipStmNode.hpp"
-#include "ast/GateExpNode.hpp"
 #include "ast/UnitaryStmNode.hpp"
 #include "ast/MeasExpNode.hpp"
 #include "ast/CondExpNode.hpp"
@@ -28,8 +27,8 @@
 #include "ast/BoolExpNode.hpp"
 #include "ast/InitExpNode.hpp"
 #include "ast/PropExpNode.hpp"
+#include "dd/DDOperation.hpp"
 
-#include "core/Gate.hpp"
 #include "utility/macros.hpp"
 
 // for interpreter and programs
@@ -53,12 +52,12 @@ extern int yylineno;
     Token yyToken;
     int codeNr; // the code of the string encoded in the string table
     Type type; // type of variables and constants
+    GateInfo gateInfo; // type of quantum operations
     TokenList *yyTokenList;
     Node *node;
     ExpNode *expr;
     StmNode *stm;
     StmSeq *stmSeq;
-    Gate* gate;
     Search::Type searchType;
 }
 
@@ -75,7 +74,7 @@ extern int yylineno;
 %token KW_KET_ONE
 %token KW_KET_RANDOM
 %token INTEGER RATIONAL REAL
-%token KW_GATE_X KW_GATE_Y KW_GATE_Z KW_GATE_H KW_GATE_I KW_GATE_CX
+%token KW_SINGLE_TARGET_OP KW_SINGLE_TARGET_COP KW_SINGLE_TARGET_MCOP
 %token KW_MEASURE
 %token KW_EQUAL
 /* for commands */
@@ -87,6 +86,7 @@ extern int yylineno;
 /* types for nonterminal sysmbols */
 %nterm <yyToken> token varName
 %nterm <type> typeName
+%nterm <gateInfo> operation
 %nterm <yyTokenList> varNameList
 /*
 %nterm <expr> expression number oneQubit basis measure condExp
@@ -95,7 +95,6 @@ extern int yylineno;
 %nterm <expr> expression number oneQubit basis measure condExp property basisProp
 %nterm <stm> stm unitaryStm condStm loopStm
 %nterm <stmSeq> stmList
-%nterm <gate> gate
 %nterm <searchType> arrow
 /* start symbol */
 %start top
@@ -295,32 +294,16 @@ stm :   skip
 /* skip */
 skip    :   KW_SKIP expectedSemi;
 /* unitary transformation */
-unitaryStm  :   varNameList KW_ASSIGN gate '[' varNameList ']' expectedSemi
+
+unitaryStm  :   varNameList KW_ASSIGN operation '[' varNameList ']' expectedSemi
                     {
-                        $$ = new UnitaryStmNode(currentSyntaxProg, $1, $3, $5);
+                        $$ = DDOperation::makeOperation(currentSyntaxProg, $1, $3, $5);
                     }
             ;
-gate    :   KW_GATE_X
-                {
-                    $$ = currentSyntaxProg->makeGate(new Gate(GateType::X));
-                }
-        |   KW_GATE_Y
-                {
-                    $$ = currentSyntaxProg->makeGate(new Gate(GateType::Y));
-                }
-        |   KW_GATE_Z
-                {
-                    $$ = currentSyntaxProg->makeGate(new Gate(GateType::Z));
-                }
-        |   KW_GATE_H
-                {
-                    $$ = currentSyntaxProg->makeGate(new Gate(GateType::H));
-                }
-        |   KW_GATE_CX
-                {
-                    $$ = currentSyntaxProg->makeGate(new Gate(GateType::CX));
-                }
-        ;
+operation   :   KW_SINGLE_TARGET_OP
+            |   KW_SINGLE_TARGET_COP
+            |   KW_SINGLE_TARGET_MCOP
+            ;
 /* conditional statement */
 condStm :   KW_IF condExp KW_THEN stmList KW_ELSE stmList KW_FI expectedSemi
                 {
@@ -523,7 +506,7 @@ basisProp   :   basis
 int main(int argc, char **argv)
 {
     // reading from a file for testing
-    const char* fileName = "prog-loop.qw";
+    const char* fileName = "prog.qw";
     if (!(yyin = fopen(fileName, "r"))) {
         fprintf(stderr, "Error opening file '%s': %s\n", fileName, strerror(errno));
         return 1;

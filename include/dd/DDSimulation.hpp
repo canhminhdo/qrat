@@ -40,11 +40,13 @@ public:
 
     void initProperty(ExpNode *expNode);
 
+    qc::Controls buildControls(UnitaryStmNode *stm);
+
+    qc::Targets buildTargets(UnitaryStmNode *stm);
+
+    qc::Qubit getQubit(Symbol *symbol);
+
     qc::MatrixDD buildProjector(PropExpNode *propNode);
-
-    dd::GateMatrix getGateMatrix(UnitaryStmNode *stm);
-
-    dd::TwoQubitGateMatrix getTwoQubitGateMatrix(UnitaryStmNode *stm);
 
     qc::VectorDD applyGate(UnitaryStmNode *stm, qc::VectorDD v);
 

@@ -53,9 +53,7 @@ add_executable(
     ../ast/OpExpNode.cpp
     ../ast/ConstExpNode.cpp
     ../ast/NumExpNode.cpp
-    ../ast/GateExpNode.cpp
     ../ast/UnitaryStmNode.cpp
-    ../core/Gate.cpp
     ../ast/StmSeq.cpp
     ../ast/SkipStmNode.cpp
     ../ast/MeasExpNode.cpp
@@ -64,10 +62,10 @@ add_executable(
     ../ast/WhileStmNode.cpp
     ../dd/DDSimulation.cpp
     ../ast/CachedNode.cpp
-        ../ast/EndStmNode.cpp
+    ../ast/EndStmNode.cpp
     ../core/StateTransitionGraph.cpp
-        ../ast/PropExpNode.cpp
-        ../ast/InitExpNode.cpp
+    ../ast/PropExpNode.cpp
+    ../ast/InitExpNode.cpp
     ../ast/BoolExpNode.cpp
 )
 

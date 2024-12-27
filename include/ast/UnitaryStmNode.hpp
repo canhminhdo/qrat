@@ -5,31 +5,35 @@
 #ifndef UNITARYSTMNODE_HPP
 #define UNITARYSTMNODE_HPP
 
-#include "ast/GateExpNode.hpp"
 #include "ast/StmNode.hpp"
-#include "core/Gate.hpp"
 #include "core/SyntaxProg.hpp"
-#include "core/Token.hpp"
 #include "core/Symbol.hpp"
+#include "ir/operations/OpType.hpp"
 
 class UnitaryStmNode : public StmNode {
 public:
-    UnitaryStmNode(SyntaxProg *currentSyntaxProg, TokenList *vars1, Gate *gate, TokenList *vars2);
+    UnitaryStmNode(int name, qc::OpType type, std::vector<Symbol *> controls, std::vector<Symbol *> targets);
 
     ~UnitaryStmNode() override = default;
-
-    GateExpNode *getGateExp() const;
-
-    const std::vector<Symbol *>& getVars() const;
 
     void eval() override {
     };
 
+    std::vector<Symbol *> getControls() const;
+
+    std::vector<Symbol *> getTargets() const;
+
+    qc::OpType getOpType() const;
+
+    int getName() const;
+
     void dump(bool recursive = true) override;
 
 private:
-    std::vector<Symbol *> vars;
-    GateExpNode *gateExp;
+    int name;
+    qc::OpType type;
+    std::vector<Symbol *> controls;
+    std::vector<Symbol *> targets;
 };
 
 #endif //UNITARYSTMNODE_HPP

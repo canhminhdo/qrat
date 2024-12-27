@@ -41,8 +41,6 @@ public:
 
     ExpNode *makeNode(ExpNode *node);
 
-    Gate *makeGate(Gate *gate);
-
     std::size_t getNqubits() const;
 
     std::vector<VarSymbol *> getVars() const;

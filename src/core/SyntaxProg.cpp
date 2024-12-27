@@ -100,10 +100,6 @@ ExpNode *SyntaxProg::makeNode(ExpNode *node) {
     return cachedNodes.makeNode(node);
 }
 
-Gate *SyntaxProg::makeGate(Gate *gate) {
-    return cachedNodes.makeGate(gate);
-}
-
 std::size_t SyntaxProg::getNqubits() const {
     return nqubits;
 }
