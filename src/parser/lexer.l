@@ -30,6 +30,9 @@
 #include "ast/PropExpNode.hpp"
 #include "dd/DDOperation.hpp"
 
+#include "Definitions.hpp"
+#include <vector>
+
 DeclMode declFlag = NONE_DECL;
 
 // bison generated token file
@@ -41,7 +44,13 @@ void lexerIdMode(void);
 %}
 
 /* reusable patterns */
-SingleTargetOP  I|X|Y|Z|H|S|SDB|T|TDG|V|VDG|SX|SXDG
+SingleTargetOp                  I|X|Y|Z|H|S|Sdg|T|Tdg|V|Vdg|SX|SXdg
+SingleTargetOpWithOneParam      P|RX|RY|RZ
+SingleTargetOpWithTwoParam      U2
+SingleTargetOpWithThreeParam    U3
+TwoTargetOp                     SWAP|iSWAP|iSWAPdg|Peres|Peresdg|DCX|ECR
+TwoTargetOpWithOneParam         RXX|RYY|RZZ|RZX
+TwoTargetOpWithTwoParam         XXminusYY|XXplusYY
 
 /* start conditions */
 %s ID_MODE
@@ -92,11 +101,41 @@ SingleTargetOP  I|X|Y|Z|H|S|SDB|T|TDG|V|VDG|SX|SXDG
 "|1>"		{ return KW_KET_ONE; }
 "random"	{ return KW_KET_RANDOM; }
 
-{SingleTargetOP}        { Token token; token.tokenize(yytext, yylineno); yylval.gateInfo = {token, SINGLE_TARGET_OP}; return KW_SINGLE_TARGET_OP; }
-"C"{SingleTargetOP}     { Token token; token.tokenize(yytext, yylineno); yylval.gateInfo = {token, SINGLE_TARGET_COP}; return KW_SINGLE_TARGET_COP; }
-"MC"{SingleTargetOP}    { Token token; token.tokenize(yytext, yylineno); yylval.gateInfo = {token, SINGLE_TARGET_MCOP}; return KW_SINGLE_TARGET_MCOP; }
+{SingleTargetOp}        { Token token; token.tokenize(yytext, yylineno); yylval.gateInfo = {token, SINGLE_TARGET_OP}; return KW_SINGLE_TARGET_OP; }
+"C"{SingleTargetOp}     { Token token; token.tokenize(yytext, yylineno); yylval.gateInfo = {token, SINGLE_TARGET_COP}; return KW_SINGLE_TARGET_COP; }
+"MC"{SingleTargetOp}    { Token token; token.tokenize(yytext, yylineno); yylval.gateInfo = {token, SINGLE_TARGET_MCOP}; return KW_SINGLE_TARGET_MCOP; }
+
+{SingleTargetOpWithOneParam}        { Token token; token.tokenize(yytext, yylineno); yylval.gateInfo = {token, SINGLE_TARGET_OP_WITH_ONE_PARAM}; return KW_SINGLE_TARGET_OP_WITH_ONE_PARAM; }
+"C"{SingleTargetOpWithOneParam}     { Token token; token.tokenize(yytext, yylineno); yylval.gateInfo = {token, SINGLE_TARGET_COP_WITH_ONE_PARAM}; return KW_SINGLE_TARGET_COP_WITH_ONE_PARAM; }
+"MC"{SingleTargetOpWithOneParam}    { Token token; token.tokenize(yytext, yylineno); yylval.gateInfo = {token, SINGLE_TARGET_MCOP_WITH_ONE_PARAM}; return KW_SINGLE_TARGET_MCOP_WITH_ONE_PARAM; }
+
+SingleTargetOpWithTwoParam          { Token token; token.tokenize(yytext, yylineno); yylval.gateInfo = {token, SINGLE_TARGET_OP_WITH_TWO_PARAM}; return KW_SINGLE_TARGET_OP_WITH_TWO_PARAM; }
+"C"{SingleTargetOpWithTwoParam}     { Token token; token.tokenize(yytext, yylineno); yylval.gateInfo = {token, SINGLE_TARGET_COP_WITH_TWO_PARAM}; return KW_SINGLE_TARGET_COP_WITH_TWO_PARAM; }
+"MC"{SingleTargetOpWithTwoParam}    { Token token; token.tokenize(yytext, yylineno); yylval.gateInfo = {token, SINGLE_TARGET_MCOP_WITH_TWO_PARAM}; return KW_SINGLE_TARGET_MCOP_WITH_TWO_PARAM; }
+
+{SingleTargetOpWithThreeParam}      { Token token; token.tokenize(yytext, yylineno); yylval.gateInfo = {token, SINGLE_TARGET_OP_WITH_THREE_PARAM}; return KW_SINGLE_TARGET_OP_WITH_THREE_PARAM; }
+"C"{SingleTargetOpWithThreeParam}   { Token token; token.tokenize(yytext, yylineno); yylval.gateInfo = {token, SINGLE_TARGET_COP_WITH_THREE_PARAM}; return KW_SINGLE_TARGET_COP_WITH_THREE_PARAM; }
+"MC"{SingleTargetOpWithThreeParam}  { Token token; token.tokenize(yytext, yylineno); yylval.gateInfo = {token, SINGLE_TARGET_MCOP_WITH_THREE_PARAM}; return KW_SINGLE_TARGET_MCOP_WITH_THREE_PARAM; }
+
+{TwoTargetOp}           { Token token; token.tokenize(yytext, yylineno); yylval.gateInfo = {token, TWO_TARGET_OP}; return KW_TWO_TARGET_OP; }
+"C"{TwoTargetOp}        { Token token; token.tokenize(yytext, yylineno); yylval.gateInfo = {token, TWO_TARGET_COP}; return KW_TWO_TARGET_COP; }
+"MC"{TwoTargetOp}       { Token token; token.tokenize(yytext, yylineno); yylval.gateInfo = {token, TWO_TARGET_MCOP}; return KW_TWO_TARGET_MCOP; }
+
+{TwoTargetOpWithOneParam}       { Token token; token.tokenize(yytext, yylineno); yylval.gateInfo = {token, TWO_TARGET_OP_WITH_ONE_PARAM}; return KW_TWO_TARGET_OP_WITH_ONE_PARAM; }
+"C"{TwoTargetOpWithOneParam}    { Token token; token.tokenize(yytext, yylineno); yylval.gateInfo = {token, TWO_TARGET_COP_WITH_ONE_PARAM}; return KW_TWO_TARGET_COP_WITH_ONE_PARAM; }
+"MC"{TwoTargetOpWithOneParam}   { Token token; token.tokenize(yytext, yylineno); yylval.gateInfo = {token, TWO_TARGET_MCOP_WITH_ONE_PARAM}; return KW_TWO_TARGET_MCOP_WITH_ONE_PARAM; }
+
+{TwoTargetOpWithTwoParam}       { Token token; token.tokenize(yytext, yylineno); yylval.gateInfo = {token, TWO_TARGET_OP_WITH_TWO_PARAM}; return KW_TWO_TARGET_OP_WITH_TWO_PARAM; }
+"C"{TwoTargetOpWithTwoParam}    { Token token; token.tokenize(yytext, yylineno); yylval.gateInfo = {token, TWO_TARGET_COP_WITH_TWO_PARAM}; return KW_TWO_TARGET_COP_WITH_TWO_PARAM; }
+"MC"{TwoTargetOpWithTwoParam}   { Token token; token.tokenize(yytext, yylineno); yylval.gateInfo = {token, TWO_TARGET_MCOP_WITH_TWO_PARAM}; return KW_TWO_TARGET_MCOP_WITH_TWO_PARAM; }
 
 "M"         { return KW_MEASURE; }
+PI|pi     { return KW_PI; }
+PI2|pi2   { return KW_PI_2; }
+PI4|pi4   { return KW_PI_4; }
+TAU|tau   { return KW_TAU; }
+e         { return KW_E; }
+
 [_a-zA-Z]([_a-zA-Z0-9])*    {
                 // printf("identifier: %s at line %d\n", yytext, yylineno);
                 // yylval.codeNr = stringTable.encode(yytext);

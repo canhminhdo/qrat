@@ -9,10 +9,11 @@
 #include "core/SyntaxProg.hpp"
 #include "core/Symbol.hpp"
 #include "ir/operations/OpType.hpp"
+#include "Definitions.hpp"
 
 class UnitaryStmNode : public StmNode {
 public:
-    UnitaryStmNode(int name, qc::OpType type, std::vector<Symbol *> controls, std::vector<Symbol *> targets);
+    UnitaryStmNode(int name, qc::OpType type, std::vector<Symbol *> controls, std::vector<Symbol *> targets, std::vector<qc::fp> parameters = {});
 
     ~UnitaryStmNode() override = default;
 
@@ -22,6 +23,8 @@ public:
     std::vector<Symbol *> getControls() const;
 
     std::vector<Symbol *> getTargets() const;
+
+    std::vector<qc::fp> getParams() const;
 
     qc::OpType getOpType() const;
 
@@ -34,6 +37,7 @@ private:
     qc::OpType type;
     std::vector<Symbol *> controls;
     std::vector<Symbol *> targets;
+    std::vector<qc::fp> parameters;
 };
 
 #endif //UNITARYSTMNODE_HPP

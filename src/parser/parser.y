@@ -29,6 +29,8 @@
 #include "ast/PropExpNode.hpp"
 #include "dd/DDOperation.hpp"
 
+#include "Definitions.hpp"
+#include <vector>
 #include "utility/macros.hpp"
 
 // for interpreter and programs
@@ -59,6 +61,8 @@ extern int yylineno;
     StmNode *stm;
     StmSeq *stmSeq;
     Search::Type searchType;
+    qc::fp param;
+    std::vector<qc::fp> *params;
 }
 
 /* declare tokens */
@@ -74,7 +78,14 @@ extern int yylineno;
 %token KW_KET_ONE
 %token KW_KET_RANDOM
 %token INTEGER RATIONAL REAL
-%token KW_SINGLE_TARGET_OP KW_SINGLE_TARGET_COP KW_SINGLE_TARGET_MCOP
+%token KW_PI KW_PI_2 KW_PI_4 KW_TAU KW_E
+%token <gateInfo> KW_SINGLE_TARGET_OP KW_SINGLE_TARGET_COP KW_SINGLE_TARGET_MCOP
+%token <gateInfo> KW_SINGLE_TARGET_OP_WITH_ONE_PARAM KW_SINGLE_TARGET_COP_WITH_ONE_PARAM KW_SINGLE_TARGET_MCOP_WITH_ONE_PARAM
+%token <gateInfo> KW_SINGLE_TARGET_OP_WITH_TWO_PARAM KW_SINGLE_TARGET_COP_WITH_TWO_PARAM KW_SINGLE_TARGET_MCOP_WITH_TWO_PARAM
+%token <gateInfo> KW_SINGLE_TARGET_OP_WITH_THREE_PARAM KW_SINGLE_TARGET_COP_WITH_THREE_PARAM KW_SINGLE_TARGET_MCOP_WITH_THREE_PARAM
+%token <gateInfo> KW_TWO_TARGET_OP KW_TWO_TARGET_COP KW_TWO_TARGET_MCOP
+%token <gateInfo> KW_TWO_TARGET_OP_WITH_ONE_PARAM KW_TWO_TARGET_COP_WITH_ONE_PARAM KW_TWO_TARGET_MCOP_WITH_ONE_PARAM
+%token <gateInfo> KW_TWO_TARGET_OP_WITH_TWO_PARAM KW_TWO_TARGET_COP_WITH_TWO_PARAM KW_TWO_TARGET_MCOP_WITH_TWO_PARAM
 %token KW_MEASURE
 %token KW_EQUAL
 /* for commands */
@@ -86,7 +97,7 @@ extern int yylineno;
 /* types for nonterminal sysmbols */
 %nterm <yyToken> token varName
 %nterm <type> typeName
-%nterm <gateInfo> operation
+%nterm <gateInfo> operation operationWithParams
 %nterm <yyTokenList> varNameList
 /*
 %nterm <expr> expression number oneQubit basis measure condExp
@@ -96,6 +107,8 @@ extern int yylineno;
 %nterm <stm> stm unitaryStm condStm loopStm
 %nterm <stmSeq> stmList
 %nterm <searchType> arrow
+%nterm <param> param
+%nterm <params> params
 /* start symbol */
 %start top
 
@@ -299,11 +312,62 @@ unitaryStm  :   varNameList KW_ASSIGN operation '[' varNameList ']' expectedSemi
                     {
                         $$ = DDOperation::makeOperation(currentSyntaxProg, $1, $3, $5);
                     }
+            |   varNameList KW_ASSIGN operationWithParams '[' varNameList ']' '(' params ')' expectedSemi
+                    {
+                        $$ = DDOperation::makeOperation(currentSyntaxProg, $1, $3, $5, $8);
+                        delete $8;
+                    }
             ;
 operation   :   KW_SINGLE_TARGET_OP
             |   KW_SINGLE_TARGET_COP
             |   KW_SINGLE_TARGET_MCOP
+            |   KW_TWO_TARGET_OP
+            |   KW_TWO_TARGET_COP
+            |   KW_TWO_TARGET_MCOP
             ;
+
+operationWithParams :   KW_SINGLE_TARGET_OP_WITH_ONE_PARAM
+                    |   KW_SINGLE_TARGET_COP_WITH_ONE_PARAM
+                    |   KW_SINGLE_TARGET_MCOP_WITH_ONE_PARAM
+                    |   KW_TWO_TARGET_OP_WITH_ONE_PARAM
+                    |   KW_TWO_TARGET_COP_WITH_ONE_PARAM
+                    |   KW_SINGLE_TARGET_OP_WITH_TWO_PARAM
+                    |   KW_SINGLE_TARGET_COP_WITH_TWO_PARAM
+                    |   KW_SINGLE_TARGET_MCOP_WITH_TWO_PARAM
+                    |   KW_TWO_TARGET_OP_WITH_TWO_PARAM
+                    |   KW_TWO_TARGET_COP_WITH_TWO_PARAM
+                    |   KW_TWO_TARGET_MCOP_WITH_TWO_PARAM
+                    |   KW_SINGLE_TARGET_OP_WITH_THREE_PARAM
+                    |   KW_SINGLE_TARGET_COP_WITH_THREE_PARAM
+                    |   KW_SINGLE_TARGET_MCOP_WITH_THREE_PARAM
+                    ;
+
+params  :   param
+                {
+                    $$ = new std::vector<qc::fp>();
+                    $$->push_back($1);
+                }
+        |   params ',' param
+                {
+                    $1->push_back($3);
+                    $$ = $1;
+                }
+        ;
+param   :   KW_PI      {   $$ = qc::PI; }
+        |   KW_PI_2    {   $$ = qc::PI_2; }
+        |   KW_PI_4    {   $$ = qc::PI_4; }
+        |   KW_TAU     {   $$ = qc::TAU; }
+        |   KW_E       {   $$ = qc::E; }
+        |   number
+                {
+                    if (NUM_EXP_NODE($1)->isInt()) {
+                        $$ = NUM_EXP_NODE($1)->getIntVal();
+                    } else {
+                        $$ = NUM_EXP_NODE($1)->getFloatVal();
+                    }
+                }
+        ;
+
 /* conditional statement */
 condStm :   KW_IF condExp KW_THEN stmList KW_ELSE stmList KW_FI expectedSemi
                 {

@@ -310,7 +310,8 @@ void DDSimulation::initQState() {
 qc::VectorDD DDSimulation::applyGate(UnitaryStmNode *stm, qc::VectorDD v) {
     auto controls = buildControls(stm);
     qc::Targets targets = buildTargets(stm);
-    qc::StandardOperation op = StandardOperation(controls, targets, stm->getOpType());
+    auto params = stm->getParams();
+    qc::StandardOperation op = StandardOperation(controls, targets, stm->getOpType(), params);
     if (targets.size() == 1) {
         auto gate = dd::getStandardOperationDD<DDSimulationPackageConfig>(&op, *dd, controls, targets.front(), false);
         auto v1 = dd->multiply(gate, v);
@@ -330,6 +331,12 @@ std::pair<qc::VectorDD, qc::VectorDD> DDSimulation::measure(MeasExpNode *expr, q
     auto v0 = dd->measureOneQubit(v, target, true);
     auto v1 = dd->measureOneQubit(v, target, false);
     return {v0, v1};
+}
+
+std::tuple<qc::VectorDD, qc::fp, qc::VectorDD, qc::fp> DDSimulation::measureWithProb(MeasExpNode *expr, qc::VectorDD v) {
+    auto var = expr->getVar();
+    auto target = qVarMap[var->getName()];
+    return dd->measureOneQubit(v, target);
 }
 
 qc::VectorDD DDSimulation::project(qc::MatrixDD projector, qc::VectorDD v) {

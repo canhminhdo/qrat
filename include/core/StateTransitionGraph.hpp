@@ -27,9 +27,10 @@ public:
         int parent;
         std::vector<int> nextStates;
         int depth{0};
+        qc::fp prob{1.0};
 
-        State(StmNode *pc, qc::VectorDD current, int parent = -1, int depth = 0)
-            : pc{pc}, current{std::move(current)}, parent{parent}, depth{depth} {
+        State(StmNode *pc, qc::VectorDD current, int parent = -1, int depth = 0, qc::fp prob = 1.0)
+            : pc{pc}, current{std::move(current)}, parent{parent}, depth{depth}, prob{prob} {
         }
 
         bool isFinalState() {
@@ -74,7 +75,7 @@ public:
 
     void procWhileStm(WhileStmNode *whileStm, State *currentState, StmNode *nextStm, std::unordered_set<int> &results);
 
-    void procCondBranch(State *currentState, StmNode *nextStm, qc::VectorDD &v, std::unordered_set<int> &results);
+    void procCondBranch(State *currentState, StmNode *nextStm, qc::VectorDD &v, qc::fp prob, std::unordered_set<int> &results);
 
     StmNode *getNextStatement(StmNode *stm);
 

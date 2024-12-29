@@ -5,6 +5,8 @@
 #ifndef CONFIGURATION_HPP
 #define CONFIGURATION_HPP
 
+#include <cstddef>
+
 class Configuration {
 public:
     // configuration options for the simulation scheme

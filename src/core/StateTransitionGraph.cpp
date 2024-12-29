@@ -77,7 +77,7 @@ StmNode *StateTransitionGraph::getNextStatement(StmNode *stm) {
 
 void StateTransitionGraph::procSkipStm(SkipStmNode *skipStm, State *currentState, StmNode *nextStm, std::unordered_set<int> &results) {
     auto [newState, inCache] = makeState(new State(nextStm, currentState->current, currentState->stateNr,
-                                                   currentState->depth + 1));
+                                                   currentState->depth + 1, currentState->prob));
     currentState->nextStates.push_back(newState->stateNr);
     if (!inCache) {
         checkState(newState, results);
@@ -88,7 +88,7 @@ void StateTransitionGraph::procUnitaryStm(UnitaryStmNode *unitaryStm, State *cur
                                              std::unordered_set<int> &results) {
     auto v = currentState->current;
     auto v1 = ddSim->applyGate(unitaryStm, v);
-    auto [newState, inCache] = makeState(new State(nextStm, v1, currentState->stateNr, currentState->depth + 1));
+    auto [newState, inCache] = makeState(new State(nextStm, v1, currentState->stateNr, currentState->depth + 1, currentState->prob));
     currentState->nextStates.push_back(newState->stateNr);
     if (!inCache) {
         checkState(newState, results);
@@ -101,19 +101,19 @@ void StateTransitionGraph::procCondStm(CondStmNode *condStm, State *currentState
     auto *numExp = dynamic_cast<NumExpNode *>(condExp->getRight());
     assert(condExp != nullptr && measExp != nullptr && numExp != nullptr);
     auto isZero = numExp->isZero();
-    auto [v0, v1] = ddSim->measure(measExp, currentState->current);
+    auto [v0, pzero, v1, pone] = ddSim->measureWithProb(measExp, currentState->current);
 
-    procCondBranch(currentState, isZero ? condStm->getThenStm()->getHead() : condStm->getElseStm()->getHead(), v0, results);
+    procCondBranch(currentState, isZero ? condStm->getThenStm()->getHead() : condStm->getElseStm()->getHead(), v0, pzero, results);
     if (results.size() < numSols) {
-        procCondBranch(currentState, isZero ? condStm->getElseStm()->getHead() : condStm->getThenStm()->getHead(), v1, results);
+        procCondBranch(currentState, isZero ? condStm->getElseStm()->getHead() : condStm->getThenStm()->getHead(), v1, pone, results);
     }
 }
 
-void StateTransitionGraph::procCondBranch(State *currentState, StmNode *nextStm, qc::VectorDD &v,
+void StateTransitionGraph::procCondBranch(State *currentState, StmNode *nextStm, qc::VectorDD &v, qc::fp prob,
                                              std::unordered_set<int> &results) {
     if (!v.isZeroTerminal()) {
         bool inCache = false;
-        auto [newState, cache] = makeState(new State(nextStm, v, currentState->stateNr, currentState->depth + 1));
+        auto [newState, cache] = makeState(new State(nextStm, v, currentState->stateNr, currentState->depth + 1, currentState->prob * prob));
         currentState->nextStates.push_back(newState->stateNr);
         if (!inCache) {
             checkState(newState, results);
@@ -128,10 +128,10 @@ void StateTransitionGraph::procWhileStm(WhileStmNode *whileStm, State *currentSt
     auto *numExp = dynamic_cast<NumExpNode *>(condExp->getRight());
     assert(condExp != nullptr && measExp != nullptr && numExp != nullptr);
     auto isZero = numExp->isZero();
-    auto [v0, v1] = ddSim->measure(measExp, currentState->current);
-    procCondBranch(currentState, isZero ? whileStm->getBody()->getHead() : nextStm, v0, results);
+    auto [v0, pzero, v1, pone] = ddSim->measureWithProb(measExp, currentState->current);
+    procCondBranch(currentState, isZero ? whileStm->getBody()->getHead() : nextStm, v0, pzero, results);
     if (results.size() < numSols) {
-        procCondBranch(currentState, isZero ? nextStm : whileStm->getBody()->getHead(), v1, results);
+        procCondBranch(currentState, isZero ? nextStm : whileStm->getBody()->getHead(), v1, pone, results);
     }
 }
 
@@ -213,6 +213,7 @@ void StateTransitionGraph::printState(State *s, bool recursive) const {
     std::cout << "[Program Counter]: ";
     s->pc->dump(false);
     std::cout << "[Depth]: " << s->depth << "\n";
+    std::cout << "[Probability]: " << s->prob << "\n";
     std::cout << "[Quantum State]: \n";
     s->current.printVector<dd::vNode>();
     std::cout << "[Next States]: ";

@@ -2,12 +2,12 @@
 // Created by CanhDo on 2024/11/20.
 //
 
-#include <iostream>
 #include "ast/UnitaryStmNode.hpp"
+#include <iostream>
 
 UnitaryStmNode::UnitaryStmNode(int name, qc::OpType type, std::vector<Symbol *> controls,
-                               std::vector<Symbol *> targets) : name{name}, type{type}, controls{controls},
-                                                                targets{targets} {
+                               std::vector<Symbol *> targets, std::vector<qc::fp> parameters) : name{name}, type{type}, controls{controls},
+                                                                                                targets{targets}, parameters{parameters} {
 }
 
 std::vector<Symbol *> UnitaryStmNode::getControls() const {
@@ -16,6 +16,10 @@ std::vector<Symbol *> UnitaryStmNode::getControls() const {
 
 std::vector<Symbol *> UnitaryStmNode::getTargets() const {
     return targets;
+}
+
+std::vector<qc::fp> UnitaryStmNode::getParams() const {
+    return parameters;
 }
 
 qc::OpType UnitaryStmNode::getOpType() const {

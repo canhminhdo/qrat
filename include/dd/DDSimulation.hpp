@@ -5,22 +5,22 @@
 #ifndef DDSIMULATION_HPP
 #define DDSIMULATION_HPP
 
-#include "ir/QuantumComputation.hpp"
-#include "dd/Package_fwd.hpp"
-#include "DDSimulationPackageConfig.hpp"
-#include "core/SyntaxProg.hpp"
 #include "Configuration.hpp"
+#include "DDSimulationPackageConfig.hpp"
 #include "ast/MeasExpNode.hpp"
-#include "ast/UnitaryStmNode.hpp"
-#include "dd/DDDefinitions.hpp"
-#include <unordered_map>
 #include "ast/PropExpNode.hpp"
+#include "ast/UnitaryStmNode.hpp"
+#include "core/SyntaxProg.hpp"
+#include "dd/DDDefinitions.hpp"
+#include "dd/Package_fwd.hpp"
+#include "ir/QuantumComputation.hpp"
+#include <unordered_map>
 
-using dd::Qubit;
-using qc::StandardOperation;
 using qc::Control;
 using qc::Controls;
 using qc::OP_NAME_TO_TYPE;
+using qc::Qubit;
+using qc::StandardOperation;
 
 class DDSimulation {
 public:
@@ -52,6 +52,8 @@ public:
 
     std::pair<qc::VectorDD, qc::VectorDD> measure(MeasExpNode *expr, qc::VectorDD v);
 
+    std::tuple<qc::VectorDD, qc::fp, qc::VectorDD, qc::fp> measureWithProb(MeasExpNode *expr, qc::VectorDD v);
+
     qc::VectorDD project(qc::MatrixDD projector, qc::VectorDD v);
 
     bool test(qc::VectorDD v, ExpNode *expNode);
@@ -69,16 +71,16 @@ public:
     ///                            \n Operations \n
     ///---------------------------------------------------------------------------
 
-#define DEFINE_SINGLE_TARGET_OPERATION(op)                                                  \
-    StandardOperation op(const Qubit target) {                                              \
-        return mc##op(Controls{}, target);                                                  \
-    }                                                                                       \
-    StandardOperation c##op(const Control& control, const Qubit target) {                   \
-        return mc##op(Controls{control}, target);                                           \
-    }                                                                                       \
-    StandardOperation mc##op(const Controls& controls, const Qubit target) {                \
-        checkQubitRange(target);                                                            \
-        return StandardOperation(controls, target, OP_NAME_TO_TYPE.at(#op));                \
+#define DEFINE_SINGLE_TARGET_OPERATION(op)                                   \
+    StandardOperation op(const Qubit target) {                               \
+        return mc##op(Controls{}, target);                                   \
+    }                                                                        \
+    StandardOperation c##op(const Control &control, const Qubit target) {    \
+        return mc##op(Controls{control}, target);                            \
+    }                                                                        \
+    StandardOperation mc##op(const Controls &controls, const Qubit target) { \
+        checkQubitRange(target);                                             \
+        return StandardOperation(controls, target, OP_NAME_TO_TYPE.at(#op)); \
     }
 
     DEFINE_SINGLE_TARGET_OPERATION(i)
@@ -136,4 +138,4 @@ private:
     Configuration config{};
     std::mt19937_64 mt{};
 };
-#endif //DDSIMULATION_HPP
+#endif//DDSIMULATION_HPP
