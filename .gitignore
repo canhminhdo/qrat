@@ -3,3 +3,4 @@ sample
 build
 build-release
 .DS_Store
+generator/*/*.qw
