@@ -31,11 +31,10 @@ void StateTransitionGraph::search() {
     Timer timer(true);
     buildInitialState();
     solutionCount = 0;
-    std::unordered_set<int> results;
     if (searchType == Type::ARROW_STAR) {
         checkState(seenStates[0], timer);
     }
-    while (results.size() < numSols && savedStateId < seenStates.size()) {
+    while (solutionCount < numSols && savedStateId < seenStates.size()) {
         // std::cout << "----------- ID: " << savedStateId << " -----------\n";
         State *currentState = seenStates[savedStateId];
         if (currentState->depth >= depthBound || (searchType == Type::ARROW_ONE && currentState->depth >= 1)) {
@@ -116,14 +115,15 @@ void StateTransitionGraph::procCondStm(CondStmNode *condStm, State *currentState
 
 void StateTransitionGraph::procCondBranch(State *currentState, StmNode *nextStm, qc::VectorDD &v, qc::fp prob,
                                           const Timer &timer) {
-    if (!v.isZeroTerminal()) {
-        bool inCache = false;
-        auto [newState, cache] = makeState(new State(nextStm, v, currentState->stateNr, currentState->depth + 1,
-                                                     currentState->prob * prob));
-        currentState->nextStates.push_back(newState->stateNr);
-        if (!inCache) {
-            checkState(newState, timer);
-        }
+    if (prob == 0.0 || v.isZeroTerminal()) {
+        return;
+    }
+    bool inCache = false;
+    auto [newState, cache] = makeState(new State(nextStm, v, currentState->stateNr, currentState->depth + 1,
+                                                 currentState->prob * prob));
+    currentState->nextStates.push_back(newState->stateNr);
+    if (!inCache) {
+        checkState(newState, timer);
     }
 }
 
@@ -215,15 +215,15 @@ void StateTransitionGraph::printSearchTiming(State *s, const Timer &timer) const
 }
 
 void StateTransitionGraph::printSearchTiming(const Timer &timer) const {
-    if (solutionCount < numSols) {
-        std::cout << "No more solutions\n";
-        std::cout << "states: " << seenStates.size();
-        Int64 real;
-        Int64 virt;
-        Int64 prof;
-        if (timer.getTimes(real, virt, prof)) {
-            std::cout << " in " << prof / 1000 << "ms cpu (" << real / 1000 << "ms real)\n";
-        }
+    if (solutionCount != 0 && solutionCount >= numSols)
+        return;
+    solutionCount == 0 ? std::cout << "No solution.\n" : std::cout << "No more solutions.\n";
+    std::cout << "states: " << seenStates.size();
+    Int64 real;
+    Int64 virt;
+    Int64 prof;
+    if (timer.getTimes(real, virt, prof)) {
+        std::cout << " in " << prof / 1000 << "ms cpu (" << real / 1000 << "ms real)\n";
     }
 }
 
