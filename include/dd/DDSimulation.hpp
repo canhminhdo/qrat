@@ -30,8 +30,6 @@ public:
 
     qc::VectorDD generateRandomState();
 
-    qc::VectorDD generateRandomState1();
-
     void initialize();
 
     void initQVarMap();

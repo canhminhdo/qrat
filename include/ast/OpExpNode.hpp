@@ -29,15 +29,15 @@ enum class OpExpType {
 
 // // inline initialization with ODR
 inline static const char *opExpNames[] = {
-    "MINUS",
-    "ADD",
-    "SUB",
-    "MUL",
-    "DIV",
-    "MOD",
-    "AND",
-    "OR",
-    "NOT",
+    "-", // "MINUS",
+    "+", // "ADD",
+    "-", // "SUB",
+    "*", // "MUL",
+    "/", // "DIV",
+    "%", // "MOD",
+    "and", // "AND",
+    "or", // "OR",
+    "not", // "NOT",
 };
 
 class OpExpNode : public ExpNode {
@@ -62,6 +62,8 @@ public:
     ExpNode *getRight() const;
 
     OpExpType getType() const;
+
+    void info() override;
 
 private:
     OpExpType type;

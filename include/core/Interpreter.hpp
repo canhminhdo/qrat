@@ -10,7 +10,6 @@
 #include "core/Token.hpp"
 #include "dd/DDSimulation.hpp"
 
-
 class Interpreter {
 public:
     Interpreter() = default;

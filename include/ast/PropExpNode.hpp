@@ -23,7 +23,10 @@ public:
 
     void eval() override {
     }
+
     void dump(bool recursive = true) override;
+
+    void info() override;
 
 private:
     std::vector<Symbol *> vars;

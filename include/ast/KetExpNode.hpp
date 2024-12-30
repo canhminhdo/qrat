@@ -36,6 +36,8 @@ public:
 
     void dump(bool recursive = true) override;
 
+    void info() override;
+
 private:
     KetType type;
 };

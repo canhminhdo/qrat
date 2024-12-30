@@ -67,6 +67,7 @@ add_executable(
     ../ast/PropExpNode.cpp
     ../ast/InitExpNode.cpp
     ../ast/BoolExpNode.cpp
+    ../utility/Timer.cpp
 )
 
 target_include_directories(ParserRunner PUBLIC ${CMAKE_CURRENT_BINARY_DIR})

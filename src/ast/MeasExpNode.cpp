@@ -29,3 +29,7 @@ Symbol * MeasExpNode::getVar() const {
 void MeasExpNode::dump(bool recursive) {
     std::cout << "M[" << Token::name(var->getName()) << "]" << std::endl;
 }
+
+void MeasExpNode::info() {
+    std::cout << "M[" << Token::name(var->getName()) << "]";
+}

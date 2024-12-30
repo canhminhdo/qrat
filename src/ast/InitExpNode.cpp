@@ -30,3 +30,7 @@ bool InitExpNode::isEqual(const Node &other) const {
 void InitExpNode::dump(bool recursive) {
     std::cout << name << "[" << Token::name(var->getName()) << "]";
 }
+
+void InitExpNode::info() {
+    std::cout << name << "[" << Token::name(var->getName()) << "]";
+}

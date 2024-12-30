@@ -49,3 +49,16 @@ void UnitaryStmNode::dump(bool recursive) {
     if (recursive && next)
         next->dump();
 }
+
+void UnitaryStmNode::info() {
+    std::vector<Symbol *> vars(controls);
+    vars.insert(vars.end(), targets.begin(), targets.end());
+    for (int i = 0; i < vars.size(); i++) {
+        std::cout << Token::name(vars[i]->getName()) << ((i < vars.size() - 1) ? ", " : "");
+    }
+    std::cout << " = " << Token::name(name) << "[";
+    for (int i = 0; i < vars.size(); i++) {
+        std::cout << Token::name(vars[i]->getName()) << ((i < vars.size() - 1) ? ", " : "");
+    }
+    std::cout << "];";
+}

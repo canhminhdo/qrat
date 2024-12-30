@@ -18,6 +18,8 @@ public:
 
     const char *getName() const;
 
+    void info() override;
+
 private:
     // no out-of-class definition required, ODR-usable (One Definition Rule)
     inline static const char *name = "skip";

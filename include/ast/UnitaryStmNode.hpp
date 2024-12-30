@@ -13,7 +13,8 @@
 
 class UnitaryStmNode : public StmNode {
 public:
-    UnitaryStmNode(int name, qc::OpType type, std::vector<Symbol *> controls, std::vector<Symbol *> targets, std::vector<qc::fp> parameters = {});
+    UnitaryStmNode(int name, qc::OpType type, std::vector<Symbol *> controls, std::vector<Symbol *> targets,
+                   std::vector<qc::fp> parameters = {});
 
     ~UnitaryStmNode() override = default;
 
@@ -31,6 +32,8 @@ public:
     int getName() const;
 
     void dump(bool recursive = true) override;
+
+    void info() override;
 
 private:
     int name;

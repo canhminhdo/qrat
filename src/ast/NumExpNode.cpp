@@ -100,3 +100,13 @@ void NumExpNode::dump(bool recursive) {
         throw std::invalid_argument("Unsupported NumType");
     }
 }
+
+void NumExpNode::info() {
+    if (type == NumType::INT) {
+        std::cout << val.intV;
+    } else if (type == NumType::REAL) {
+        std::cout << val.floatV;
+    } else {
+        throw std::invalid_argument("Unsupported NumType");
+    }
+}

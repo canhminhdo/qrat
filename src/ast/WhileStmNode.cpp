@@ -32,3 +32,9 @@ void WhileStmNode::dump(bool recursive) {
         std::cout << "do ... od" << std::endl;
     }
 }
+
+void WhileStmNode::info() {
+    std::cout << "while ";
+    cond->info();
+    std::cout << " do ... od;";
+}

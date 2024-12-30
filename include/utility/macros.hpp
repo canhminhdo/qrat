@@ -24,6 +24,10 @@ enum SpecialConstants {
     UNBOUNDED = INT_MAX,
 };
 
+typedef long Int64;
+
+#define local_inline extern __inline__
+
 #define Assert(condition, message)                                     \
     if (!(condition))                                                  \
     ((cerr << "ASSERT FAILED: " << __FILE__ << ':' << __LINE__ << '\n' \

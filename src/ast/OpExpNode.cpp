@@ -10,16 +10,6 @@
 OpExpNode::OpExpNode(OpExpType type, ExpNode *left, ExpNode *right) : type{type}, left{left}, right{right} {
 }
 
-void OpExpNode::dump(bool recursive) {
-    std::cout << "OpType: " << getOpName() << std::endl;
-    if (left != nullptr) {
-        left->dump();
-    }
-    if (right != nullptr) {
-        right->dump();
-    }
-}
-
 ExpNode * OpExpNode::getLeft() const {
     return left;
 }
@@ -48,4 +38,24 @@ bool OpExpNode::isEqual(const Node &other) const {
     if (otherOp == nullptr || type != otherOp->type || left != otherOp->left || right != otherOp->right)
         return false;
     return true;
+}
+
+void OpExpNode::dump(bool recursive) {
+    std::cout << "OpType: " << getOpName() << std::endl;
+    if (left != nullptr) {
+        left->dump();
+    }
+    if (right != nullptr) {
+        right->dump();
+    }
+}
+
+void OpExpNode::info() {
+    if (left != nullptr) {
+        left->info();
+    }
+    std::cout << " " << getOpName() << " ";
+    if (right != nullptr) {
+        right->dump();
+    }
 }

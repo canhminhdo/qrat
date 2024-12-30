@@ -28,6 +28,8 @@ public:
 
     void dump(bool recursive = true) override;
 
+    void info() override;
+
 private:
     ExpNode *cond;
     StmSeq *thenStm;

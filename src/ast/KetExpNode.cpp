@@ -34,3 +34,7 @@ bool KetExpNode::isEqual(const Node &other) const {
 void KetExpNode::dump(bool recursive) {
     std::cout << getName() << std::endl;
 }
+
+void KetExpNode::info() {
+    std::cout << getName() << std::endl;
+}

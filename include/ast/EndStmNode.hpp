@@ -19,6 +19,8 @@ public:
     };
 
     void dump(bool recursive = true) override;
+
+    void info() override;
 };
 
 #endif //ENDSTMNODE_HPP

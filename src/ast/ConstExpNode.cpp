@@ -30,3 +30,7 @@ Symbol * ConstExpNode::getSymbol() const {
 void ConstExpNode::dump(bool recursive) {
     std::cout << Token::name(symbol->getName()) << std::endl;
 }
+
+void ConstExpNode::info() {
+    std::cout << Token::name(symbol->getName());
+}

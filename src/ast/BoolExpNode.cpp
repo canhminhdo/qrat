@@ -28,3 +28,7 @@ bool BoolExpNode::isEqual(const Node &other) const {
 void BoolExpNode::dump(bool recursive) {
     std::cout << boolNames[static_cast<int>(val)] << std::endl;
 }
+
+void BoolExpNode::info() {
+    std::cout << boolNames[static_cast<int>(val)];
+}

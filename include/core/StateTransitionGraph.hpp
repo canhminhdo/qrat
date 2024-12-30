@@ -14,6 +14,7 @@
 #include "utility/HashUtil.hpp"
 #include "utility/macros.hpp"
 #include "Search.hpp"
+#include "utility/Timer.hpp"
 
 class StateTransitionGraph : public Search {
 public:
@@ -63,29 +64,33 @@ public:
 
     void search();
 
-    void procState(State *currentState, std::unordered_set<int> &results);
+    void procState(State *currentState, const Timer &timer);
 
-    void procSkipStm([[maybe_unused]] SkipStmNode *skipStm, State *currentState, StmNode *nextStm,
-                     std::unordered_set<int> &results);
+    void procSkipStm([[maybe_unused]] SkipStmNode *skipStm, State *currentState, StmNode *nextStm, const Timer &timer);
 
-    void procUnitaryStm(UnitaryStmNode *unitaryStm, State *currentState, StmNode *nextStm,
-                        std::unordered_set<int> &results);
+    void procUnitaryStm(UnitaryStmNode *unitaryStm, State *currentState, StmNode *nextStm, const Timer &timer);
 
-    void procCondStm(CondStmNode *condStm, State *currentState, std::unordered_set<int> &results);
+    void procCondStm(CondStmNode *condStm, State *currentState, const Timer &timer);
 
-    void procWhileStm(WhileStmNode *whileStm, State *currentState, StmNode *nextStm, std::unordered_set<int> &results);
+    void procWhileStm(WhileStmNode *whileStm, State *currentState, StmNode *nextStm, const Timer &timer);
 
-    void procCondBranch(State *currentState, StmNode *nextStm, qc::VectorDD &v, qc::fp prob, std::unordered_set<int> &results);
+    void procCondBranch(State *currentState, StmNode *nextStm, qc::VectorDD &v, qc::fp prob, const Timer &timer);
 
     StmNode *getNextStatement(StmNode *stm);
 
-    void showPath(int stateId);
+    void showPath(int stateId) const;
 
     std::pair<State *, bool> makeState(State *s);
 
-    void checkState(State *s, std::unordered_set<int> &results);
+    void checkState(State *s, const Timer &timer);
 
     const char *getSearchType() const;
+
+    void printProbability(State *s) const;
+
+    void printSearchTiming(State *s, const Timer &timer) const;
+
+    void printSearchTiming(const Timer &timer) const;
 
     void dump() const;
 
@@ -103,6 +108,7 @@ private:
     ExpNode *propExp{nullptr};
     Type searchType{Type::ARROW_EXCLAMATION};
     int numSols{UNBOUNDED};
+    int solutionCount{0};
     int depthBound{UNBOUNDED};
 };
 

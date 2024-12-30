@@ -57,6 +57,8 @@ public:
 
     void dump(bool recursive = true) override;
 
+    void info() override;
+
 private:
     ExpNode *left;
     RelOpType type;

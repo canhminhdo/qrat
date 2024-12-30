@@ -46,3 +46,12 @@ void PropExpNode::dump(bool recursive) {
     expr->dump();
     std::cout << ")\n";
 }
+
+void PropExpNode::info() {
+    std::cout << "P(";
+    for (int i = 0; i < vars.size(); i++) {
+        std::cout << Token::name(vars[i]->getName()) << ", ";
+    }
+    expr->info();
+    std::cout << ")";
+}

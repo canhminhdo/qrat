@@ -20,10 +20,13 @@ public:
     void eval() override {
     }
 
+    ExpNode *getKet() const;
+
+    ExpNode *getExp() const;
+
     void dump(bool recursive = true) override;
 
-    ExpNode* getKet() const;
-    ExpNode* getExp() const;
+    void info() override;
 
 private:
     ExpNode *exp;

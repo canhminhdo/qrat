@@ -26,6 +26,8 @@ public:
 
     void dump(bool recursive = true) override;
 
+    void info() override;
+
 private:
     Symbol *var;
     inline static const char *name = "init";

@@ -13,3 +13,6 @@ EndStmNode::EndStmNode(StmNode *next) {
 void EndStmNode::dump(bool recursive) {
     std::cout << "End" << std::endl;
 }
+
+void EndStmNode::info() {
+}

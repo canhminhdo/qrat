@@ -10,3 +10,7 @@ void SkipStmNode::dump(bool recursive) {
     if (recursive && next)
         next->dump();
 }
+
+void SkipStmNode::info() {
+    std::cout << getName() << ";";
+}

@@ -18,7 +18,6 @@ inline static const char *boolNames[] = {
 
 class BoolExpNode : public ExpNode {
 public:
-
     explicit BoolExpNode(BoolType val);
 
     std::size_t getHash() const override;
@@ -31,6 +30,8 @@ public:
     }
 
     void dump(bool recursive = true) override;
+
+    void info() override;
 
 private:
     BoolType val;

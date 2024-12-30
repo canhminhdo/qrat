@@ -23,6 +23,14 @@ bool QubitExpNode::isEqual(const Node &other) const {
     return true;
 }
 
+ExpNode *QubitExpNode::getKet() const {
+    return ket;
+}
+
+ExpNode *QubitExpNode::getExp() const {
+    return exp;
+}
+
 void QubitExpNode::dump(bool recursive) {
     if (exp != nullptr) {
         std::cout << "expr:" << std::endl;
@@ -34,10 +42,12 @@ void QubitExpNode::dump(bool recursive) {
     }
 }
 
-ExpNode *QubitExpNode::getKet() const {
-    return ket;
-}
-
-ExpNode *QubitExpNode::getExp() const {
-    return exp;
+void QubitExpNode::info() {
+    if (exp != nullptr) {
+        exp->info();
+    }
+    std::cout << " . ";
+    if (ket != nullptr) {
+        ket->info();
+    }
 }

@@ -22,6 +22,12 @@ StmSeq *CondStmNode::getElseStm() const {
     return elseStm;
 }
 
+void CondStmNode::info() {
+    std::cout << "if ";
+    cond->info();
+    std::cout << " then ... else ... fi;";
+}
+
 void CondStmNode::dump(bool recursive) {
     std::cout << "if" << std::endl;
     cond->dump();

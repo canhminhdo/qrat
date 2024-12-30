@@ -47,3 +47,9 @@ void CondExpNode::dump(bool recursive) {
     std::cout << getRelOpName(type) << std::endl;
     right->dump();
 }
+
+void CondExpNode::info() {
+    left->info();
+    std::cout << " " << getRelOpName(type) << " ";
+    right->info();
+}
