@@ -122,7 +122,29 @@ void DDSimulation::initQVarMap() {
     std::vector<VarSymbol *> vars = prog->getVars();
     // lexically sort variables by names in lexicographical order
     sort(vars.begin(), vars.end(), [](VarSymbol *v1, VarSymbol *v2) {
-        return std::strcmp(Token::name(v1->getName()), Token::name(v2->getName())) < 0;
+        std::string a = std::string(Token::name(v1->getName()));
+        std::string b = std::string(Token::name(v2->getName()));
+        // Find where the numeric part starts
+        auto isDigit = [](char c) { return std::isdigit(c); };
+
+        auto itA = std::find_if(a.begin(), a.end(), isDigit);
+        auto itB = std::find_if(b.begin(), b.end(), isDigit);
+
+        // Extract string prefix
+        std::string prefixA(a.begin(), itA);
+        std::string prefixB(b.begin(), itB);
+
+        // Compare prefixes
+        if (prefixA != prefixB) {
+            return prefixA < prefixB;
+        }
+
+        // Extract numeric part
+        int numA = std::stoi(std::string(itA, a.end()));
+        int numB = std::stoi(std::string(itB, b.end()));
+
+        // Compare numbers
+        return numA < numB;
     });
     for (int i = 0; i < vars.size(); i++) {
         qVarMap.insert({vars[i]->getName(), i});
