@@ -4,6 +4,7 @@
 
 #include "core/Interpreter.hpp"
 #include <iostream>
+#include "utility/Tty.hpp"
 
 void Interpreter::setCurrentProg(Token progName) {
     currentProg = new SyntaxProg(progName);
@@ -60,6 +61,6 @@ void Interpreter::finalizeProg() {
         oldProg->second = currentProg;
         std::cout << "==========================================" << std::endl;
         std::cout << "prog " << Token::name(currentProg->getName()) << std::endl;
-        std::cout << "\e[32mAdvisory:\e[0m redefining program \e[35m" << Token::name(currentProg->getName()) << "\e[0m." << std::endl;
+        std::cout << Tty(Tty::GREEN) << "Advisory: " << Tty(Tty::RESET) << "redefining program " << Tty(Tty::MAGENTA)<< Token::name(currentProg->getName()) << Tty(Tty::RESET) << std::endl;
     }
 }

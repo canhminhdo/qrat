@@ -32,6 +32,7 @@
 #include "Definitions.hpp"
 #include <vector>
 #include "utility/macros.hpp"
+#include "utility/Tty.hpp"
 
 // for interpreter and programs
 SyntaxProg *currentSyntaxProg;
@@ -407,8 +408,8 @@ loopStm :   KW_WHILE condExp KW_DO stmList KW_OD expectedSemi
 measure :   KW_MEASURE '[' varName ']'
                 {
                     if (!currentSyntaxProg->hasVarSymbol($3)) {
-                        printf("Error: variable %s is undefined", $3.name());
-                        exit(1);
+                        yyerror(("Variable " + std::string($3.name()) + " is undefined").c_str());
+                        YYERROR;
                     }
                     $$ = currentSyntaxProg->makeNode(new MeasExpNode(currentSyntaxProg->lookup($3)));
                 }
@@ -419,8 +420,8 @@ condExp :   measure KW_EQUAL number
                     $3 = currentSyntaxProg->makeNode($3);
                     $$ = currentSyntaxProg->makeNode(new CondExpNode($1, RelOpType::EQ, $3));
                     if (!NUM_EXP_NODE($3)->isZeroOrOne()) {
-                        yyerror("the measurement result must be 0 or 1");
-                        exit(SEMANTIC_ERROR);
+                        yyerror("The measurement result must be 0 or 1");
+                        YYERROR;
                     }
                 }
         |   number KW_EQUAL measure
@@ -428,8 +429,8 @@ condExp :   measure KW_EQUAL number
                     $1 = currentSyntaxProg->makeNode($1);
                     $$ = currentSyntaxProg->makeNode(new CondExpNode($3, RelOpType::EQ, $1));
                     if (!NUM_EXP_NODE($1)->isZeroOrOne()) {
-                        yyerror("the measurement result must be 0 or 1");
-                        exit(SEMANTIC_ERROR);
+                        yyerror("The measurement result must be 0 or 1");
+                        YYERROR;
                     }
                 }
         ;
@@ -596,5 +597,5 @@ int main(int argc, char **argv)
 
 void yyerror(const char *s)
 {
-    printf("\e[31mError: %s at line %d\e[0m\n", s, yylineno);
+    std::cout << Tty(Tty::RED) << "Error: " << s << " at line " << yylineno << Tty(Tty::RESET) << std::endl;
 }
