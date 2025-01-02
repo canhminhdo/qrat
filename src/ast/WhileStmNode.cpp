@@ -12,6 +12,11 @@ WhileStmNode::WhileStmNode(ExpNode *cond, StmSeq *body) : cond{cond}, body{body}
     body->addStm(endWhile);
 }
 
+WhileStmNode::~WhileStmNode() {
+    if (body != nullptr)
+        delete body;
+}
+
 ExpNode *WhileStmNode::getCond() const {
     return cond;
 }

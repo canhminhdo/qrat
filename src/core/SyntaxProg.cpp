@@ -17,9 +17,8 @@ SyntaxProg::SyntaxProg(Token prog) {
 }
 
 SyntaxProg::~SyntaxProg() {
-    // for (int i = 0; varDecl.size(); i++) {
-    //     delete varDecl[i];
-    // }
+    if (stmSeq != nullptr)
+        delete stmSeq;
 }
 
 void SyntaxProg::addVarDecl(TokenList *variables, Type type) {
@@ -60,9 +59,8 @@ void SyntaxProg::addEndStm(StmSeq *stmSeq) {
         StmNode* next = head->getNext();
         auto *condStm = dynamic_cast<CondStmNode *>(head);
         if (condStm != nullptr) {
-            auto *endStm = new EndStmNode(next);
-            condStm->getThenStm()->addStm(endStm);
-            condStm->getElseStm()->addStm(endStm);
+            condStm->getThenStm()->addStm(new EndStmNode(next));
+            condStm->getElseStm()->addStm(new EndStmNode(next));
             addEndStm(condStm->getThenStm());
             addEndStm(condStm->getElseStm());
         }
@@ -114,7 +112,8 @@ void SyntaxProg::dump() const {
     std::cout << "Symbol Table: " << std::endl;
     symTab.dump();
     std::cout << "Statements: " << std::endl;
-    stmSeq->dump();
+    if (stmSeq != nullptr)
+        stmSeq->dump();
     std::cout << "CachedNodes: " << std::endl;
     cachedNodes.dump();
 }

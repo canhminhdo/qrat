@@ -21,6 +21,8 @@ SymbolTable::~SymbolTable() {
         }
     }
     simTab.clear();
+    // variable symbols must be deleted in simTab before the vector is cleared
+    vars.clear();
 }
 
 void SymbolTable::addVarSymbol(int name, Type type, Node *value) {

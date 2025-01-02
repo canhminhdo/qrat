@@ -5,8 +5,22 @@
 #include <iostream>
 #include "ast/StmSeq.hpp"
 #include "ast/CondStmNode.hpp"
+#include "ast/EndStmNode.hpp"
 
 StmSeq::StmSeq() : head{nullptr}, tail{nullptr} {
+}
+
+StmSeq::~StmSeq() {
+    StmNode *current = head;
+    while (current != nullptr) {
+        if (dynamic_cast<EndStmNode *>(current)) {
+            delete current;
+            break;
+        }
+        StmNode *next = current->getNext();
+        delete current;
+        current = next;
+    }
 }
 
 void StmSeq::addStm(StmNode *stm) {
@@ -19,11 +33,11 @@ void StmSeq::addStm(StmNode *stm) {
     }
 }
 
-StmNode * StmSeq::getHead() const {
+StmNode *StmSeq::getHead() const {
     return head;
 }
 
-StmNode * StmSeq::getTail() const {
+StmNode *StmSeq::getTail() const {
     return tail;
 }
 

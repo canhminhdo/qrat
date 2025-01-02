@@ -13,7 +13,7 @@ class WhileStmNode : public StmNode {
 public:
     WhileStmNode(ExpNode *cond, StmSeq *body);
 
-    ~WhileStmNode() override = default;
+    ~WhileStmNode();
 
     ExpNode *getCond() const;
 

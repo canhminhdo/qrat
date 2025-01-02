@@ -11,7 +11,7 @@ class StmSeq {
 public:
     StmSeq();
 
-    ~StmSeq() = default;
+    ~StmSeq();
 
     void addStm(StmNode *stm);
 

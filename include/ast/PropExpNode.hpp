@@ -13,6 +13,8 @@ class PropExpNode : public ExpNode {
 public:
     explicit PropExpNode(Symbol *var, ExpNode *expr);
 
+    ~PropExpNode() override = default;
+
     size_t getHash() const override;
 
     bool isEqual(const Node &other) const override;

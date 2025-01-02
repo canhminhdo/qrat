@@ -35,7 +35,6 @@
 
 // for interpreter and programs
 SyntaxProg *currentSyntaxProg;
-
 extern DeclMode declFlag;
 
 // for lexer
@@ -63,6 +62,7 @@ extern int yylineno;
     Search::Type searchType;
     qc::fp param;
     std::vector<qc::fp> *params;
+    std::pair<int, int> *searchParams;
 }
 
 /* declare tokens */
@@ -109,6 +109,7 @@ extern int yylineno;
 %nterm <searchType> arrow
 %nterm <param> param
 %nterm <params> params
+%nterm <searchParams> searchParams
 /* start symbol */
 %start top
 
@@ -139,6 +140,17 @@ prog    :   KW_PROG
                     currentSyntaxProg = interpreter.getCurrentProg();
                 }
             KW_IS startDecl startConst startWhere startInit begin KW_END
+                {
+                    interpreter.finalizeProg();
+                }
+        |   KW_PROG token error KW_END
+            {
+                if (currentSyntaxProg != nullptr) {
+                    delete currentSyntaxProg;
+                }
+                yyerrok;
+                yyclearin;
+            }
         ;
 token   :   IDENTIFIER;
 
@@ -211,7 +223,6 @@ oneQubit    :   expression '.' basis
 basis   :   KW_KET_ZERO
                 {
                     $$ = currentSyntaxProg->makeNode(new KetExpNode(KetType::KET_ZERO));
-
                 }
         |   KW_KET_ONE
                 {
@@ -249,14 +260,14 @@ expression  :   '(' expression ')'
             |   IDENTIFIER
                     {
                         if (!currentSyntaxProg->hasConstSymbol($1)) {
-                            printf("Error: %s is not declared as a constant", $1.name());
-                            exit(1);
+                            yyerror((std::string($1.name()) + " is not declared as a constant").c_str());
+                            YYERROR;
                         }
                         $$ = currentSyntaxProg->makeNode(new ConstExpNode(currentSyntaxProg->lookup($1)));
                     }
             |   number
                     {
-                        $$ = $1;
+                        $$ = currentSyntaxProg->makeNode($1);
                     }
             |   oneQubit
                     {
@@ -310,12 +321,22 @@ skip    :   KW_SKIP expectedSemi;
 
 unitaryStm  :   varNameList KW_ASSIGN operation '[' varNameList ']' expectedSemi
                     {
-                        $$ = DDOperation::makeOperation(currentSyntaxProg, $1, $3, $5);
+                        std::string errMsg = "";
+                        $$ = DDOperation::makeOperation(currentSyntaxProg, $1, $3, $5, nullptr, errMsg);
+                        if (!errMsg.empty()) {
+                            yyerror(errMsg.c_str());
+                            YYERROR;
+                        }
                     }
             |   varNameList KW_ASSIGN operationWithParams '[' varNameList ']' '(' params ')' expectedSemi
                     {
-                        $$ = DDOperation::makeOperation(currentSyntaxProg, $1, $3, $5, $8);
+                        std::string errMsg = "";
+                        $$ = DDOperation::makeOperation(currentSyntaxProg, $1, $3, $5, $8, errMsg);
                         delete $8;
+                        if (!errMsg.empty()) {
+                            yyerror(errMsg.c_str());
+                            YYERROR;
+                        }
                     }
             ;
 operation   :   KW_SINGLE_TARGET_OP
@@ -365,6 +386,7 @@ param   :   KW_PI      {   $$ = qc::PI; }
                     } else {
                         $$ = NUM_EXP_NODE($1)->getFloatVal();
                     }
+                    delete $1;
                 }
         ;
 
@@ -388,13 +410,14 @@ measure :   KW_MEASURE '[' varName ']'
                         printf("Error: variable %s is undefined", $3.name());
                         exit(1);
                     }
-                    $$ = new MeasExpNode(currentSyntaxProg->lookup($3));
+                    $$ = currentSyntaxProg->makeNode(new MeasExpNode(currentSyntaxProg->lookup($3)));
                 }
         ;
 /* conditional expression */
 condExp :   measure KW_EQUAL number
                 {
-                    $$ = new CondExpNode($1, RelOpType::EQ, $3);
+                    $3 = currentSyntaxProg->makeNode($3);
+                    $$ = currentSyntaxProg->makeNode(new CondExpNode($1, RelOpType::EQ, $3));
                     if (!NUM_EXP_NODE($3)->isZeroOrOne()) {
                         yyerror("the measurement result must be 0 or 1");
                         exit(SEMANTIC_ERROR);
@@ -402,7 +425,8 @@ condExp :   measure KW_EQUAL number
                 }
         |   number KW_EQUAL measure
                 {
-                    $$ = new CondExpNode($3, RelOpType::EQ, $1);
+                    $1 = currentSyntaxProg->makeNode($1);
+                    $$ = currentSyntaxProg->makeNode(new CondExpNode($3, RelOpType::EQ, $1));
                     if (!NUM_EXP_NODE($1)->isZeroOrOne()) {
                         yyerror("the measurement result must be 0 or 1");
                         exit(SEMANTIC_ERROR);
@@ -413,13 +437,14 @@ condExp :   measure KW_EQUAL number
 /* expected semicolon */
 expectedSemi    :   ';';
 
-command :   KW_SEARCH KW_IN
+command :   KW_SEARCH searchParams KW_IN
             token
                 {
-                    if (currentSyntaxProg == nullptr || currentSyntaxProg->getName() != $3.code()) {
-                        yyerror(("Search in an undefined program: " + std::string($3.name())).c_str());
-                        exit(SEMANTIC_ERROR);
+                    if (!interpreter.existProg($4)) {
+                        yyerror(("Search in an undefined program: " + std::string($4.name())).c_str());
+                        YYERROR;
                     }
+                    currentSyntaxProg = interpreter.getCurrentProg();
                 }
             KW_WITH
             arrow
@@ -427,81 +452,56 @@ command :   KW_SEARCH KW_IN
             property
             expectedSemi
                 {
-                    interpreter.initializeSearch($3.code(), $9, $6, UNBOUNDED, UNBOUNDED);
+                    interpreter.initializeSearch($4.code(), $10, $7, $2->first, $2->second);
                     interpreter.execute();
+                    delete $2;
                 }
-        |   KW_SEARCH '[' number ']' KW_IN
-            token
+        |   KW_SEARCH error expectedSemi
                 {
-                    if (currentSyntaxProg == nullptr || currentSyntaxProg->getName() != $6.code()) {
-                        yyerror(("Search in an undefined program: " + std::string($6.name())).c_str());
-                        exit(SEMANTIC_ERROR);
-                    }
-                }
-            KW_WITH
-            arrow
-            KW_SUCH KW_THAT
-            property
-            expectedSemi
-                {
-                    if (!NUM_EXP_NODE($3)->isInt()) {
-                        yyerror("The number of solutions must be an integer");
-                        exit(SEMANTIC_ERROR);
-                    }
-                    interpreter.initializeSearch($6.code(), $12, $9, NUM_EXP_NODE($3)->getIntVal(), UNBOUNDED);
-                    delete $3;
-                    interpreter.execute();
-                }
-        |   KW_SEARCH '[' ',' number ']' KW_IN
-            token
-                {
-                    if (currentSyntaxProg == nullptr || currentSyntaxProg->getName() != $7.code()) {
-                        yyerror(("Search in an undefined program: " + std::string($7.name())).c_str());
-                        exit(SEMANTIC_ERROR);
-                    }
-                }
-            KW_WITH
-            arrow
-            KW_SUCH KW_THAT
-            property
-            expectedSemi
-                {
-                    if (!NUM_EXP_NODE($4)->isInt()) {
-                        yyerror("The bounded depth must be an integer");
-                        exit(SEMANTIC_ERROR);
-                    }
-                    interpreter.initializeSearch($7.code(), $13, $10, UNBOUNDED, NUM_EXP_NODE($4)->getIntVal());
-                    delete $4;
-                    interpreter.execute();
-                }
-        |   KW_SEARCH '[' number ',' number ']' KW_IN
-            token
-                {
-                    if (currentSyntaxProg == nullptr || currentSyntaxProg->getName() != $8.code()) {
-                        yyerror(("Search in an undefined program: " + std::string($8.name())).c_str());
-                        exit(SEMANTIC_ERROR);
-                    }
-                }
-            KW_WITH
-            arrow
-            KW_SUCH KW_THAT
-            property
-            expectedSemi
-                {
-                    if (!NUM_EXP_NODE($3)->isInt()) {
-                        yyerror("The number of solutions must be an integer");
-                        exit(SEMANTIC_ERROR);
-                    }
-                    if (!NUM_EXP_NODE($5)->isInt()) {
-                        yyerror("The bounded depth must be an integer");
-                        exit(SEMANTIC_ERROR);
-                    }
-                    interpreter.initializeSearch($8.code(), $14, $11, NUM_EXP_NODE($3)->getIntVal(), NUM_EXP_NODE($5)->getIntVal());
-                    delete $3;
-                    delete $5;
-                    interpreter.execute();
+                    yyerrok;
+                    yyclearin;
                 }
         ;
+
+searchParams    :   /* empty */
+                    {
+                        $$ = new std::pair<int, int>(UNBOUNDED, UNBOUNDED);
+                    }
+                |   '[' number ']'
+                    {
+                        if (!NUM_EXP_NODE($2)->isInt()) {
+                            yyerror("The number of solutions must be an integer");
+                            delete $2;
+                            YYERROR;
+                        }
+                        $$ = new std::pair<int, int>(NUM_EXP_NODE($2)->getIntVal(), UNBOUNDED);
+                        delete $2;
+                    }
+                |   '[' ',' number ']'
+                    {
+                        if (!NUM_EXP_NODE($3)->isInt()) {
+                            yyerror("The bounded depth must be an integer");
+                            YYERROR;
+                        }
+                        $$ = new std::pair<int, int>(UNBOUNDED, NUM_EXP_NODE($3)->getIntVal());
+                        delete $3;
+                    }
+                |   '[' number ',' number ']'
+                    {
+                        if (!NUM_EXP_NODE($2)->isInt()) {
+                            yyerror("The number of solutions must be an integer");
+                            YYERROR;
+                        }
+                        if (!NUM_EXP_NODE($4)->isInt()) {
+                            yyerror("The bounded depth must be an integer");
+                            YYERROR;
+                        }
+                        $$ = new std::pair<int, int>(NUM_EXP_NODE($2)->getIntVal(), NUM_EXP_NODE($4)->getIntVal());
+                        delete $2;
+                        delete $4;
+                    }
+                ;
+
 arrow   :   KW_ARROW_ONE
                 {
                     $$ = Search::Type::ARROW_ONE;
@@ -535,8 +535,8 @@ property    :   '(' property ')'
             |   KW_PROP '(' varName ',' basisProp ')'
                     {
                         if (!currentSyntaxProg->hasVarSymbol($3)) {
-                            printf("Error: variable %s is undefined", $3.name());
-                            exit(1);
+                            yyerror(("Variable " + std::string($3.name()) + " is undefined").c_str());
+                            YYERROR;
                         }
                         $$ = currentSyntaxProg->makeNode(new PropExpNode(currentSyntaxProg->lookup($3), $5));
                     }
@@ -558,8 +558,8 @@ basisProp   :   basis
             |   KW_INIT '[' varName ']'
                     {
                         if (!currentSyntaxProg->hasVarSymbol($3)) {
-                            printf("Error: variable %s is undefined", $3.name());
-                            exit(1);
+                            yyerror(("Variable " + std::string($3.name()) + " is undefined").c_str());
+                            YYERROR;
                         }
                         $$ = currentSyntaxProg->makeNode(new InitExpNode(currentSyntaxProg->lookup($3)));
                     }
@@ -576,6 +576,7 @@ int main(int argc, char **argv)
         return 1;
     }
     yyparse();
+    fclose(yyin);
     #if false
     // test vector implementation
     Vector<int> v{5};
@@ -595,5 +596,5 @@ int main(int argc, char **argv)
 
 void yyerror(const char *s)
 {
-    fprintf(stderr, "Error: %s at line %d\n", s, yylineno);
+    printf("\e[31mError: %s at line %d\e[0m\n", s, yylineno);
 }

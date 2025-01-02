@@ -10,6 +10,12 @@ UnitaryStmNode::UnitaryStmNode(int name, qc::OpType type, std::vector<Symbol *> 
                                                                                                 targets{targets}, parameters{parameters} {
 }
 
+UnitaryStmNode::~UnitaryStmNode() {
+    controls.clear();
+    targets.clear();
+    parameters.clear();
+}
+
 std::vector<Symbol *> UnitaryStmNode::getControls() const {
     return controls;
 }

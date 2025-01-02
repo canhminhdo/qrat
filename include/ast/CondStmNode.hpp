@@ -15,7 +15,7 @@ public:
 
     CondStmNode(ExpNode *cond, StmSeq *then_stm, StmSeq *else_stm);
 
-    ~CondStmNode() override = default;
+    ~CondStmNode();
 
     ExpNode *getCond() const;
 

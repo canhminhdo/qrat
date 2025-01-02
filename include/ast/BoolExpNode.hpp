@@ -20,6 +20,8 @@ class BoolExpNode : public ExpNode {
 public:
     explicit BoolExpNode(BoolType val);
 
+    ~BoolExpNode() override = default;
+
     std::size_t getHash() const override;
 
     BoolType getVal() const;

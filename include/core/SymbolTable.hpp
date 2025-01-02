@@ -30,7 +30,7 @@ public:
     std::vector<VarSymbol *> getVars() const;
 
 private:
-    std::pmr::unordered_map<int, Symbol *> simTab;
+    std::unordered_map<int, Symbol *> simTab;
     std::vector<VarSymbol *> vars;
 };
 

@@ -18,19 +18,22 @@ public:
 
     SyntaxProg *getCurrentProg() const;
 
+    bool existProg(Token progName);
+
     void initDDSimulation();
 
     void initGraphSearch(ExpNode *propExp, Search::Type type, int numSols, int maxDepth);
 
     void execute();
 
-    void buildInitialState();
-
     void initializeSearch(int progName, ExpNode *propExp, Search::Type type, int numSols, int maxDepth);
+
+    void finalizeProg();
 
 private:
     SyntaxProg *currentProg;
     DDSimulation *ddSim;
     StateTransitionGraph *graphSearch;
+    std::unordered_map<int, SyntaxProg *> savedProgs;
 };
 #endif//INTERPRETER_HPP
