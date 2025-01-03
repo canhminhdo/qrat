@@ -1,14 +1,10 @@
-# building mqt-core as a part of project
-#add_subdirectory(
-#    "${PROJECT_SOURCE_DIR}/extern/mqt-core"
-#    "extern/mqt-core"
-#    EXCLUDE_FROM_ALL)
+configure_file(${PROJECT_SOURCE_DIR}/generator/teleport/teleport.qw prog.qw)
+configure_file(${PROJECT_SOURCE_DIR}/generator/loop/prog-loop.qw prog-loop.qw)
 
-add_library(
+add_executable(
     ${PROJECT_NAME}
-    main.cpp
-    getch.cpp
-    Person.cpp
+    main/main.cpp
+    main/printInfo.cpp
 )
 
 # set include directories
@@ -19,5 +15,7 @@ include_directories(
 
 # link to the MQT::Core libararies
 #target_link_libraries(${PROJECT_NAME} PUBLIC MQT::CoreDD MQT::CoreZX Parser)
+
+target_link_libraries(${PROJECT_NAME} Parser)
 
 add_subdirectory(parser)

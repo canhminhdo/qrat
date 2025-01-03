@@ -118,8 +118,7 @@ void StateTransitionGraph::procCondBranch(State *currentState, StmNode *nextStm,
     if (prob == 0.0 || v.isZeroTerminal()) {
         return;
     }
-    bool inCache = false;
-    auto [newState, cache] = makeState(new State(nextStm, v, currentState->stateNr, currentState->depth + 1,
+    auto [newState, inCache] = makeState(new State(nextStm, v, currentState->stateNr, currentState->depth + 1,
                                                  currentState->prob * prob));
     currentState->nextStates.push_back(newState->stateNr);
     if (!inCache) {
@@ -164,7 +163,7 @@ void StateTransitionGraph::showPath(int stateNr) const {
 std::pair<StateTransitionGraph::State *, bool> StateTransitionGraph::makeState(State *s) {
     auto it = stateTab.find(s);
     if (it != stateTab.end()) {
-        std::cout << "Found state in cache, then delete the newly created state\n";
+//        std::cout << "Found state in cache, then delete the newly created state\n";
         delete s;
         return {seenStates[it->second], true};
     }

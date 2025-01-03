@@ -3,6 +3,9 @@
 //
 
 #include "parser/lexerAux.hpp"
+#include <vector>
+
+std::vector<char *> pendingFiles;
 
 void lexerIdMode() {
     BEGIN(ID_MODE);

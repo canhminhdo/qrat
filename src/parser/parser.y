@@ -568,6 +568,7 @@ basisProp   :   basis
 %%
 
 /* Section 3: C code */
+#if false
 int main(int argc, char **argv)
 {
     // reading from a file for testing
@@ -594,6 +595,7 @@ int main(int argc, char **argv)
     interpreter.execute();
     #endif
 }
+#endif
 
 void yyerror(const char *s)
 {

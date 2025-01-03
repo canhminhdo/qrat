@@ -7,3 +7,27 @@ set(BUILD_QRAT_TESTS
 
 set(BUILD_QRAT_DOC
     OFF CACHE BOOL "Build QRAT document" FORCE)
+
+MACRO (TODAY RESULT)
+    IF (WIN32)
+        EXECUTE_PROCESS(COMMAND "date" OUTPUT_VARIABLE ${RESULT})
+        string(REGEX REPLACE "\n" "" ${RESULT} ${${RESULT}})
+    ELSEIF(UNIX)
+        EXECUTE_PROCESS(COMMAND "date" "+%b %d %Y %T" OUTPUT_VARIABLE ${RESULT})
+        string(REGEX REPLACE "\n" "" ${RESULT} ${${RESULT}})
+    ELSE (WIN32)
+        MESSAGE(SEND_ERROR "date not implemented")
+        SET(${RESULT} "unknown")
+    ENDIF (WIN32)
+ENDMACRO (TODAY)
+
+TODAY(RESULT)
+set(PROJECT_BUILD_DATE ${RESULT})
+set(PROJECT_BUGREPORT "canhdo@jaist.ac.jp")
+
+# generate a header file with the information from the project
+configure_file(
+        ${PROJECT_SOURCE_DIR}/include/config.h.in
+        ${PROJECT_BINARY_DIR}/include/config.h
+        @ONLY
+)

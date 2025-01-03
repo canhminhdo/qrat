@@ -4,9 +4,10 @@
 
 #include <gtest/gtest.h>
 
-extern int boostrap(void);
+TEST(QRAT, Test1) {
+    EXPECT_EQ(1, 1);
+}
 
-TEST(QRAT, Bootstrap) {
-    boostrap();
-    EXPECT_EQ(1, 0);
+TEST(QRAT, Test2) {
+    EXPECT_EQ(1, 2);
 }

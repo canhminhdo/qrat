@@ -24,17 +24,10 @@ ADD_FLEX_BISON_DEPENDENCY(Scanner Parser)
 
 # set include directory for parsing files
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
-message(${BISON_Parser_OUTPUTS})
-message(${FLEX_Scanner_OUTPUTS})
-message(${FLEX_LIBRARIES})
-message(${FLEX_INCLUDE_DIRS})
-add_library(
-    Parser STATIC
-    ${BISON_Parser_OUTPUTS}
-    ${FLEX_Scanner_OUTPUTS}
-)
-target_link_libraries(Parser ${FLEX_LIBRARIES})
-target_include_directories(Parser PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
+#message(${BISON_Parser_OUTPUTS})
+#message(${FLEX_Scanner_OUTPUTS})
+#message(${FLEX_LIBRARIES})
+#message(${FLEX_INCLUDE_DIRS})
 
 add_executable(
     ParserRunner
@@ -71,6 +64,45 @@ add_executable(
     ../utility/Tty.cpp
 )
 
+add_library(
+    Parser STATIC
+    ${BISON_Parser_OUTPUTS}
+    ${FLEX_Scanner_OUTPUTS}
+    ../core/Token.cpp
+    ../utility/StringTable.cpp
+    ../core/Interpreter.cpp
+    ../core/SyntaxProg.cpp
+    ../core/global.cpp
+    ../core/SymbolTable.cpp
+    ../core/VarSymbol.cpp
+    ../core/ConstSymbol.cpp
+    ../ast/KetExpNode.cpp
+    ../ast/QubitExpNode.cpp
+    ../ast/OpExpNode.cpp
+    ../ast/ConstExpNode.cpp
+    ../ast/NumExpNode.cpp
+    ../ast/UnitaryStmNode.cpp
+    ../ast/StmSeq.cpp
+    ../ast/SkipStmNode.cpp
+    ../ast/MeasExpNode.cpp
+    ../ast/CondExpNode.cpp
+    ../ast/CondStmNode.cpp
+    ../ast/WhileStmNode.cpp
+    ../dd/DDSimulation.cpp
+    ../ast/CachedNode.cpp
+    ../ast/EndStmNode.cpp
+    ../core/StateTransitionGraph.cpp
+    ../ast/PropExpNode.cpp
+    ../ast/InitExpNode.cpp
+    ../ast/BoolExpNode.cpp
+    ../utility/Timer.cpp
+    ../utility/Tty.cpp
+)
+
 target_include_directories(ParserRunner PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
 target_link_libraries(ParserRunner PUBLIC ${FLEX_LIBRARIES})
-target_link_libraries(ParserRunner PUBLIC MQT::CoreDD MQT::CoreZX)
+target_link_libraries(ParserRunner PUBLIC MQT::CoreDD)
+
+target_include_directories(Parser PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
+target_link_libraries(Parser PUBLIC ${FLEX_LIBRARIES})
+target_link_libraries(Parser PUBLIC MQT::CoreDD)

@@ -25,11 +25,10 @@ message("Building tests for QRAT project")
 ## for production
 add_executable(bootstrap
     bootstrap.cpp)
-target_link_libraries(bootstrap ${PROJECT_NAME})
 
 package_add_test(
     ${PROJECT_NAME}_test
-    ${PROJECT_NAME}
+    Parser
     main.cpp
     test.cpp
 )

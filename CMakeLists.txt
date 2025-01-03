@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.20..3.26)
-project(QRAT
+project(qrat
     LANGUAGES CXX
     VERSION 0.1
     HOMEPAGE_URL "https://github.com/canhminhdo/QRAT"
