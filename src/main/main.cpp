@@ -2,18 +2,21 @@
 // Created by CanhDo on 2024/08/29.
 //
 
+#include "lexer.hpp"
 #include <iostream>
-#include "config.h"
-#include "utility/Tty.hpp"
-
-extern FILE *yyin;
-extern int yyparse();
-extern std::vector<char *> pendingFiles;
 
 void printVersion();
 void printBanner();
 void printHelp();
-void yy_scan_string(const char *str);
+
+extern FILE *yyin;
+extern int yyparse();
+extern std::vector<char *> pendingFiles;
+void handlePendingFiles(bool clearMemory = true);
+void yy_delete_buffer(YY_BUFFER_STATE buffer);
+YY_BUFFER_STATE yy_scan_string(const char *str);
+void yy_switch_to_buffer(YY_BUFFER_STATE new_buffer);
+YY_BUFFER_STATE yy_create_buffer(FILE *file, int size);
 
 int main(int argc, char *argv[]) {
     bool outputBanner = true;
@@ -32,33 +35,40 @@ int main(int argc, char *argv[]) {
     }
     if (outputBanner)
         printBanner();
-
-    for (int i = 0; i < pendingFiles.size(); i++) {
-        if (!(yyin = fopen(pendingFiles[i], "r"))) {
-            fprintf(stderr, "Error opening file '%s': %s\n", pendingFiles[i], strerror(errno));
+    handlePendingFiles(false);
+    while (1) {
+        std::string inputLine;
+        std::cout << "Qrat> " << std::flush;
+        std::getline(std::cin, inputLine);
+        if (std::cin.eof()) { // Check for EOF (Ctrl+D or Ctrl+Z)
+            break;
+        }
+        auto buffer = yy_scan_string(inputLine.c_str());
+        yy_switch_to_buffer(buffer);
+        if (!buffer) {
+            std::cerr << "Error: Unable to scan the command." << std::endl;
             continue;
         }
         yyparse();
-        fclose(yyin);
+        yy_delete_buffer(buffer);
+        handlePendingFiles();
     }
-    yyin = stdin; // Set input stream to stdin
-    std::string inputLine;
-    while (1) {
-        std::cout << "Qrat> " << std::flush;
-        std::getline(std::cin, inputLine);
-        if (std::cin.eof()) {  // Check for EOF (Ctrl+D or Ctrl+Z)
-            break;
-        }
-        yy_scan_string(inputLine.c_str());
-        yyparse();
-    }
-    // reading from a file for testing
-//    const char* fileName = "prog-loop.qw";
-//    if (!(yyin = fopen(fileName, "r"))) {
-//        fprintf(stderr, "Error opening file '%s': %s\n", fileName, strerror(errno));
-//        return 1;
-//    }
-//    yyparse();
-//    fclose(yyin);
     return 0;
+}
+
+void handlePendingFiles(bool clearMemory) {
+    for (int i = 0; i < pendingFiles.size(); i++) {
+        if (!(yyin = fopen(pendingFiles[i], "r"))) {
+            std::cerr << "Error: Opening file '" << pendingFiles[i] << "': " << strerror(errno) << std::endl;
+            continue;
+        }
+        YY_BUFFER_STATE file_buffer = yy_create_buffer(yyin, YY_BUF_SIZE);
+        yy_switch_to_buffer(file_buffer);
+        yyparse();
+        yy_delete_buffer(file_buffer);
+        fclose(yyin);
+        if (clearMemory)
+            delete[] pendingFiles[i];
+    }
+    pendingFiles.clear();
 }

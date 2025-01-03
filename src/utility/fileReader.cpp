@@ -10,7 +10,7 @@ void printFile(const char *fileName) {
     FILE *file = fopen(fileName, "r");
     // Check if the file was opened successfully
     if (file == nullptr) {
-        std::cerr << "Error opening file: " << fileName << std::endl;
+        std::cerr << "Error: Opening file '" << fileName << std::endl;
         return;
     }
     // Read and print the file content character by character

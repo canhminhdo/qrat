@@ -3,6 +3,7 @@
 %{
 #include <stdio.h>
 #include <vector>
+#include "lexer.hpp"
 #include "parser/lexerAux.hpp"
 #include "utility/Vector.hpp"
 #include "utility/fileReader.hpp"
@@ -46,6 +47,9 @@ int yylex (void);
 extern FILE *yyin;
 extern char *yytext;
 extern int yylineno;
+
+// for loading files
+extern std::vector<char *> pendingFiles;
 
 #define EXP_NODE(node) dynamic_cast<ExpNode *>(node)
 #define STM_NODE(node) dynamic_cast<StmNode *>(node)
@@ -456,16 +460,14 @@ command :   loadFile
 
 loadFile    :   KW_LOAD filePath expectedDot
                     {
-                        printFile($2);
+                        // printFile($2);
                         if (!(yyin = fopen($2, "r"))) {
-                            delete $2;
                             yyerror(("Opening file '" + std::string($2) + "': " + strerror(errno)).c_str());
+                            delete $2;
                             YYERROR;
                         }
-                        yyclearin;
-                        yyparse();
                         fclose(yyin);
-                        delete $2;
+                        pendingFiles.push_back($2);
                     }
             ;
 filePath    :   IDENTIFIER  { $$ = strdup($1.name()); }
