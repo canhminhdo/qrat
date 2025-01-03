@@ -97,9 +97,15 @@ TwoTargetOpWithTwoParam         XXminusYY|XXplusYY
 "and"       { return KW_AND; }
 "or"        { return KW_OR; }
 
+"load"      { return KW_LOAD; }
+"show"      { return KW_SHOW; }
+"path"      { return KW_PATH; }
+
 "|0>"		{ return KW_KET_ZERO; }
 "|1>"		{ return KW_KET_ONE; }
 "random"	{ return KW_KET_RANDOM; }
+
+"quit"      { return KW_QUIT; }
 
 {SingleTargetOp}        { Token token; token.tokenize(yytext, yylineno); yylval.gateInfo = {token, SINGLE_TARGET_OP}; return KW_SINGLE_TARGET_OP; }
 "C"{SingleTargetOp}     { Token token; token.tokenize(yytext, yylineno); yylval.gateInfo = {token, SINGLE_TARGET_COP}; return KW_SINGLE_TARGET_COP; }
@@ -141,6 +147,7 @@ e         { return KW_E; }
                 // yylval.codeNr = stringTable.encode(yytext);
                 RETURN(IDENTIFIER);
             }
+[a-zA-Z0-9_\-]+\.[qQ][wW]   { yylval.filePath = strdup(yytext); return FILENAME; }
 [+-]?[0-9]+                 { return INTEGER; }
 [+-]?[0-9]+"/"[+-]?[0-9]+   { return RATIONAL; }
 [+-]?[0-9]+"."[0-9]*        { return REAL; }

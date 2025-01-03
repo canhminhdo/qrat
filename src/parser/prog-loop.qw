@@ -7,4 +7,4 @@ begin
     while M[q] = 1 do q := H[q]; od;
 end
 
-search in PROG_LOOP with =>! such that true;
+search in PROG_LOOP with =>! such that true .

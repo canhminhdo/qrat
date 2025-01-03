@@ -13,6 +13,7 @@ extern std::vector<char *> pendingFiles;
 void printVersion();
 void printBanner();
 void printHelp();
+void yy_scan_string(const char *str);
 
 int main(int argc, char *argv[]) {
     bool outputBanner = true;
@@ -32,13 +33,32 @@ int main(int argc, char *argv[]) {
     if (outputBanner)
         printBanner();
 
-    // reading from a file for testing
-    const char* fileName = "prog-loop.qw";
-    if (!(yyin = fopen(fileName, "r"))) {
-        fprintf(stderr, "Error opening file '%s': %s\n", fileName, strerror(errno));
-        return 1;
+    for (int i = 0; i < pendingFiles.size(); i++) {
+        if (!(yyin = fopen(pendingFiles[i], "r"))) {
+            fprintf(stderr, "Error opening file '%s': %s\n", pendingFiles[i], strerror(errno));
+            continue;
+        }
+        yyparse();
+        fclose(yyin);
     }
-    yyparse();
-    fclose(yyin);
+    yyin = stdin; // Set input stream to stdin
+    std::string inputLine;
+    while (1) {
+        std::cout << "Qrat> " << std::flush;
+        std::getline(std::cin, inputLine);
+        if (std::cin.eof()) {  // Check for EOF (Ctrl+D or Ctrl+Z)
+            break;
+        }
+        yy_scan_string(inputLine.c_str());
+        yyparse();
+    }
+    // reading from a file for testing
+//    const char* fileName = "prog-loop.qw";
+//    if (!(yyin = fopen(fileName, "r"))) {
+//        fprintf(stderr, "Error opening file '%s': %s\n", fileName, strerror(errno));
+//        return 1;
+//    }
+//    yyparse();
+//    fclose(yyin);
     return 0;
 }

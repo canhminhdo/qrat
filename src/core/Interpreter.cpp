@@ -64,3 +64,10 @@ void Interpreter::finalizeProg() {
         std::cout << Tty(Tty::GREEN) << "Advisory: " << Tty(Tty::RESET) << "redefining program " << Tty(Tty::MAGENTA)<< Token::name(currentProg->getName()) << Tty(Tty::RESET) << std::endl;
     }
 }
+void Interpreter::showPath(int stateId) {
+    if (graphSearch != nullptr) {
+        graphSearch->showPath(stateId);
+    } else {
+        std::cout << Tty(Tty::RED) << "Warning: " << Tty(Tty::RESET) << "no state graph." << std::endl;
+    }
+}

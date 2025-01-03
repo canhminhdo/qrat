@@ -10,7 +10,7 @@ let search = () => {
             list.push("P(q" + i + ", |1>)" )
         }
     }
-    prog += "search in GROVER with =>! such that " + list.join(" and ") + ";";
+    prog += "search in GROVER with =>! such that " + list.join(" and ") + " .";
     return prog;
 }
 

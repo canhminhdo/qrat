@@ -7,6 +7,7 @@
 #include "ast/CondExpNode.hpp"
 #include "ast/NumExpNode.hpp"
 #include <iomanip>
+#include "utility/Tty.hpp"
 
 StateTransitionGraph::StateTransitionGraph(SyntaxProg *currentProg, DDSimulation *ddSim, ExpNode *propExp,
                                            Search::Type type, int numSols, int maxDepth) {
@@ -140,20 +141,20 @@ void StateTransitionGraph::procWhileStm(WhileStmNode *whileStm, State *currentSt
     }
 }
 
-void StateTransitionGraph::showPath(int stateNr) const {
+void StateTransitionGraph::showPath(int stateNr, bool endState) const {
     if (stateNr >= seenStates.size()) {
-        std::cout << "Invalid state ID\n";
+        std::cout << Tty(Tty::RED) << "Invalid state ID" << Tty(Tty::RESET) << std::endl;
         return;
     }
     auto *s = seenStates[stateNr];
     if (s->parent != -1) {
-        showPath(s->parent);
+        showPath(s->parent, false);
     }
     std::cout << "state " << s->stateNr << ", ";
     printProbability(s);
     std::cout << ", quantum state:\n";
     s->current.printVector<dd::vNode>();
-    if (!s->isFinalState()) {
+    if (!endState && !s->isFinalState()) {
         std::cout << "===[ ";
         s->pc->info();
         std::cout << " ]===>\n";

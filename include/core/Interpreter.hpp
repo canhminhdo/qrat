@@ -30,6 +30,8 @@ public:
 
     void finalizeProg();
 
+    void showPath(int stateId);
+
 private:
     SyntaxProg *currentProg;
     DDSimulation *ddSim;

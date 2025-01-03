@@ -23,15 +23,15 @@ enum class RelOpType {
 
 // inline initialization with ODR
 inline static const char *relOpNames[] = {
-    "EQ",
-    "NE",
-    "GT",
-    "LT",
-    "GE",
-    "LE",
-    "AND",
-    "OR",
-    "NOT"
+    "=",
+    "!=",
+    ">",
+    "<",
+    ">=",
+    "<=",
+    "&&",
+    "||",
+    "!"
 };
 
 class CondExpNode : public ExpNode {

@@ -62,6 +62,7 @@ add_executable(
     ../ast/BoolExpNode.cpp
     ../utility/Timer.cpp
     ../utility/Tty.cpp
+    ../utility/fileReader.cpp
 )
 
 add_library(
@@ -97,6 +98,7 @@ add_library(
     ../ast/BoolExpNode.cpp
     ../utility/Timer.cpp
     ../utility/Tty.cpp
+    ../utility/fileReader.cpp
 )
 
 target_include_directories(ParserRunner PUBLIC ${CMAKE_CURRENT_BINARY_DIR})

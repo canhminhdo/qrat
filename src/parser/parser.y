@@ -5,6 +5,7 @@
 #include <vector>
 #include "parser/lexerAux.hpp"
 #include "utility/Vector.hpp"
+#include "utility/fileReader.hpp"
 #include "core/Token.hpp"
 #include "core/global.hpp"
 #include "core/type.hpp"
@@ -40,6 +41,7 @@ extern DeclMode declFlag;
 
 // for lexer
 void yyerror(const char *s);
+int yyparse(void);
 int yylex (void);
 extern FILE *yyin;
 extern char *yytext;
@@ -64,11 +66,14 @@ extern int yylineno;
     qc::fp param;
     std::vector<qc::fp> *params;
     std::pair<int, int> *searchParams;
+    char *filePath;
 }
 
 /* declare tokens */
 /* for programs */
 %token KW_PROG KW_IS KW_VAR KW_CONST KW_WHERE KW_INIT KW_BEGIN KW_END
+%token KW_LOAD KW_QUIT
+%token <filePath> FILENAME
 %token KW_QUBIT KW_COMPLEX
 %token <yyToken> IDENTIFIER
 %token KW_SKIP
@@ -93,6 +98,7 @@ extern int yylineno;
 %token KW_SEARCH KW_IN KW_WITH KW_SUCH KW_THAT
 %token KW_ARROW_ONE KW_ARROW_STAR KW_ARROW_PLUS KW_ARROW_EXCLAMATION
 %token KW_TRUE KW_FALSE KW_AND KW_OR KW_NOT KW_PROP
+%token KW_SHOW KW_PATH
 %token EOL
 
 /* types for nonterminal sysmbols */
@@ -111,6 +117,7 @@ extern int yylineno;
 %nterm <param> param
 %nterm <params> params
 %nterm <searchParams> searchParams
+%nterm <filePath> filePath
 /* start symbol */
 %start top
 
@@ -438,7 +445,34 @@ condExp :   measure KW_EQUAL number
 /* expected semicolon */
 expectedSemi    :   ';';
 
-command :   KW_SEARCH searchParams KW_IN
+/* expected dot */
+expectedDot :   '.';
+
+command :   loadFile
+        |   search
+        |   showPath
+        |   quit
+        ;
+
+loadFile    :   KW_LOAD filePath expectedDot
+                    {
+                        printFile($2);
+                        if (!(yyin = fopen($2, "r"))) {
+                            delete $2;
+                            yyerror(("Opening file '" + std::string($2) + "': " + strerror(errno)).c_str());
+                            YYERROR;
+                        }
+                        yyclearin;
+                        yyparse();
+                        fclose(yyin);
+                        delete $2;
+                    }
+            ;
+filePath    :   IDENTIFIER  { $$ = strdup($1.name()); }
+            |   FILENAME
+            ;
+
+search  :   KW_SEARCH searchParams KW_IN
             token
                 {
                     if (!interpreter.existProg($4)) {
@@ -451,13 +485,13 @@ command :   KW_SEARCH searchParams KW_IN
             arrow
             KW_SUCH KW_THAT
             property
-            expectedSemi
+            expectedDot
                 {
                     interpreter.initializeSearch($4.code(), $10, $7, $2->first, $2->second);
                     interpreter.execute();
                     delete $2;
                 }
-        |   KW_SEARCH error expectedSemi
+        |   KW_SEARCH error expectedDot
                 {
                     yyerrok;
                     yyclearin;
@@ -565,6 +599,33 @@ basisProp   :   basis
                         $$ = currentSyntaxProg->makeNode(new InitExpNode(currentSyntaxProg->lookup($3)));
                     }
             ;
+
+showPath    :   KW_SHOW KW_PATH number expectedDot
+                {
+                    if (!NUM_EXP_NODE($3)->isInt() || NUM_EXP_NODE($3)->getIntVal() < 0) {
+                        yyerror("State ID must be a natural number for showing the path");
+                        YYERROR;
+                    }
+                    interpreter.showPath(NUM_EXP_NODE($3)->getIntVal());
+                    delete $3;
+                }
+            |   KW_SHOW error expectedDot
+                     {
+                         yyerrok;
+                         yyclearin;
+                     }
+            ;
+
+quit    :   KW_QUIT expectedOrNotDot
+                {
+                    std::cout << "Bye." << std::endl;
+                    exit(0);
+                }
+        ;
+
+expectedOrNotDot    :   /* empty */
+                    |   expectedDot
+                    ;
 %%
 
 /* Section 3: C code */
@@ -579,6 +640,7 @@ int main(int argc, char **argv)
     }
     yyparse();
     fclose(yyin);
+
     #if false
     // test vector implementation
     Vector<int> v{5};
