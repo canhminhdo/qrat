@@ -13,6 +13,7 @@ extern FILE *yyin;
 extern int yyparse();
 extern std::vector<char *> pendingFiles;
 void handlePendingFiles(bool clearMemory = true);
+bool handleCommandLine();
 void yy_delete_buffer(YY_BUFFER_STATE buffer);
 YY_BUFFER_STATE yy_scan_string(const char *str);
 void yy_switch_to_buffer(YY_BUFFER_STATE new_buffer);
@@ -37,20 +38,8 @@ int main(int argc, char *argv[]) {
         printBanner();
     handlePendingFiles(false);
     while (1) {
-        std::string inputLine;
-        std::cout << "Qrat> " << std::flush;
-        std::getline(std::cin, inputLine);
-        if (std::cin.eof()) { // Check for EOF (Ctrl+D or Ctrl+Z)
-            break;
-        }
-        auto buffer = yy_scan_string(inputLine.c_str());
-        yy_switch_to_buffer(buffer);
-        if (!buffer) {
-            std::cerr << "Error: Unable to scan the command." << std::endl;
+        if (!handleCommandLine())
             continue;
-        }
-        yyparse();
-        yy_delete_buffer(buffer);
         handlePendingFiles();
     }
     return 0;
@@ -71,4 +60,22 @@ void handlePendingFiles(bool clearMemory) {
             delete[] pendingFiles[i];
     }
     pendingFiles.clear();
+}
+
+bool handleCommandLine() {
+    std::string inputLine;
+    std::cout << "Qrat> " << std::flush;
+    std::getline(std::cin, inputLine);
+    if (std::cin.eof()) { // Check for EOF (Ctrl+D or Ctrl+Z)
+        exit(0);
+    }
+    auto buffer = yy_scan_string(inputLine.c_str());
+    yy_switch_to_buffer(buffer);
+    if (!buffer) {
+        std::cerr << "Error: Unable to scan the command." << std::endl;
+        return false;
+    }
+    yyparse();
+    yy_delete_buffer(buffer);
+    return true;
 }
