@@ -8,6 +8,7 @@
 #include "ast/NumExpNode.hpp"
 #include <iomanip>
 #include "utility/Tty.hpp"
+#include "core/global.hpp"
 
 StateTransitionGraph::StateTransitionGraph(SyntaxProg *currentProg, DDSimulation *ddSim, ExpNode *propExp,
                                            Search::Type type, int numSols, int maxDepth) {
@@ -107,20 +108,20 @@ void StateTransitionGraph::procCondStm(CondStmNode *condStm, State *currentState
     auto [v0, pzero, v1, pone] = ddSim->measureWithProb(measExp, currentState->current);
 
     procCondBranch(currentState, isZero ? condStm->getThenStm()->getHead() : condStm->getElseStm()->getHead(), v0,
-                   pzero, timer);
+                   pzero, 0, timer);
     if (solutionCount < numSols) {
         procCondBranch(currentState, isZero ? condStm->getElseStm()->getHead() : condStm->getThenStm()->getHead(), v1,
-                       pone, timer);
+                       pone, 1, timer);
     }
 }
 
 void StateTransitionGraph::procCondBranch(State *currentState, StmNode *nextStm, qc::VectorDD &v, qc::fp prob,
-                                          const Timer &timer) {
+                                          int outcome, const Timer &timer) {
     if (prob == 0.0 || v.isZeroTerminal()) {
         return;
     }
-    auto [newState, inCache] = makeState(new State(nextStm, v, currentState->stateNr, currentState->depth + 1,
-                                                 currentState->prob * prob));
+    auto [newState, inCache] = makeState(new StateWithOutcome(nextStm, v, currentState->stateNr, currentState->depth + 1,
+                                                 currentState->prob * prob, outcome));
     currentState->nextStates.push_back(newState->stateNr);
     if (!inCache) {
         checkState(newState, timer);
@@ -135,20 +136,23 @@ void StateTransitionGraph::procWhileStm(WhileStmNode *whileStm, State *currentSt
     assert(condExp != nullptr && measExp != nullptr && numExp != nullptr);
     auto isZero = numExp->isZero();
     auto [v0, pzero, v1, pone] = ddSim->measureWithProb(measExp, currentState->current);
-    procCondBranch(currentState, isZero ? whileStm->getBody()->getHead() : nextStm, v0, pzero, timer);
+    procCondBranch(currentState, isZero ? whileStm->getBody()->getHead() : nextStm, v0, pzero, 0, timer);
     if (solutionCount < numSols) {
-        procCondBranch(currentState, isZero ? nextStm : whileStm->getBody()->getHead(), v1, pone, timer);
+        procCondBranch(currentState, isZero ? nextStm : whileStm->getBody()->getHead(), v1, pone, 1, timer);
     }
 }
 
 void StateTransitionGraph::showPath(int stateNr, bool endState) const {
     if (stateNr >= seenStates.size()) {
-        std::cout << Tty(Tty::RED) << "Invalid state ID" << Tty(Tty::RESET) << std::endl;
+        std::cout << Tty(Tty::RED) << "Error: State ID is invalid" << Tty(Tty::RESET) << std::endl;
         return;
     }
     auto *s = seenStates[stateNr];
     if (s->parent != -1) {
         showPath(s->parent, false);
+    }
+    if (s->hasOutcome()) {
+        std::cout << "(with measurement result: " << s->getOutcome() << ")\n";
     }
     std::cout << "state " << s->stateNr << ", ";
     printProbability(s);
@@ -164,7 +168,7 @@ void StateTransitionGraph::showPath(int stateNr, bool endState) const {
 std::pair<StateTransitionGraph::State *, bool> StateTransitionGraph::makeState(State *s) {
     auto it = stateTab.find(s);
     if (it != stateTab.end()) {
-//        std::cout << "Found state in cache, then delete the newly created state\n";
+        // std::cout << "Found state in cache, then delete the newly created state\n";
         delete s;
         return {seenStates[it->second], true};
     }
@@ -198,6 +202,7 @@ void StateTransitionGraph::printProbability(State *s) const {
 }
 
 void StateTransitionGraph::printSearchTiming(State *s, const Timer &timer) const {
+    std::cout << "\n";
     std::cout << "Solution " << solutionCount << " (state " << s->stateNr << ")\n";
     std::cout << "states: " << seenStates.size();
     Int64 real;
@@ -209,14 +214,12 @@ void StateTransitionGraph::printSearchTiming(State *s, const Timer &timer) const
     printProbability(s);
     std::cout << ", quantum state: \n";
     s->current.printVector<dd::vNode>();
-    std::cout << "\n";
-    std::cout << std::flush;
-    // showPath(s->stateNr);
 }
 
 void StateTransitionGraph::printSearchTiming(const Timer &timer) const {
     if (solutionCount != 0 && solutionCount >= numSols)
         return;
+    std::cout << "\n";
     solutionCount == 0 ? std::cout << "No solution.\n" : std::cout << "No more solutions.\n";
     std::cout << "states: " << seenStates.size();
     Int64 real;
@@ -227,6 +230,16 @@ void StateTransitionGraph::printSearchTiming(const Timer &timer) const {
     }
 }
 
+void StateTransitionGraph::printSearchCommand() {
+    if (systemMode == LOADING_FILE_MODE) {
+        std::cout << "==========================================\n";
+    }
+    std::cout << "search in ";
+    std::cout << Token::name(currentProg->getName());
+    std::cout << " with " << getSearchType() << " such that ";
+    propExp->info();
+    std::cout << " .\n";
+}
 void StateTransitionGraph::dump() const {
     std::cout << "Initial state: \n";
     ddSim->getInitialState().printVector<dd::vNode>();

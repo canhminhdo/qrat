@@ -56,6 +56,6 @@ void OpExpNode::info() {
     }
     std::cout << " " << getOpName() << " ";
     if (right != nullptr) {
-        right->dump();
+        right->info();
     }
 }

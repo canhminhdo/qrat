@@ -40,6 +40,7 @@ void Interpreter::execute() {
     assert(graphSearch != nullptr);
     // ddSim->dump();
     // graphSearch->dump();
+    graphSearch->printSearchCommand();
     graphSearch->search();
 }
 

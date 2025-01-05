@@ -1,11 +1,11 @@
-configure_file(${PROJECT_SOURCE_DIR}/generator/teleport/teleport.qw prog.qw)
-configure_file(${PROJECT_SOURCE_DIR}/generator/loop/prog-loop.qw prog-loop.qw)
-configure_file(${PROJECT_SOURCE_DIR}/generator/grover/grover.qw grover.qw)
+configure_file(${PROJECT_SOURCE_DIR}/examples/teleport/teleport.qw prog.qw)
+configure_file(${PROJECT_SOURCE_DIR}/examples/loop/prog-loop.qw prog-loop.qw)
+configure_file(${PROJECT_SOURCE_DIR}/examples/grover/grover.qw grover.qw)
 
 add_executable(
     ${PROJECT_NAME}
     main/main.cpp
-    main/printInfo.cpp
+    main/printUtils.cpp
 )
 
 # set include directories

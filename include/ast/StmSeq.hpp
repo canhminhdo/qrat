@@ -21,6 +21,8 @@ public:
 
     void dump(bool recursive = true);
 
+    void info();
+
 private:
     StmNode *head;
     StmNode *tail;

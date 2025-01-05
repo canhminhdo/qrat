@@ -5,16 +5,16 @@
 #ifndef STATETRANSITIONGRAPH_HPP
 #define STATETRANSITIONGRAPH_HPP
 
+#include "Search.hpp"
 #include "ast/CondStmNode.hpp"
 #include "ast/EndStmNode.hpp"
-#include "ast/StmNode.hpp"
 #include "ast/SkipStmNode.hpp"
+#include "ast/StmNode.hpp"
 #include "ast/WhileStmNode.hpp"
 #include "dd/DDSimulation.hpp"
 #include "utility/HashUtil.hpp"
-#include "utility/macros.hpp"
-#include "Search.hpp"
 #include "utility/Timer.hpp"
+#include "utility/macros.hpp"
 
 class StateTransitionGraph : public Search {
 public:
@@ -23,12 +23,13 @@ public:
 
     struct State {
         int stateNr;
-        StmNode *pc; // program counter
-        qc::VectorDD current{}; // current quantum state
+        StmNode *pc;           // program counter
+        qc::VectorDD current{};// current quantum state
         int parent;
         std::vector<int> nextStates;
         int depth{0};
         qc::fp prob{1.0};
+        int outcome{0};
 
         State(StmNode *pc, qc::VectorDD current, int parent = -1, int depth = 0, qc::fp prob = 1.0)
             : pc{pc}, current{std::move(current)}, parent{parent}, depth{depth}, prob{prob} {
@@ -44,6 +45,29 @@ public:
 
         void setId(int id) {
             stateNr = id;
+        }
+
+        virtual bool hasOutcome() const {
+            return false;
+        }
+
+        virtual int getOutcome() const {
+            throw std::runtime_error("No outcome available");
+        }
+    };
+
+    struct StateWithOutcome : public State {
+        int outcome{0};
+
+        StateWithOutcome(StmNode *pc, qc::VectorDD current, int parent = -1, int depth = 0, qc::fp prob = 1.0, int outcome = 0)
+            : State(pc, std::move(current), parent, depth, prob), outcome{outcome} {
+        }
+
+        bool hasOutcome() const override {
+            return true;
+        }
+        int getOutcome() const override {
+            return outcome;
         }
     };
 
@@ -74,7 +98,7 @@ public:
 
     void procWhileStm(WhileStmNode *whileStm, State *currentState, StmNode *nextStm, const Timer &timer);
 
-    void procCondBranch(State *currentState, StmNode *nextStm, qc::VectorDD &v, qc::fp prob, const Timer &timer);
+    void procCondBranch(State *currentState, StmNode *nextStm, qc::VectorDD &v, qc::fp prob, int outcome, const Timer &timer);
 
     StmNode *getNextStatement(StmNode *stm);
 
@@ -92,6 +116,8 @@ public:
 
     void printSearchTiming(const Timer &timer) const;
 
+    void printSearchCommand();
+
     void dump() const;
 
     void printState(State *s, bool recursive = true) const;
@@ -100,7 +126,7 @@ private:
     // for analysis
     std::unordered_map<State *, int, StateHash, StateEqual> stateTab;
     std::vector<State *> seenStates;
-    int savedStateId{-1}; // state being considered
+    int savedStateId{-1};// state being considered
 
     SyntaxProg *currentProg;
     DDSimulation *ddSim;
@@ -112,4 +138,4 @@ private:
     int depthBound{UNBOUNDED};
 };
 
-#endif //STATETRANSITIONGRAPH_HPP
+#endif//STATETRANSITIONGRAPH_HPP

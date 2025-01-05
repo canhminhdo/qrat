@@ -2,10 +2,10 @@
 // Created by CanhDo on 2024/11/20.
 //
 
-#include <iostream>
 #include "ast/StmSeq.hpp"
 #include "ast/CondStmNode.hpp"
 #include "ast/EndStmNode.hpp"
+#include <iostream>
 
 StmSeq::StmSeq() : head{nullptr}, tail{nullptr} {
 }
@@ -44,4 +44,13 @@ StmNode *StmSeq::getTail() const {
 void StmSeq::dump(bool recursive) {
     if (head)
         head->dump();
+}
+void StmSeq::info() {
+    StmNode *current = head;
+    while (current != nullptr && current != tail) {
+        current->info();
+        current = current->getNext();
+    }
+    if (dynamic_cast<EndStmNode *>(current) == nullptr)
+        current->info();
 }
