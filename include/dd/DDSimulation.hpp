@@ -26,6 +26,8 @@ class DDSimulation {
 public:
     DDSimulation(SyntaxProg *prog);
 
+    ~DDSimulation();
+
     qc::VectorDD getInitialState() const;
 
     qc::VectorDD generateRandomState();

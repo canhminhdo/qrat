@@ -38,7 +38,7 @@ void SyntaxProg::addInit(Token variable, Node *value) {
     if (auto *varPtr = dynamic_cast<VarSymbol *>(symTab.lookup(variable.code()))) {
         varPtr->setValue(value);
     } else {
-        std::cerr << "Error: " << Token::name(variable.code()) << " variable is not declared. " << std::endl;
+        std::cerr << "Error: " << Token::name(variable.code()) << " variable is not declared" << std::endl;
         exit(1);
     }
 }

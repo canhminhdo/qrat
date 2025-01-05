@@ -23,6 +23,10 @@ DDSimulation::DDSimulation(SyntaxProg *prog) : prog{prog}, dd{std::make_unique<D
     initialize();
 }
 
+DDSimulation::~DDSimulation() {
+    dd->garbageCollect(true);
+}
+
 qc::VectorDD DDSimulation::getInitialState() const {
     return initialState;
 }

@@ -21,6 +21,8 @@ public:
     StateTransitionGraph(SyntaxProg *currentProg, DDSimulation *ddSim, ExpNode *propExp, Search::Type type, int numSols,
                          int maxDepth);
 
+    ~StateTransitionGraph();
+
     struct State {
         int stateNr;
         StmNode *pc;           // program counter

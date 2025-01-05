@@ -28,6 +28,8 @@ public:
 
     void initializeSearch(int progName, ExpNode *propExp, Search::Type type, int numSols, int maxDepth);
 
+    void cleanSearch();
+
     void finalizeProg();
 
     void showPath(int stateId);

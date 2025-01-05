@@ -27,7 +27,7 @@ void Interpreter::initDDSimulation() {
     if (currentProg) {
         ddSim = new DDSimulation(currentProg);
     } else {
-        std::cerr << "Error: no program to simulate." << std::endl;
+        std::cerr << "Error: No program to simulate" << std::endl;
     }
 }
 
@@ -46,8 +46,20 @@ void Interpreter::execute() {
 
 void Interpreter::initializeSearch(int progName, ExpNode *propExp, Search::Type type, int numSols, int maxDepth) {
     assert(currentProg != nullptr && progName == currentProg->getName());
+    cleanSearch();
     initDDSimulation();
     initGraphSearch(propExp, type, numSols, maxDepth);
+}
+
+void Interpreter::cleanSearch() {
+    if (graphSearch != nullptr) {
+        delete graphSearch;
+        graphSearch = nullptr;
+    }
+    if (ddSim != nullptr) {
+        delete ddSim;
+        ddSim = nullptr;
+    }
 }
 
 void Interpreter::finalizeProg() {

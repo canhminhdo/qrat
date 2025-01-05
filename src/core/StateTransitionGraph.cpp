@@ -21,6 +21,15 @@ StateTransitionGraph::StateTransitionGraph(SyntaxProg *currentProg, DDSimulation
     this->ddSim->initProperty(propExp);
 }
 
+StateTransitionGraph::~StateTransitionGraph() {
+    for (auto *state: seenStates) {
+        delete state;
+    }
+    seenStates.clear();
+    stateTab.clear();
+}
+
+
 void StateTransitionGraph::buildInitialState() {
     auto *initialState = new State(currentProg->getStmSeq()->getHead(), ddSim->getInitialState());
     assert(seenStates.empty());

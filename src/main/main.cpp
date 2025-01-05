@@ -72,7 +72,7 @@ bool handleCommandLine() {
     }
     auto buffer = yy_scan_string(inputLine.c_str());
     if (!buffer) {
-        std::cerr << "Error: Unable to scan the command." << std::endl;
+        std::cerr << "Error: Unable to scan the command" << std::endl;
         return false;
     }
     yyparse();

@@ -27,7 +27,7 @@ SymbolTable::~SymbolTable() {
 
 void SymbolTable::addVarSymbol(int name, Type type, Node *value) {
     if (simTab.find(name) != simTab.end()) {
-        std::cerr << "Error: " << Token::name(name) << " variable already exists." << std::endl;
+        std::cerr << "Error: " << Token::name(name) << " variable already exists" << std::endl;
         exit(1);
     }
     auto *varPtr = new VarSymbol(name, type, value);
@@ -37,7 +37,7 @@ void SymbolTable::addVarSymbol(int name, Type type, Node *value) {
 
 void SymbolTable::addConstSymbol(int name, Type type, Node *value, Node *conditions) {
     if (simTab.find(name) != simTab.end()) {
-        std::cerr << "Error: " << Token::name(name) << " already exists: " << std::endl;
+        std::cerr << "Error: " << Token::name(name) << " already exists" << std::endl;
         exit(1);
     }
     simTab[name] = new ConstSymbol(name, type, value, conditions);
