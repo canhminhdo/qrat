@@ -19,6 +19,11 @@ enum ErrorCode {
     INTERNAL_ERROR,
 };
 
+enum SystemMode {
+    INTERACTIVE_MODE,
+    LOADING_FILE_MODE,
+};
+
 enum SpecialConstants {
     UNUSED = -1,
     UNBOUNDED = INT_MAX,

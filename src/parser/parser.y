@@ -663,5 +663,9 @@ int main(int argc, char **argv)
 
 void yyerror(const char *s)
 {
-    std::cout << Tty(Tty::RED) << "Error: " << s << " at line " << yylineno << Tty(Tty::RESET) << std::endl;
+    if (systemMode == LOADING_FILE_MODE) {
+        std::cout << Tty(Tty::RED) << "Error: " << s << " at line " << yylineno << Tty(Tty::RESET) << std::endl;
+    } else {
+        std::cout << Tty(Tty::RED) << "Error: " << s << Tty(Tty::RESET) << std::endl;
+    }
 }

@@ -2,7 +2,9 @@
 // Created by CanhDo on 2024/08/29.
 //
 
+#include "core/global.hpp"
 #include "lexer.hpp"
+#include "utility/macros.hpp"
 #include <iostream>
 
 void printVersion();
@@ -16,8 +18,7 @@ void handlePendingFiles(bool clearMemory = true);
 bool handleCommandLine();
 void yy_delete_buffer(YY_BUFFER_STATE buffer);
 YY_BUFFER_STATE yy_scan_string(const char *str);
-void yy_switch_to_buffer(YY_BUFFER_STATE new_buffer);
-YY_BUFFER_STATE yy_create_buffer(FILE *file, int size);
+void yyrestart(FILE *input_file);
 
 int main(int argc, char *argv[]) {
     bool outputBanner = true;
@@ -46,15 +47,14 @@ int main(int argc, char *argv[]) {
 }
 
 void handlePendingFiles(bool clearMemory) {
+    systemMode = LOADING_FILE_MODE;
     for (int i = 0; i < pendingFiles.size(); i++) {
         if (!(yyin = fopen(pendingFiles[i], "r"))) {
             std::cerr << "Error: Opening file '" << pendingFiles[i] << "': " << strerror(errno) << std::endl;
             continue;
         }
-        YY_BUFFER_STATE file_buffer = yy_create_buffer(yyin, YY_BUF_SIZE);
-        yy_switch_to_buffer(file_buffer);
+        yyrestart(yyin);
         yyparse();
-        yy_delete_buffer(file_buffer);
         fclose(yyin);
         if (clearMemory)
             delete[] pendingFiles[i];
@@ -63,14 +63,14 @@ void handlePendingFiles(bool clearMemory) {
 }
 
 bool handleCommandLine() {
+    systemMode = INTERACTIVE_MODE;
     std::string inputLine;
-    std::cout << "Qrat> " << std::flush;
+    std::cout << "qrat> " << std::flush;
     std::getline(std::cin, inputLine);
-    if (std::cin.eof()) { // Check for EOF (Ctrl+D or Ctrl+Z)
+    if (std::cin.eof()) {// Check for EOF (Ctrl+D or Ctrl+Z)
         exit(0);
     }
     auto buffer = yy_scan_string(inputLine.c_str());
-    yy_switch_to_buffer(buffer);
     if (!buffer) {
         std::cerr << "Error: Unable to scan the command." << std::endl;
         return false;

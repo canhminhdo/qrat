@@ -5,3 +5,4 @@
 #include "core/global.hpp"
 
 Interpreter &interpreter = *(new Interpreter());
+SystemMode systemMode = INTERACTIVE_MODE;
