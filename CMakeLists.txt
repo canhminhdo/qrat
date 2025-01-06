@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 3.20..3.26)
 project(qrat
-    LANGUAGES CXX
     VERSION 0.1
-    HOMEPAGE_URL "https://github.com/canhminhdo/QRAT"
     DESCRIPTION "QRAT - A Reachability Analysis Tool for Quantum Programs"
+    HOMEPAGE_URL "https://github.com/canhminhdo/QRAT"
+    LANGUAGES CXX
 )
 
 # project settings

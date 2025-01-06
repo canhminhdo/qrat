@@ -8,3 +8,12 @@ This repository presents a reachablity analysis tool for quantum programs called
 - [google/googletest](https://github.com/google/googletest) - A testing framework for C++ (only used in tests)
 
 ## Getting Started
+
+`QRAT` can be installed on your system after building it from source.
+```shell
+$ git clone --recurse-submodules https://github.com/canhminhdo/MQT-QRAT.git
+$ cd MQT-QRAT
+$ cmake -S . -B build
+$ cmake --build build
+$ cmake --install build
+```
