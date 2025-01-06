@@ -14,6 +14,7 @@ This repository presents a reachablity analysis tool for quantum programs called
 $ git clone --recurse-submodules https://github.com/canhminhdo/MQT-QRAT.git
 $ cd MQT-QRAT
 $ cmake -S . -B build
-$ cmake --build build
-$ cmake --install build
+$ cmake --build build # building the project
+$ cmake --install build # install the project
+$ ctest --test-dir build # testing the project
 ```
