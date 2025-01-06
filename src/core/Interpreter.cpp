@@ -74,7 +74,7 @@ void Interpreter::finalizeProg() {
         oldProg->second = currentProg;
         std::cout << "==========================================" << std::endl;
         std::cout << "prog " << Token::name(currentProg->getName()) << std::endl;
-        std::cout << Tty(Tty::GREEN) << "Advisory: " << Tty(Tty::RESET) << "redefining program " << Tty(Tty::MAGENTA)<< Token::name(currentProg->getName()) << Tty(Tty::RESET) << std::endl;
+        std::cout << Tty(Tty::GREEN) << "Advisory: " << Tty(Tty::RESET) << "redefining program " << Tty(Tty::MAGENTA)<< Token::name(currentProg->getName()) << Tty(Tty::RESET) << "." << std::endl;
     }
 }
 void Interpreter::showPath(int stateId) {

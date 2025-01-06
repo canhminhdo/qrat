@@ -36,5 +36,5 @@ void KetExpNode::dump(bool recursive) {
 }
 
 void KetExpNode::info() {
-    std::cout << getName() << std::endl;
+    std::cout << getName();
 }
