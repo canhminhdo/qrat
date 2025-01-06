@@ -19,7 +19,7 @@ add_subdirectory(src)
 include_directories(include)
 
 # add documentation
-option(BUILD_QRAT_DOC "Build documentation for the QRAT project" ON)
+option(BUILD_QRAT_DOC "Build documentation for the QRAT project" ON) # only sets value if it is not already defined
 if(BUILD_QRAT_DOC)
     add_subdirectory(doc)
 endif()
