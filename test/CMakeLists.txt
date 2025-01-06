@@ -5,30 +5,21 @@ if(NOT TARGET gtest OR NOT TARGET gmock)
         ON
         CACHE BOOL "" FORCE)
     add_subdirectory("${PROJECT_SOURCE_DIR}/extern/googletest" "extern/googletest" EXCLUDE_FROM_ALL)
-#    set_target_properties(gtest gtest_main gmock gmock_main PROPERTIES FOLDER extern)
+    set_target_properties(gtest gtest_main gmock gmock_main PROPERTIES FOLDER extern)
 endif()
 
 message("Building tests for QRAT project")
 
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/testScript.sh DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+file(GLOB DIRECTORIES LIST_DIRECTORIES true "${CMAKE_CURRENT_SOURCE_DIR}/*")
+foreach(DIR ${DIRECTORIES})
+    if(IS_DIRECTORY ${DIR})
+        file(COPY ${DIR} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+    endif()
+endforeach()
+
 ## for testing
-#add_executable(appTest
-#    app_test.cpp)
-#
-## for production
-#add_executable(main
-#    main.cpp)
-#
-#target_link_libraries(main ${PROJECT_NAME})
-#target_link_libraries(appTest ${PROJECT_NAME} gtest_main)
-#gtest_discover_tests(appTest)
-
-## for production
-add_executable(bootstrap
-    bootstrap.cpp)
-
-package_add_test(
-    ${PROJECT_NAME}_test
-    Parser
-    main.cpp
-    test.cpp
+package_add_tests(
+    ${PROJECT_NAME}_test ""
+    test_programs.cpp
 )

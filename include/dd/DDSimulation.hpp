@@ -5,7 +5,6 @@
 #ifndef DDSIMULATION_HPP
 #define DDSIMULATION_HPP
 
-#include "Configuration.hpp"
 #include "DDSimulationPackageConfig.hpp"
 #include "ast/MeasExpNode.hpp"
 #include "ast/PropExpNode.hpp"
@@ -135,7 +134,6 @@ private:
     std::unordered_map<PropExpNode *, qc::MatrixDD, PropHash, PropEqual> projectorMap;
 
     // for random state generation
-    Configuration config{};
     std::mt19937_64 mt{};
 };
 #endif//DDSIMULATION_HPP

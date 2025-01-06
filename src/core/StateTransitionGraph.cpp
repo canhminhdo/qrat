@@ -4,6 +4,7 @@
 
 #include "core/StateTransitionGraph.hpp"
 
+#include <Configuration.hpp>
 #include "ast/CondExpNode.hpp"
 #include "ast/NumExpNode.hpp"
 #include <iomanip>
@@ -129,8 +130,9 @@ void StateTransitionGraph::procCondBranch(State *currentState, StmNode *nextStm,
     if (prob == 0.0 || v.isZeroTerminal()) {
         return;
     }
-    auto [newState, inCache] = makeState(new StateWithOutcome(nextStm, v, currentState->stateNr, currentState->depth + 1,
-                                                 currentState->prob * prob, outcome));
+    auto [newState, inCache] = makeState(new StateWithOutcome(nextStm, v, currentState->stateNr,
+                                                              currentState->depth + 1,
+                                                              currentState->prob * prob, outcome));
     currentState->nextStates.push_back(newState->stateNr);
     if (!inCache) {
         checkState(newState, timer);
@@ -214,12 +216,15 @@ void StateTransitionGraph::printSearchTiming(State *s, const Timer &timer) const
     std::cout << "\n";
     std::cout << "Solution " << solutionCount << " (state " << s->stateNr << ")\n";
     std::cout << "states: " << seenStates.size();
-    Int64 real;
-    Int64 virt;
-    Int64 prof;
-    if (timer.getTimes(real, virt, prof)) {
-        std::cout << " in " << prof / 1000 << "ms cpu (" << real / 1000 << "ms real)\n";
+    if (Configuration::showTiming) {
+        Int64 real;
+        Int64 virt;
+        Int64 prof;
+        if (timer.getTimes(real, virt, prof)) {
+            std::cout << " in " << prof / 1000 << "ms cpu (" << real / 1000 << "ms real)";
+        }
     }
+    std::cout << "\n";
     printProbability(s);
     std::cout << ", quantum state: \n";
     s->current.printVector<dd::vNode>();
@@ -231,16 +236,19 @@ void StateTransitionGraph::printSearchTiming(const Timer &timer) const {
     std::cout << "\n";
     solutionCount == 0 ? std::cout << "No solution.\n" : std::cout << "No more solutions.\n";
     std::cout << "states: " << seenStates.size();
-    Int64 real;
-    Int64 virt;
-    Int64 prof;
-    if (timer.getTimes(real, virt, prof)) {
-        std::cout << " in " << prof / 1000 << "ms cpu (" << real / 1000 << "ms real)\n";
+    if (Configuration::showTiming) {
+        Int64 real;
+        Int64 virt;
+        Int64 prof;
+        if (timer.getTimes(real, virt, prof)) {
+            std::cout << " in " << prof / 1000 << "ms cpu (" << real / 1000 << "ms real)";
+        }
     }
+    std::cout << "\n";
 }
 
 void StateTransitionGraph::printSearchCommand() {
-    if (systemMode == LOADING_FILE_MODE) {
+    if (Configuration::systemMode == LOADING_FILE_MODE) {
         std::cout << "==========================================\n";
     }
     std::cout << "search in ";
@@ -249,6 +257,7 @@ void StateTransitionGraph::printSearchCommand() {
     propExp->info();
     std::cout << " .\n";
 }
+
 void StateTransitionGraph::dump() const {
     std::cout << "Initial state: \n";
     ddSim->getInitialState().printVector<dd::vNode>();

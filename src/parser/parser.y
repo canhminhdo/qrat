@@ -35,6 +35,7 @@
 #include <vector>
 #include "utility/macros.hpp"
 #include "utility/Tty.hpp"
+#include "Configuration.hpp"
 
 // for interpreter and programs
 SyntaxProg *currentSyntaxProg;
@@ -103,6 +104,8 @@ extern std::vector<char *> pendingFiles;
 %token KW_ARROW_ONE KW_ARROW_STAR KW_ARROW_PLUS KW_ARROW_EXCLAMATION
 %token KW_TRUE KW_FALSE KW_AND KW_OR KW_NOT KW_PROP
 %token KW_SHOW KW_PATH
+%token KW_SET KW_TIMING KW_ON KW_OFF
+%token KW_SEED
 %token EOL
 
 /* types for nonterminal sysmbols */
@@ -455,6 +458,7 @@ expectedDot :   '.';
 command :   loadFile
         |   search
         |   showPath
+        |   setParam
         |   quit
         ;
 
@@ -473,6 +477,35 @@ loadFile    :   KW_LOAD filePath expectedDot
 filePath    :   IDENTIFIER  { $$ = strdup($1.name()); }
             |   FILENAME
             ;
+
+setParam    :   setShowingTime
+            |   setRandomSeed
+            ;
+
+setShowingTime  :   KW_SET KW_SHOW KW_TIMING KW_ON expectedDot
+                        {
+                            Configuration::showTiming = true;
+                            std::cout << "Show timing is on." << std::endl;
+                        }
+                |   KW_SET KW_SHOW KW_TIMING KW_OFF expectedDot
+                        {
+                            Configuration::showTiming = false;
+                            std::cout << "Show timing is off." << std::endl;
+                        }
+                ;
+
+setRandomSeed   :   KW_SET KW_KET_RANDOM KW_SEED number expectedDot
+                        {
+                            if (!NUM_EXP_NODE($4)->isInt()) {
+                                yyerror("The seed must be an integer");
+                                YYERROR;
+                            }
+                            Configuration::seed = NUM_EXP_NODE($4)->getIntVal();
+
+                            delete $4;
+                            std::cout << "Random seed is set to "<< Configuration::seed << "." << std::endl;
+                        }
+                ;
 
 search  :   KW_SEARCH searchParams KW_IN
             token
@@ -663,7 +696,7 @@ int main(int argc, char **argv)
 
 void yyerror(const char *s)
 {
-    if (systemMode == LOADING_FILE_MODE) {
+    if (Configuration::systemMode == LOADING_FILE_MODE) {
         std::cout << Tty(Tty::RED) << "Error: " << s << " at line " << yylineno << Tty(Tty::RESET) << std::endl;
     } else {
         std::cout << Tty(Tty::RED) << "Error: " << s << Tty(Tty::RESET) << std::endl;

@@ -1,0 +1,15 @@
+Show timing is off.
+Random seed is set to 0.
+==========================================
+prog PROG_LOOP
+==========================================
+search in PROG_LOOP with =>! such that true .
+
+Solution 1 (state 2)
+states: 3
+probability: 0.501, quantum state: 
+0: (0.754,-0.657)
+
+No more solutions.
+states: 5
+Bye.

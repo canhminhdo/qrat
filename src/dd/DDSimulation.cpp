@@ -3,7 +3,7 @@
 //
 
 #include "dd/DDSimulation.hpp"
-
+#include "Configuration.hpp"
 #include "ast/BoolExpNode.hpp"
 #include "ast/InitExpNode.hpp"
 #include "ast/KetExpNode.hpp"
@@ -19,7 +19,7 @@
 // using DDPackage = typename dd::Package<DDSimulationPackageConfig>;
 DDSimulation::DDSimulation(SyntaxProg *prog) : prog{prog}, dd{std::make_unique<DDPackage>(prog->getNqubits())},
                                                nqubits{prog->getNqubits()} {
-    mt.seed(config.simulation.seed);
+    mt.seed(Configuration::seed);
     initialize();
 }
 
@@ -250,7 +250,7 @@ bool DDSimulation::test(qc::VectorDD v, ExpNode *expNode) {
         // todo: should check structure similarity during checking fidelity for fast comparison
         // auto fd = dd->fidelity(v1, v);
         // std::cout << "Fidelity: " << fd << std::endl;
-        // return std::abs(fd - 1) < config.simulation.fidelityThreshold;
+        // return std::abs(fd - 1) < Configuration::fidelityThreshold;
     }
     if (auto *opExpNode = dynamic_cast<OpExpNode *>(expNode)) {
         switch (opExpNode->getType()) {

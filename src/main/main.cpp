@@ -2,6 +2,8 @@
 // Created by CanhDo on 2024/08/29.
 //
 
+#include <Configuration.hpp>
+
 #include "core/global.hpp"
 #include "lexer.hpp"
 #include "utility/macros.hpp"
@@ -22,7 +24,6 @@ YY_BUFFER_STATE yy_scan_string(const char *str);
 void yyrestart(FILE *input_file);
 
 int main(int argc, char *argv[]) {
-    bool outputBanner = true;
     for (int i = 1; i < argc; i++) {
         char *arg = argv[i];
         if (arg[0] == '-') {
@@ -31,17 +32,17 @@ int main(int argc, char *argv[]) {
             else if (strcmp(arg, "--version") == 0)
                 printVersion();
             else if (strcmp(arg, "-no-banner") == 0)
-                outputBanner = false;
+                Configuration::outputBanner = false;
             else if (const char *s = isFlag(arg, "-random-seed="))
-                Configuration::Simulation::seed = strtoul(s, 0, 0);
+                Configuration::seed = strtoul(s, 0, 0);
         } else {
             pendingFiles.push_back(arg);
         }
     }
-    if (outputBanner)
+    if (Configuration::outputBanner)
         printBanner();
     handlePendingFiles(false);
-    while (1) {
+    while (true) {
         if (!handleCommandLine())
             continue;
         handlePendingFiles();
@@ -50,7 +51,7 @@ int main(int argc, char *argv[]) {
 }
 
 void handlePendingFiles(bool clearMemory) {
-    systemMode = LOADING_FILE_MODE;
+    Configuration::systemMode = LOADING_FILE_MODE;
     for (int i = 0; i < pendingFiles.size(); i++) {
         if (!(yyin = fopen(pendingFiles[i], "r"))) {
             std::cerr << "Error: Opening file '" << pendingFiles[i] << "': " << strerror(errno) << std::endl;
@@ -66,7 +67,7 @@ void handlePendingFiles(bool clearMemory) {
 }
 
 bool handleCommandLine() {
-    systemMode = INTERACTIVE_MODE;
+    Configuration::systemMode = INTERACTIVE_MODE;
     std::string inputLine;
     std::cout << "qrat> " << std::flush;
     std::getline(std::cin, inputLine);

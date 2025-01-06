@@ -6,9 +6,7 @@
 #define GLOBAL_HPP
 
 #include "core/Interpreter.hpp"
-#include "utility/macros.hpp"
 
 extern Interpreter &interpreter;
-extern SystemMode systemMode;
 
 #endif //GLOBAL_HPP

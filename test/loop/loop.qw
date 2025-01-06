@@ -1,0 +1,15 @@
+set show timing off .
+set random seed 0 .
+
+prog PROG_LOOP is
+var q : qubit;
+init
+    q := random;
+begin
+    q := H[q];
+    while M[q] = 1 do q := H[q]; od;
+end
+
+search in PROG_LOOP with =>! such that true .
+
+quit .

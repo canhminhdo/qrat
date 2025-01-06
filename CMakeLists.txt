@@ -12,7 +12,10 @@ include(cmake/ProjectSettings.cmake)
 include(cmake/CompilerOptions.cmake)
 # check external dependencies
 include(cmake/ExternalDependencies.cmake)
+# for doxygen documentation
 include(cmake/Doxygen.cmake)
+# package add test macro
+include(cmake/PackageAddTest.cmake)
 
 add_subdirectory(src)
 #add_subdirectory(extern)

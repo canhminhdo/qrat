@@ -6,16 +6,15 @@
 #define CONFIGURATION_HPP
 
 #include <cstddef>
+#include "utility/macros.hpp"
 
-class Configuration {
-public:
+struct Configuration {
     // configuration options for the simulation scheme
-    struct Simulation {
-        static constexpr double fidelityThreshold = 1e-8;
-        inline static std::size_t seed = 0U;
-    };
-
-    Simulation simulation{};
+    inline static double fidelityThreshold = 1e-8;
+    inline static std::size_t seed = 0U;
+    inline static bool outputBanner = true;
+    inline static SystemMode systemMode = INTERACTIVE_MODE;
+    inline static bool showTiming = true;
 };
 
 #endif //CONFIGURATION_HPP
