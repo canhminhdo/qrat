@@ -10,6 +10,7 @@
 void printVersion();
 void printBanner();
 void printHelp();
+const char * isFlag(const char *arg, const char *flag);
 
 extern FILE *yyin;
 extern int yyparse();
@@ -31,6 +32,8 @@ int main(int argc, char *argv[]) {
                 printVersion();
             else if (strcmp(arg, "-no-banner") == 0)
                 outputBanner = false;
+            else if (const char *s = isFlag(arg, "-random-seed="))
+                Configuration::Simulation::seed = strtoul(s, 0, 0);
         } else {
             pendingFiles.push_back(arg);
         }

@@ -11,8 +11,8 @@ class Configuration {
 public:
     // configuration options for the simulation scheme
     struct Simulation {
-        double fidelityThreshold = 1e-8;
-        std::size_t seed = 0U;
+        static constexpr double fidelityThreshold = 1e-8;
+        inline static std::size_t seed = 0U;
     };
 
     Simulation simulation{};

@@ -7,21 +7,14 @@
 #include <iostream>
 #include <sys/time.h>
 
-void printVersion() {
-    std::cout << PROJECT_VERSION << std::endl;
-    exit(0);
-}
-
-void printHelp() {
-    std::cout << PROJECT_DESCRIPTION << "\n"
-              << "Usage: " << PROJECT_NAME << " [options] [files]\n"
-              << "Options:\n"
-              << "  --help\t\tDisplay this information\n"
-              << "  --version\t\tDisplay version number\n"
-              << "  -no-banner\t\tDo not output banner on startup\n"
-              << "\n"
-              << "Send bug reports to: " << "canhdo@jaist.ac.jp" << std::endl;
-    exit(0);
+const char * isFlag(const char *arg, const char *flag) {
+    char f;
+    do {
+        f = *flag++;
+        if (f == 0)
+            return arg;
+    } while (f == *arg++);
+    return 0;
 }
 
 void capitalizeFirstLetter(std::string &str) {
@@ -36,6 +29,24 @@ void capitalizeLetters(std::string &str) {
             c = std::toupper(c);
         }
     }
+}
+
+void printVersion() {
+    std::cout << PROJECT_VERSION << std::endl;
+    exit(0);
+}
+
+void printHelp() {
+    std::cout << PROJECT_DESCRIPTION << "\n"
+              << "Usage: " << PROJECT_NAME << " [options] [files]\n"
+              << "Options:\n"
+              << "  --help\t\tDisplay this information\n"
+              << "  --version\t\tDisplay version number\n"
+              << "  -no-banner\t\tDo not output banner on startup\n"
+              << "  -random-seed=<int>\t\tSet seed for random number generator\n"
+              << "\n"
+              << "Send bug reports to: " << "canhdo@jaist.ac.jp" << std::endl;
+    exit(0);
 }
 
 void printBanner() {
