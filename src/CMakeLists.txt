@@ -5,7 +5,7 @@ configure_file(${PROJECT_SOURCE_DIR}/examples/grover/grover.qw grover.qw)
 add_executable(
     ${PROJECT_NAME}
     main/main.cpp
-    main/printUtils.cpp
+    utility/printUtils.cpp
 )
 
 # set include directories

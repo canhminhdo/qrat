@@ -16,6 +16,6 @@ $ cd MQT-QRAT
 $ cmake -S . -B build -D CMAKE_BUILD_TYPE=Release # configure the project to be built with Release mode
 $ cmake --build build --clean-first # clean the build directory if needed
 $ cmake --build build --config Release --parallel 8 # building the project with Release mode and 8 workers in parallel
-$ cmake --install build # install the project
 $ ctest --test-dir build # testing the project
+$ cmake --install build # install the project
 ```

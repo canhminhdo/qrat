@@ -3,6 +3,7 @@
 //
 
 #include "config.h"
+#include "utility/printUtils.hpp"
 #include "utility/Tty.hpp"
 #include <iostream>
 #include <sys/time.h>

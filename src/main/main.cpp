@@ -6,22 +6,15 @@
 
 #include "core/global.hpp"
 #include "lexer.hpp"
+#include "dd/DDOperation.hpp"
+#include "parser.hpp"
 #include "utility/macros.hpp"
+#include "utility/printUtils.hpp"
 #include <iostream>
 
-void printVersion();
-void printBanner();
-void printHelp();
-const char * isFlag(const char *arg, const char *flag);
-
-extern FILE *yyin;
-extern int yyparse();
 extern std::vector<char *> pendingFiles;
 void handlePendingFiles(bool clearMemory = true);
 bool handleCommandLine();
-void yy_delete_buffer(YY_BUFFER_STATE buffer);
-YY_BUFFER_STATE yy_scan_string(const char *str);
-void yyrestart(FILE *input_file);
 
 int main(int argc, char *argv[]) {
     for (int i = 1; i < argc; i++) {
