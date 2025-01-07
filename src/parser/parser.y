@@ -125,8 +125,9 @@ extern std::vector<char *> pendingFiles;
 %nterm <params> params
 %nterm <searchParams> searchParams
 %nterm <filePath> filePath
-/* start symbol */
+/* start symbol
 %start top
+*/
 
 /* precedence and associativity */
 %left '-' '+'
