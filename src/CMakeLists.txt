@@ -8,17 +8,6 @@ add_executable(
     utility/printUtils.cpp
 )
 
-# install the project and some quantum programs
-install(TARGETS ${PROJECT_NAME}
-        RUNTIME
-        DESTINATION ${PROJECT_SOURCE_DIR}/dist)
-install(
-    FILES
-        ${PROJECT_SOURCE_DIR}/examples/teleport/teleport.qw
-        ${PROJECT_SOURCE_DIR}/examples/loop/prog-loop.qw
-        ${PROJECT_SOURCE_DIR}/examples/grover/grover.qw
-    DESTINATION ${PROJECT_SOURCE_DIR}/dist)
-
 if(FORMAT_SOURCE_CODE)
     set(FORMAT_DIRECTORIES
         ${PROJECT_SOURCE_DIR}/src
@@ -41,3 +30,26 @@ include_directories(
 target_link_libraries(${PROJECT_NAME} Parser)
 
 add_subdirectory(parser)
+
+set(CMAKE_INSTALL_PREFIX ${PROJECT_SOURCE_DIR}/dist CACHE STRING "Install prefix" FORCE)
+message(STATUS "Install prefix: ${CMAKE_INSTALL_PREFIX}")
+# install the project and some quantum programs
+install(TARGETS ${PROJECT_NAME}
+        RUNTIME
+        DESTINATION .)
+install(
+        FILES
+        ${PROJECT_SOURCE_DIR}/examples/teleport/teleport.qw
+        ${PROJECT_SOURCE_DIR}/examples/loop/prog-loop.qw
+        ${PROJECT_SOURCE_DIR}/examples/grover/grover.qw
+        DESTINATION .)
+
+# CPack Configuration
+include(CPack)
+set(CPACK_PACKAGE_NAME ${PROJECT_NAME})
+set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION})
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY ${PROJECT_DESCRIPTION})
+set(CPACK_PACKAGE_VENDOR ${PROJECT_VENDOR})
+set(CPACK_PACKAGE_CONTACT ${PROJECT_BUGREPORT})
+set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${CMAKE_SYSTEM_NAME}")
+set(CPACK_GENERATOR "ZIP" CACHE STRING "Set package format" FORCE) # Use .zip for Windows, MacOS, and Linux

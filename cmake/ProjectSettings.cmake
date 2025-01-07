@@ -21,7 +21,7 @@ macro(TODAY RESULT)
     elseif(UNIX)
         execute_process(COMMAND "date" "+%b %d %Y %T" OUTPUT_VARIABLE ${RESULT})
         string(REGEX REPLACE "\n" "" ${RESULT} ${${RESULT}})
-    else(WIN32)
+    else()
         message(SEND_ERROR "date not implemented")
         set(${RESULT} "unknown")
     endif(WIN32)
@@ -30,6 +30,7 @@ endmacro()
 today(RESULT)
 set(PROJECT_BUILD_DATE ${RESULT})
 set(PROJECT_BUGREPORT "canhdo@jaist.ac.jp")
+set(PROJECT_VENDOR "Ogata Laboratory (JAIST)")
 
 # generate a header file with the information from the project
 configure_file(
