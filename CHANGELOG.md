@@ -9,6 +9,6 @@
     + `load <progFile> .`
     + `search {[ bound {, depth} ]} in <progId> with <searchType> such that <condition> .`
     + `show path <number> .`
-    + `set show timming <on|off> .`
+    + `set show timing <on|off> .`
     + `set random seed <number> .`
     + `quit .`
