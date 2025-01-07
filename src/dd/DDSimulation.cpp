@@ -158,30 +158,30 @@ void DDSimulation::initQVarMap() {
 
 void DDSimulation::initQState() {
     std::vector<VarSymbol *> vars = prog->getVars();
-    for (int i = 0; i < vars.size(); i++) {
-        if (Node *node = vars[i]->getValue(); node != nullptr) {
-            if (KetExpNode *ketNode = dynamic_cast<KetExpNode *>(node); ketNode != nullptr) {
+    for (auto &var: vars) {
+        if (Node *node = var->getValue(); node != nullptr) {
+            if (auto *ketNode = dynamic_cast<KetExpNode *>(node); ketNode != nullptr) {
                 switch (ketNode->getType()) {
                     case KetType::KET_ZERO:
-                        initStateMap[vars[i]->getName()] = dd->makeBasisState(1, std::vector<bool>{false});
+                        initStateMap[var->getName()] = dd->makeBasisState(1, std::vector<bool>{false});
                         break;
                     case KetType::KET_ONE:
-                        initStateMap[vars[i]->getName()] = dd->makeBasisState(1, std::vector<bool>{true});
+                        initStateMap[var->getName()] = dd->makeBasisState(1, std::vector<bool>{true});
                         break;
                     case KetType::KET_RANDOM:
-                        initStateMap[vars[i]->getName()] = generateRandomState();
+                        initStateMap[var->getName()] = generateRandomState();
                         break;
                     default:
                         throw std::runtime_error("Only support initialization with |0>, |1> or random state");
                 }
-                dd->incRef(initStateMap[vars[i]->getName()]);
+                dd->incRef(initStateMap[var->getName()]);
             }
         } else {
             // not initialized, then set to |0> as default
-            initStateMap[vars[i]->getName()] = dd->makeBasisState(1, std::vector<bool>{false});
+            initStateMap[var->getName()] = dd->makeBasisState(1, std::vector<bool>{false});
         }
     }
-    assert(vars.size() > 0);
+    assert(!vars.empty());
     // building initial state
     initialState = initStateMap[vars[0]->getName()];
     for (int i = 1; i < vars.size(); i++) {

@@ -18,9 +18,10 @@ include(cmake/Doxygen.cmake)
 include(cmake/PackageAddTests.cmake)
 # format source codes
 include(cmake/Format.cmake)
+# add clang-tidy
+include(cmake/ClangTidy.cmake)
 
 add_subdirectory(src)
-#add_subdirectory(extern)
 include_directories(include)
 
 # add documentation

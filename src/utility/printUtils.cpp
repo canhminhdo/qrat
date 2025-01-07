@@ -15,19 +15,19 @@ const char *isFlag(const char *arg, const char *flag) {
         if (f == 0)
             return arg;
     } while (f == *arg++);
-    return 0;
+    return nullptr;
 }
 
 void capitalizeFirstLetter(std::string &str) {
     if (!str.empty() && std::islower(str[0])) {
-        str[0] = std::toupper(str[0]);
+        str[0] = static_cast<char>(std::toupper(str[0]));
     }
 }
 
 void capitalizeLetters(std::string &str) {
     for (char &c: str) {
         if (std::islower(c)) {
-            c = std::toupper(c);
+            c = static_cast<char>(std::toupper(c));
         }
     }
 }
@@ -51,8 +51,8 @@ void printHelp() {
 }
 
 void printBanner() {
-    struct timeval t;
-    gettimeofday(&t, 0);
+    struct timeval t{};
+    gettimeofday(&t, nullptr);
     time_t secs = t.tv_sec;
     std::string projectName = PROJECT_NAME;
     capitalizeLetters(projectName);

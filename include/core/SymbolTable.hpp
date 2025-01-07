@@ -15,7 +15,7 @@
 
 class SymbolTable {
 public:
-    SymbolTable();
+    SymbolTable() = default;
 
     ~SymbolTable();
 

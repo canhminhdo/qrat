@@ -35,9 +35,9 @@ private:
     Int64 realAcc;
     Int64 virtAcc;
     Int64 profAcc;
-    itimerval realStartTime;
-    itimerval virtStartTime;
-    itimerval profStartTime;
+    itimerval realStartTime{};
+    itimerval virtStartTime{};
+    itimerval profStartTime{};
     bool running;
     bool valid;
 };

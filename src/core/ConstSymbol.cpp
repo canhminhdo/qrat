@@ -11,10 +11,6 @@ ConstSymbol::ConstSymbol(int constName, Type constType, Node *value, Node *condi
     // initialize the constant symbol
 }
 
-ConstSymbol::~ConstSymbol() {
-    // todo: should delete `value` and `conditions` here;
-}
-
 int ConstSymbol::getName() const {
     return name;
 }

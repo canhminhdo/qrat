@@ -31,7 +31,7 @@ public:
     void eval() override {
     }
 
-    void dump(bool recursive = true) override;
+    void dump(bool recursive) override;
 
     void info() override;
 

@@ -101,6 +101,10 @@ add_library(
     ../utility/fileReader.cpp
 )
 
+if(CLANG_TIDY_ANALYSIS)
+    AddClangTidy(Parser)
+endif()
+
 target_include_directories(ParserRunner PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
 target_link_libraries(ParserRunner PUBLIC ${FLEX_LIBRARIES})
 target_link_libraries(ParserRunner PUBLIC MQT::CoreDD)

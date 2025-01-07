@@ -104,7 +104,7 @@ public:
 
     StmNode *getNextStatement(StmNode *stm);
 
-    void showPath(int stateId, bool endState = true) const;
+    void showPath(int stateNr, bool endState = true) const;
 
     std::pair<State *, bool> makeState(State *s);
 

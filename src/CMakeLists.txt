@@ -17,14 +17,15 @@ if(FORMAT_SOURCE_CODE)
     Format(${PROJECT_NAME} ${FORMAT_DIRECTORIES})
 endif()
 
+if(CLANG_TIDY_ANALYSIS)
+    AddClangTidy(${PROJECT_NAME})
+endif()
+
 # set include directories
 include_directories(
     ${PROJECT_NAME} PUBLIC
     ${PROJECT_SOURCE_DIR}/include
     ${PROJECT_BINARY_DIR}/include)
-
-# link to the MQT::Core libararies
-#target_link_libraries(${PROJECT_NAME} PUBLIC MQT::CoreDD MQT::CoreZX Parser)
 
 target_link_libraries(${PROJECT_NAME} Parser)
 

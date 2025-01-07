@@ -15,7 +15,7 @@ void printFile(const char *fileName) {
     }
     // Read and print the file content character by character
     char ch;
-    while ((ch = fgetc(file)) != EOF) {
+    while ((ch = static_cast<char>(fgetc(file))) != EOF) {
         std::cout << ch;
     }
     // Close the file

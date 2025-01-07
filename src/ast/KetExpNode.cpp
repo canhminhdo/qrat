@@ -25,7 +25,7 @@ std::size_t KetExpNode::getHash() const {
 }
 
 bool KetExpNode::isEqual(const Node &other) const {
-    const KetExpNode *otherKet = dynamic_cast<const KetExpNode *>(&other);
+    const auto *otherKet = dynamic_cast<const KetExpNode *>(&other);
     if (otherKet == nullptr || type != otherKet->type)
         return false;
     return true;

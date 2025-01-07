@@ -100,13 +100,10 @@ TwoTargetOpWithTwoParam         XXminusYY|XXplusYY
 "load"      { return KW_LOAD; }
 "show"      { return KW_SHOW; }
 "path"      { return KW_PATH; }
-
 "set"       { return KW_SET; }
-"show"      { return KW_SHOW; }
 "timing"    { return KW_TIMING; }
 "on"        { return KW_ON; }
 "off"       { return KW_OFF; }
-
 "seed"      { return KW_SEED; }
 
 "|0>"		{ return KW_KET_ZERO; }

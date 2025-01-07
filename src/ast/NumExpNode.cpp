@@ -32,7 +32,7 @@ std::size_t NumExpNode::getHash() const {
 }
 
 bool NumExpNode::isEqual(const Node &other) const {
-    const NumExpNode *otherNum = dynamic_cast<const NumExpNode *>(&other);
+    const auto *otherNum = dynamic_cast<const NumExpNode *>(&other);
     if (!otherNum) {
         return false;
     }

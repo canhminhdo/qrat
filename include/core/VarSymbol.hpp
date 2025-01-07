@@ -13,7 +13,7 @@ class VarSymbol : public Symbol {
 public:
     VarSymbol(int name, Type type, Node *value = nullptr);
 
-    ~VarSymbol();
+    ~VarSymbol() = default;
 
     int getName() const override;
 

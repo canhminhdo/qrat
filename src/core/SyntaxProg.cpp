@@ -14,23 +14,23 @@
 SyntaxProg::SyntaxProg(Token prog) {
     name = prog.code();
     nqubits = 0;
+    stmSeq = nullptr;
 }
 
 SyntaxProg::~SyntaxProg() {
-    if (stmSeq != nullptr)
-        delete stmSeq;
+    delete stmSeq;
 }
 
 void SyntaxProg::addVarDecl(TokenList *variables, Type type) {
-    for (int i = 0; i < variables->size(); i++) {
-        symTab.addVarSymbol(variables->at(i).code(), type);
+    for (auto variable: *variables) {
+        symTab.addVarSymbol(variable.code(), type);
     }
     nqubits += variables->size();
 }
 
 void SyntaxProg::addConstDecl(TokenList *constants, Type type) {
-    for (int i = 0; i < constants->size(); i++) {
-        symTab.addConstSymbol(constants->at(i).code(), type);
+    for (auto constant: *constants) {
+        symTab.addConstSymbol(constant.code(), type);
     }
 }
 

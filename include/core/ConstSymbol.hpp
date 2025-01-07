@@ -13,7 +13,7 @@ class ConstSymbol : public Symbol {
 public:
     ConstSymbol(int name, Type type, Node *value = nullptr, Node *conditions = nullptr);
 
-    ~ConstSymbol();
+    ~ConstSymbol() = default;
 
     int getName() const override;
 

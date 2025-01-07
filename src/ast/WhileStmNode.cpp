@@ -7,14 +7,13 @@
 #include <iostream>
 
 WhileStmNode::WhileStmNode(ExpNode *cond, StmSeq *body) : cond{cond}, body{body} {
-    EndStmNode *endWhile = new EndStmNode();
+    auto *endWhile = new EndStmNode();
     endWhile->setNext(this);
     body->addStm(endWhile);
 }
 
 WhileStmNode::~WhileStmNode() {
-    if (body != nullptr)
-        delete body;
+    delete body;
 }
 
 ExpNode *WhileStmNode::getCond() const {

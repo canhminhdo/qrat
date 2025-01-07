@@ -21,7 +21,7 @@ public:
 
     void addVarDecl(TokenList *variables, Type type);
 
-    void addConstDecl(TokenList *variables, Type type);
+    void addConstDecl(TokenList *constants, Type type);
 
     void addInit(Token variable, Node *value = nullptr);
 

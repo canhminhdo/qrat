@@ -27,7 +27,7 @@ int main(int argc, char *argv[]) {
             else if (strcmp(arg, "-no-banner") == 0)
                 Configuration::outputBanner = false;
             else if (const char *s = isFlag(arg, "-random-seed="))
-                Configuration::seed = strtoul(s, 0, 0);
+                Configuration::seed = strtoul(s, nullptr, 0);
         } else {
             pendingFiles.push_back(arg);
         }
@@ -45,16 +45,16 @@ int main(int argc, char *argv[]) {
 
 void handlePendingFiles(bool clearMemory) {
     Configuration::systemMode = LOADING_FILE_MODE;
-    for (int i = 0; i < pendingFiles.size(); i++) {
-        if (!(yyin = fopen(pendingFiles[i], "r"))) {
-            std::cerr << "Error: Opening file '" << pendingFiles[i] << "': " << strerror(errno) << std::endl;
+    for (auto &pendingFile: pendingFiles) {
+        if (!(yyin = fopen(pendingFile, "r"))) {
+            std::cerr << "Error: Opening file '" << pendingFile << "': " << strerror(errno) << std::endl;
             continue;
         }
         yyrestart(yyin);
         yyparse();
         fclose(yyin);
         if (clearMemory)
-            delete[] pendingFiles[i];
+            delete[] pendingFile;
     }
     pendingFiles.clear();
 }

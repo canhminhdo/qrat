@@ -30,9 +30,9 @@ void Timer::startOsTimers() {
             {CYCLE_LENGTH, 0},// interval for periodic timer
             {CYCLE_LENGTH, 0} // time until next expiration
     };
-    setitimer(ITIMER_REAL, &init, 0);
-    setitimer(ITIMER_VIRTUAL, &init, 0);
-    setitimer(ITIMER_PROF, &init, 0);
+    setitimer(ITIMER_REAL, &init, nullptr);
+    setitimer(ITIMER_VIRTUAL, &init, nullptr);
+    setitimer(ITIMER_PROF, &init, nullptr);
     osTimersStarted = true;
 }
 
@@ -67,9 +67,9 @@ void Timer::start() {
 
 void Timer::stop() {
     if (running && valid) {
-        itimerval realStopTime;
-        itimerval virtStopTime;
-        itimerval profStopTime;
+        itimerval realStopTime{};
+        itimerval virtStopTime{};
+        itimerval profStopTime{};
         getitimer(ITIMER_PROF, &profStopTime);
         getitimer(ITIMER_VIRTUAL, &virtStopTime);
         getitimer(ITIMER_REAL, &realStopTime);
@@ -87,9 +87,9 @@ bool Timer::getTimes(Int64 &real, Int64 &virt, Int64 &prof) const {
         virt = virtAcc;
         prof = profAcc;
         if (running) {
-            itimerval realStopTime;
-            itimerval virtStopTime;
-            itimerval profStopTime;
+            itimerval realStopTime{};
+            itimerval virtStopTime{};
+            itimerval profStopTime{};
             getitimer(ITIMER_PROF, &profStopTime);
             getitimer(ITIMER_VIRTUAL, &virtStopTime);
             getitimer(ITIMER_REAL, &realStopTime);

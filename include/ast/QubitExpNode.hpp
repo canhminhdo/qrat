@@ -24,7 +24,7 @@ public:
 
     ExpNode *getExp() const;
 
-    void dump(bool recursive = true) override;
+    void dump(bool recursive) override;
 
     void info() override;
 

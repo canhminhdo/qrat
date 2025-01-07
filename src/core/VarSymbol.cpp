@@ -9,10 +9,6 @@
 VarSymbol::VarSymbol(int name, Type type, Node *value) : name(name), type(type), value(value) {
 }
 
-VarSymbol::~VarSymbol() {
-    // todo: should delete `value` here;
-}
-
 int VarSymbol::getName() const {
     return name;
 }

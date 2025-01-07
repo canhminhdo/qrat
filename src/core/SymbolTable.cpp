@@ -8,15 +8,11 @@
 #include "core/VarSymbol.hpp"
 #include <iostream>
 
-SymbolTable::SymbolTable() {
-    // initialize the symbol table
-}
-
 SymbolTable::~SymbolTable() {
     for (auto &entry: simTab) {
-        if (VarSymbol *varPtr = dynamic_cast<VarSymbol *>(entry.second)) {
+        if (auto *varPtr = dynamic_cast<VarSymbol *>(entry.second)) {
             delete varPtr;
-        } else if (ConstSymbol *constPtr = dynamic_cast<ConstSymbol *>(entry.second)) {
+        } else if (auto *constPtr = dynamic_cast<ConstSymbol *>(entry.second)) {
             delete constPtr;
         }
     }

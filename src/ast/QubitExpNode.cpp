@@ -17,7 +17,7 @@ std::size_t QubitExpNode::getHash() const {
 }
 
 bool QubitExpNode::isEqual(const Node &other) const {
-    const QubitExpNode *otherQubit = dynamic_cast<const QubitExpNode *>(&other);
+    const auto *otherQubit = dynamic_cast<const QubitExpNode *>(&other);
     if (otherQubit == nullptr || ket != otherQubit->getKet() || exp != otherQubit->getExp())
         return false;
     return true;

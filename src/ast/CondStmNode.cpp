@@ -11,10 +11,8 @@ CondStmNode::CondStmNode(ExpNode *cond, StmSeq *then_stm, StmSeq *else_stm) : co
 }
 
 CondStmNode::~CondStmNode() {
-    if (thenStm != nullptr)
-        delete thenStm;
-    if (elseStm != nullptr)
-        delete elseStm;
+    delete thenStm;
+    delete elseStm;
 }
 
 ExpNode *CondStmNode::getCond() const {
