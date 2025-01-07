@@ -9,12 +9,15 @@ add_executable(
 )
 
 # install the project and some quantum programs
-install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION ${PROJECT_SOURCE_DIR}/dist)
-install(FILES
+install(TARGETS ${PROJECT_NAME}
+        RUNTIME
+        DESTINATION ${PROJECT_SOURCE_DIR}/dist)
+install(
+    FILES
         ${PROJECT_SOURCE_DIR}/examples/teleport/teleport.qw
         ${PROJECT_SOURCE_DIR}/examples/loop/prog-loop.qw
         ${PROJECT_SOURCE_DIR}/examples/grover/grover.qw
-        DESTINATION ${PROJECT_SOURCE_DIR}/dist)
+    DESTINATION ${PROJECT_SOURCE_DIR}/dist)
 
 if(FORMAT_SOURCE_CODE)
     set(FORMAT_DIRECTORIES
