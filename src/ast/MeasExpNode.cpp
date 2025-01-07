@@ -3,9 +3,9 @@
 //
 
 #include "ast/MeasExpNode.hpp"
-#include <iostream>
 #include "core/Token.hpp"
 #include "utility/HashUtil.hpp"
+#include <iostream>
 
 MeasExpNode::MeasExpNode(Symbol *variable) : var{variable} {
 }
@@ -22,7 +22,7 @@ bool MeasExpNode::isEqual(const Node &other) const {
     return true;
 }
 
-Symbol * MeasExpNode::getVar() const {
+Symbol *MeasExpNode::getVar() const {
     return var;
 }
 

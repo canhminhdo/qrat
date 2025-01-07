@@ -2,12 +2,12 @@
 // Created by CanhDo on 2024/11/19.
 //
 
-#include <iostream>
 #include "core/ConstSymbol.hpp"
 #include "core/Token.hpp"
+#include <iostream>
 
 ConstSymbol::ConstSymbol(int constName, Type constType, Node *value, Node *conditions) : name{constName},
-    type{constType}, value{value}, conditions{conditions} {
+                                                                                         type{constType}, value{value}, conditions{conditions} {
     // initialize the constant symbol
 }
 

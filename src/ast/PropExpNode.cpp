@@ -3,8 +3,8 @@
 //
 
 #include "ast/PropExpNode.hpp"
-#include "utility/HashUtil.hpp"
 #include "core/Token.hpp"
+#include "utility/HashUtil.hpp"
 #include <iostream>
 
 PropExpNode::PropExpNode(Symbol *var, ExpNode *expr) : expr{expr} {
@@ -26,7 +26,7 @@ std::vector<Symbol *> PropExpNode::getVars() const {
     return vars;
 }
 
-ExpNode * PropExpNode::getExpr() const {
+ExpNode *PropExpNode::getExpr() const {
     return expr;
 }
 

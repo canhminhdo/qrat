@@ -2,19 +2,19 @@
 // Created by CanhDo on 2024/11/19.
 //
 
-#include <iostream>
 #include "ast/OpExpNode.hpp"
+#include <iostream>
 
 #include "utility/HashUtil.hpp"
 
 OpExpNode::OpExpNode(OpExpType type, ExpNode *left, ExpNode *right) : type{type}, left{left}, right{right} {
 }
 
-ExpNode * OpExpNode::getLeft() const {
+ExpNode *OpExpNode::getLeft() const {
     return left;
 }
 
-ExpNode * OpExpNode::getRight() const {
+ExpNode *OpExpNode::getRight() const {
     return right;
 }
 

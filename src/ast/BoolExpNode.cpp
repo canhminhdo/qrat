@@ -3,8 +3,8 @@
 //
 
 #include "ast/BoolExpNode.hpp"
-#include <functional>
 #include "utility/HashUtil.hpp"
+#include <functional>
 #include <iostream>
 
 BoolExpNode::BoolExpNode(BoolType val) : val{val} {

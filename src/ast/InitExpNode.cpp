@@ -16,7 +16,7 @@ size_t InitExpNode::getHash() const {
     return hash;
 }
 
-Symbol * InitExpNode::getVar() const {
+Symbol *InitExpNode::getVar() const {
     return var;
 }
 

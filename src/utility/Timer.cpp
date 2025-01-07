@@ -12,7 +12,7 @@ Int64 Timer::calculateMicroseconds(const itimerval &startTime, const itimerval &
     // total time in microsecdons = M * tv_sec + tv_usec
     Int64 usec = startTime.it_value.tv_usec - stopTime.it_value.tv_usec +
                  M * (startTime.it_value.tv_sec - stopTime.it_value.tv_sec);
-    if (usec < 0) // timer wrap around
+    if (usec < 0)// timer wrap around
         usec += M * CYCLE_LENGTH;
     return usec;
 }
@@ -27,8 +27,8 @@ void Timer::startOsTimers() {
     signal(SIGVTALRM, SIG_IGN);
     signal(SIGPROF, SIG_IGN);
     static itimerval init = {
-        {CYCLE_LENGTH, 0}, // interval for periodic timer
-        {CYCLE_LENGTH, 0} // time until next expiration
+            {CYCLE_LENGTH, 0},// interval for periodic timer
+            {CYCLE_LENGTH, 0} // time until next expiration
     };
     setitimer(ITIMER_REAL, &init, 0);
     setitimer(ITIMER_VIRTUAL, &init, 0);

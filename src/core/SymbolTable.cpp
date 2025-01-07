@@ -3,10 +3,10 @@
 //
 
 #include "core/SymbolTable.hpp"
-#include <iostream>
 #include "core/ConstSymbol.hpp"
 #include "core/Token.hpp"
 #include "core/VarSymbol.hpp"
+#include <iostream>
 
 SymbolTable::SymbolTable() {
     // initialize the symbol table

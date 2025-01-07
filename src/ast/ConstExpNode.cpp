@@ -23,7 +23,7 @@ bool ConstExpNode::isEqual(const Node &other) const {
     return true;
 }
 
-Symbol * ConstExpNode::getSymbol() const {
+Symbol *ConstExpNode::getSymbol() const {
     return symbol;
 }
 

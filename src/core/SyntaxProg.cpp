@@ -56,7 +56,7 @@ void SyntaxProg::addEndStm(StmSeq *stmSeq) {
         if (dynamic_cast<EndStmNode *>(head)) {
             break;
         }
-        StmNode* next = head->getNext();
+        StmNode *next = head->getNext();
         auto *condStm = dynamic_cast<CondStmNode *>(head);
         if (condStm != nullptr) {
             condStm->getThenStm()->addStm(new EndStmNode(next));
@@ -68,7 +68,7 @@ void SyntaxProg::addEndStm(StmSeq *stmSeq) {
     }
 }
 
-StmSeq * SyntaxProg::getStmSeq() const {
+StmSeq *SyntaxProg::getStmSeq() const {
     return stmSeq;
 }
 

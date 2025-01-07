@@ -2,8 +2,8 @@
 // Created by CanhDo on 2024/11/19.
 //
 
-#include <iostream>
 #include "ast/KetExpNode.hpp"
+#include <iostream>
 
 #include "utility/HashUtil.hpp"
 

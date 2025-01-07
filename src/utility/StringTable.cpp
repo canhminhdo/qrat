@@ -66,7 +66,7 @@ int StringTable::encode(const char *name) {
         if (strcmp(name, stringTable[code]) == 0)
             break;
         if (step == 0)
-            step = hash2(name); // hash2(name) & mask ???
+            step = hash2(name);// hash2(name) & mask ???
     }
     return code;
 }
@@ -105,7 +105,7 @@ void StringTable::resize() {
         char *s = stringTable[i];
         int j = hash(s) & mask;
         if (hashTable[j] != UNUSED) {
-            int step = hash2(s); // hash2(s) & mask ???
+            int step = hash2(s);// hash2(s) & mask ???
             do
                 j = (j + step) & mask;
             while (hashTable[j] != UNUSED);

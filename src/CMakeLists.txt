@@ -8,6 +8,15 @@ add_executable(
     utility/printUtils.cpp
 )
 
+if(FORMAT_SOURCE_CODE)
+    set(FORMAT_DIRECTORIES
+        ${PROJECT_SOURCE_DIR}/src
+        ${PROJECT_SOURCE_DIR}/include
+        ${PROJECT_SOURCE_DIR}/test
+    )
+    Format(${PROJECT_NAME} ${FORMAT_DIRECTORIES})
+endif()
+
 # set include directories
 include_directories(
     ${PROJECT_NAME} PUBLIC

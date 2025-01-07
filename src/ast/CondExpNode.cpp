@@ -20,8 +20,7 @@ std::size_t CondExpNode::getHash() const {
 
 bool CondExpNode::isEqual(const Node &other) const {
     const auto *otherCond = dynamic_cast<const CondExpNode *>(&other);
-    if (otherCond == nullptr || left != otherCond->getLeft() || type != otherCond->getRelOpType() || right != otherCond->
-        getRight())
+    if (otherCond == nullptr || left != otherCond->getLeft() || type != otherCond->getRelOpType() || right != otherCond->getRight())
         return false;
     return true;
 }

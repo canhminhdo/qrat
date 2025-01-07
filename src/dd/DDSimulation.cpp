@@ -11,10 +11,10 @@
 #include "ast/UnitaryStmNode.hpp"
 #include "core/Token.hpp"
 #include "core/VarSymbol.hpp"
-#include "dd/Package.hpp"
-#include "dd/GateMatrixDefinitions.hpp"
 #include "dd/Edge.hpp"
+#include "dd/GateMatrixDefinitions.hpp"
 #include "dd/Operations.hpp"
+#include "dd/Package.hpp"
 
 // using DDPackage = typename dd::Package<DDSimulationPackageConfig>;
 DDSimulation::DDSimulation(SyntaxProg *prog) : prog{prog}, dd{std::make_unique<DDPackage>(prog->getNqubits())},

@@ -16,6 +16,8 @@ include(cmake/ExternalDependencies.cmake)
 include(cmake/Doxygen.cmake)
 # package add test macro
 include(cmake/PackageAddTests.cmake)
+# format source codes
+include(cmake/Format.cmake)
 
 add_subdirectory(src)
 #add_subdirectory(extern)

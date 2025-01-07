@@ -25,7 +25,7 @@ void VarSymbol::setValue(Node *value) {
     this->value = value;
 }
 
-Node * VarSymbol::getValue() {
+Node *VarSymbol::getValue() {
     return value;
 }
 

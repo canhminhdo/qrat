@@ -7,7 +7,7 @@
 #include <iostream>
 
 CondStmNode::CondStmNode(ExpNode *cond, StmSeq *then_stm, StmSeq *else_stm) : cond{cond}, thenStm{then_stm},
-    elseStm{else_stm} {
+                                                                              elseStm{else_stm} {
 }
 
 CondStmNode::~CondStmNode() {

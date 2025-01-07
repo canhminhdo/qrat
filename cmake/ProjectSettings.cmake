@@ -8,6 +8,9 @@ set(BUILD_QRAT_TESTS
 set(BUILD_QRAT_DOC
     OFF CACHE BOOL "Build QRAT document" FORCE)
 
+set(FORMAT_SOURCE_CODE
+    ON CACHE BOOL "Format source code for QRAT" FORCE)
+
 macro(TODAY RESULT)
     if(WIN32)
         execute_process(COMMAND "date" OUTPUT_VARIABLE ${RESULT})

@@ -2,13 +2,13 @@
 // Created by CanhDo on 2025/01/03.
 //
 
-#include "config.h"
 #include "utility/printUtils.hpp"
+#include "config.h"
 #include "utility/Tty.hpp"
 #include <iostream>
 #include <sys/time.h>
 
-const char * isFlag(const char *arg, const char *flag) {
+const char *isFlag(const char *arg, const char *flag) {
     char f;
     do {
         f = *flag++;

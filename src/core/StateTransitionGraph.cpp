@@ -4,12 +4,12 @@
 
 #include "core/StateTransitionGraph.hpp"
 
-#include <Configuration.hpp>
 #include "ast/CondExpNode.hpp"
 #include "ast/NumExpNode.hpp"
-#include <iomanip>
-#include "utility/Tty.hpp"
 #include "core/global.hpp"
+#include "utility/Tty.hpp"
+#include <Configuration.hpp>
+#include <iomanip>
 
 StateTransitionGraph::StateTransitionGraph(SyntaxProg *currentProg, DDSimulation *ddSim, ExpNode *propExp,
                                            Search::Type type, int numSols, int maxDepth) {

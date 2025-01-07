@@ -5,8 +5,8 @@
 #include <Configuration.hpp>
 
 #include "core/global.hpp"
-#include "lexer.hpp"
 #include "dd/DDOperation.hpp"
+#include "lexer.hpp"
 #include "parser.hpp"
 #include "utility/macros.hpp"
 #include "utility/printUtils.hpp"
