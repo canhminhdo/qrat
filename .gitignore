@@ -1,4 +1,5 @@
 .idea
 sample
 build*
+dist*
 .DS_Store
