@@ -17,5 +17,5 @@ $ cmake -S . -B build -D CMAKE_BUILD_TYPE=Release # configure the project to be 
 $ cmake --build build --config Release -j 8 # building the project with `Release` mode and 8 workers in parallel
 $ ctest --test-dir build # testing the project with some test cases
 $ cmake --install build --config Release # install the project with `Release` mode in the `install` folder
-$ cpack --config build/CPackConfig.cmake -B package # package the project to be distributed in the `package` directory
+$ cpack -G "ZIP" --config build/CPackConfig.cmake -B package # package the project to be distributed in the `package` directory
 ```
