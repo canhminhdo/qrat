@@ -1,7 +1,6 @@
 .idea
-sample
-build*
-dist*
-install*
-package*
+build*/
+dist*/
+install*/
+package*/
 .DS_Store
