@@ -4,7 +4,7 @@
 
 - First stable release of the project
 - Support a wide range of quantum gates
-- Support a rich search command for analyzing quantum programs
+- Support a search command for analyzing quantum programs
 - Available commands:
     + `load <progFile> .`
     + `search {[ bound {, depth} ]} in <progId> with <searchType> such that <condition> .`
