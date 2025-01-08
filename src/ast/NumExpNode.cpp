@@ -5,6 +5,7 @@
 #include "ast/NumExpNode.hpp"
 
 #include <cstdlib>
+#include <cmath>
 #include <iostream>
 
 #include "utility/HashUtil.hpp"

@@ -3,6 +3,7 @@
 //
 
 #include "utility/Timer.hpp"
+#include <csignal>
 
 bool Timer::osTimersStarted = false;
 

@@ -6,6 +6,7 @@
 #define QRAT_MACROS_HPP
 
 #include <iostream>
+#include <climits>
 
 using namespace std;
 

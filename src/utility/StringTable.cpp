@@ -6,6 +6,7 @@
 #include "utility/macros.hpp"
 #include <cassert>
 #include <iostream>
+#include <cstring>
 
 inline int
 StringTable::hash(const char *name) {
