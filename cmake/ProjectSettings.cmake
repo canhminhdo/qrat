@@ -14,6 +14,13 @@ set(FORMAT_SOURCE_CODE
 set(CLANG_TIDY_ANALYSIS
     OFF CACHE BOOL "Clang-tidy analysis for QRAT" FORCE)
 
+set(DEPLOY
+    ON CACHE BOOL "Set deployment configuration to ON for CI" FORCE)
+
+if(DEPLOY)
+    set(CMAKE_OSX_ARCHITECTURES "x86_64;arm64")
+endif()
+
 macro(TODAY RESULT)
     if(WIN32)
         execute_process(COMMAND "date" OUTPUT_VARIABLE ${RESULT})
