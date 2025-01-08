@@ -9,10 +9,10 @@ set(BUILD_QRAT_DOC
     OFF CACHE BOOL "Build QRAT document" FORCE)
 
 set(FORMAT_SOURCE_CODE
-    ON CACHE BOOL "Format source code for the project" FORCE)
+    OFF CACHE BOOL "Format source code for QRAT" FORCE)
 
 set(CLANG_TIDY_ANALYSIS
-    OFF CACHE BOOL "Analysis the source code with clang-tidy for the project" FORCE)
+    OFF CACHE BOOL "Clang-tidy analysis for QRAT" FORCE)
 
 macro(TODAY RESULT)
     if(WIN32)

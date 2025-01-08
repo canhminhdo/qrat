@@ -37,3 +37,24 @@ if(BUILD_QRAT_TESTS)
     include(GoogleTest) # this modules defines functions to automatically discover test cases for Cmake with the use of GoogleTest
     add_subdirectory(test)
 endif()
+
+# add format source code
+option(FORMAT_SOURCE_CODE "Format source code for QRAT" ON)
+if(FORMAT_SOURCE_CODE)
+    set(FORMAT_DIRECTORIES
+        ${PROJECT_SOURCE_DIR}/src
+        ${PROJECT_SOURCE_DIR}/include
+        ${PROJECT_SOURCE_DIR}/test
+    )
+    Format(${PROJECT_NAME} ${FORMAT_DIRECTORIES})
+endif()
+
+# add clang-tidy analysis
+option(CLANG_TIDY_ANALYSIS "Clang-tidy analysis for QRAT" ON)
+if(CLANG_TIDY_ANALYSIS)
+    AddClangTidy(${PROJECT_NAME})
+    AddClangTidy(Parser)
+endif()
+
+# add install & package
+include(cmake/InstallAndPackage.cmake)

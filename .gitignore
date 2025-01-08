@@ -2,5 +2,6 @@
 sample
 build*
 dist*
-packages
+install*
+package*
 .DS_Store
