@@ -50,6 +50,10 @@ do
         echo "Error: No solution found in output-$N-$i.txt"
         continue
     fi
+    prob=`cd $DIR/grover-$N && sed -E -n '/^(probability)/p' output-$N-$i.txt | head -n 1 | awk '{print $2}' | sed 's/,//'`
+    if (( $(echo "$prob < 0.99" | bc -l) )); then
+        echo "Probability $prob is not greater than 0.99"
+    fi
     time=`cd $DIR/grover-$N && sed -E -n '/^(states)/p' output-$N-$i.txt | head -n 1 | awk -F'[()]' '{print $2}' | awk '{print $1}' | sed 's/ms//'`
     states=`cd $DIR/grover-$N && sed -E -n '/^(states)/p' output-$N-$i.txt | tail -n 1 | awk '{print $2}'`
     if [ "$time" -gt "$maxTime" ]; then
