@@ -1,6 +1,4 @@
-const { nqubits, targetState } = require("./global.js");
-
-let oracle = () => {
+let oracle = (nqubits, targetState) => {
     let prog = "\t// oracle\n";
 
     //  Step 1: Apply X gates to flip |0> to |1> for each bit in the target state

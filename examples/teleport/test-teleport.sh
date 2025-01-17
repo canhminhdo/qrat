@@ -13,17 +13,22 @@ EOF
 done
 
 # analyze the results
-maxTime=0
+maxTime=-1
 maxStates=0
 for i in {$start..$end}
 do
-    line=`sed -E -n '/^(Solution|states)/p' output-$i.txt | tail -n 1`
+    solution=`sed -E -n '/^(Solution)/p' output-$i.txt`
+    if [ -z "$solution" ]; then
+        echo "Error: No solution found in output-$i.txt"
+        continue
+    fi
+    line=`sed -E -n '/^(states)/p' output-$i.txt | tail -n 1`
     time=`echo $line | awk -F'[()]' '{print $2}' | awk '{print $1}' | sed 's/ms//'`
     states=`echo $line | awk '{print $2}'`
     if [ "$time" -gt "$maxTime" ]; then
         maxTime="$time"
         maxStates="$states"
-        echo "[Output-${i}.txt] $line"
+        echo "[Last] Output-${i}.txt"
     fi
 done
 
