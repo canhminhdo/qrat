@@ -16,7 +16,7 @@ RUN mkdir -p /app
 
 # building qrat
 RUN cd /app \
-    && git clone --recurse-submodules https://github.com/canhminhdo/MQT-QRAT.git qrat
+    && git clone --recurse-submodules https://github.com/canhminhdo/qrat qrat
 
 RUN cd /app/qrat \
     && mkdir build \

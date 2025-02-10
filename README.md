@@ -30,7 +30,7 @@ $ docker run --rm -it qrat
 ### 3. Building from source
 `QRAT` can be installed on your system after building it from the source.
 ```shell
-$ git clone --recurse-submodules https://github.com/canhminhdo/MQT-QRAT.git
+$ git clone --recurse-submodules https://github.com/canhminhdo/qrat
 $ cd MQT-QRAT
 $ cmake -S . -B build -D CMAKE_BUILD_TYPE=Release # configure the project to be built with `Release` mode
 $ cmake --build build --config Release -j 8 # building the project with `Release` mode and 8 workers in parallel
