@@ -29,7 +29,7 @@ RUN cd /app/qrat \
 RUN cp /app/qrat \
     && mv install /qrat-1.0 \
     && mv package/qrat-1.0-Linux.zip /qrat-1.0 \
-    && mv /qrat-1.0/*.qw /app
+    && mv /qrat-1.0/teleport/*.qw /qrat-1.0/loop/*.qw /qrat-1.0/grover/*.qw /app
 
 ## clean up
 RUN rm -rf /app/qrat
