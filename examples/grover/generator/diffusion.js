@@ -1,6 +1,4 @@
-const { nqubits } = require("./global.js");
-
-let diffusion = () => {
+let diffusion = (nqubits) => {
     let prog = "\t// diffusion\n";
     // qc.h(range(n))
     for (i = 0; i < nqubits; i++) {

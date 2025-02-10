@@ -1,6 +1,4 @@
-const { nqubits, targetState } = require("./global.js");
-
-let search = () => {
+let search = (nqubits, targetState) => {
     let prog = "\n";
     let list = [];
     for (i = 0; i < nqubits; i++) {

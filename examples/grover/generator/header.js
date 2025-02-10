@@ -1,6 +1,4 @@
-const { nqubits } = require("./global.js");
-
-let header = () => {
+let header = (nqubits) => {
     let prog = "prog GROVER is\n";
     let qubits = "";
     for (i = 0; i < nqubits; i++) {
