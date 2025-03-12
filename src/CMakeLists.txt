@@ -1,5 +1,5 @@
 configure_file(${PROJECT_SOURCE_DIR}/examples/teleport/teleport.qw prog.qw)
-configure_file(${PROJECT_SOURCE_DIR}/examples/loop/prog-loop.qw prog-loop.qw)
+configure_file(${PROJECT_SOURCE_DIR}/examples/loop/loop.qw loop.qw)
 configure_file(${PROJECT_SOURCE_DIR}/examples/grover/grover.qw grover.qw)
 
 add_executable(
