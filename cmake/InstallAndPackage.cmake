@@ -7,7 +7,7 @@ install(TARGETS ${PROJECT_NAME}
 install(
     FILES
     ${PROJECT_SOURCE_DIR}/examples/teleport/teleport.qw
-    ${PROJECT_SOURCE_DIR}/examples/loop/prog-loop.qw
+    ${PROJECT_SOURCE_DIR}/examples/loop/loop.qw
     ${PROJECT_SOURCE_DIR}/examples/grover/grover.qw
     DESTINATION .)
 
