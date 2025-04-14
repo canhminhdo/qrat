@@ -11,6 +11,7 @@
 #include "utility/macros.hpp"
 #include "utility/printUtils.hpp"
 #include <iostream>
+#include <utility/Tty.hpp>
 
 extern std::vector<char *> pendingFiles;
 void handlePendingFiles(bool clearMemory = true);
@@ -26,6 +27,8 @@ int main(int argc, char *argv[]) {
                 printVersion();
             else if (strcmp(arg, "-no-banner") == 0)
                 Configuration::outputBanner = false;
+            else if (strcmp(arg, "-no-color") == 0)
+                Tty::setEscapeSequencesAllowed(false);
             else if (const char *s = isFlag(arg, "-random-seed="))
                 Configuration::seed = strtoul(s, nullptr, 0);
         } else {
