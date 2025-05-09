@@ -4,6 +4,8 @@ init
     q0 := random;
     q1 := |0>;
     q2 := |0>;
+prop
+    target := P(q2, init[q0]);
 begin
     q1 := H[q1];
     q1, q2 := CX[q1, q2];
@@ -12,5 +14,7 @@ begin
     if M[q1] = 1 then q2 := X[q2]; else skip; fi;
     if M[q0] = 1 then q2 := Z[q2]; else skip; fi;
 end
+
+pmc in TELEPORT with '<> target2' .
 
 search in TELEPORT with =>! such that P(q2, init[q0]) .

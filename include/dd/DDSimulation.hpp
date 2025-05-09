@@ -39,6 +39,8 @@ public:
 
     void initProperty(ExpNode *expNode);
 
+    void initProperty2();
+
     qc::Controls buildControls(UnitaryStmNode *stm);
 
     qc::Targets buildTargets(UnitaryStmNode *stm);
@@ -65,6 +67,20 @@ public:
         }
     }
 
+    struct PropHash {
+        std::size_t operator()(const PropExpNode *node) const {
+            return node->getHash();
+        }
+    };
+
+    struct PropEqual {
+        bool operator()(const PropExpNode *lhs, const PropExpNode *rhs) const {
+            return lhs->isEqual(*rhs);
+        }
+    };
+
+    std::unordered_map<PropExpNode *, qc::MatrixDD, ::DDSimulation::PropHash, ::DDSimulation::PropEqual>
+    getProjectorMap();
 
     ///---------------------------------------------------------------------------
     ///                            \n Operations \n
@@ -119,21 +135,9 @@ private:
     qc::VectorDD initialState{};
 
     // for properties
-    struct PropHash {
-        std::size_t operator()(const PropExpNode *node) const {
-            return node->getHash();
-        }
-    };
-
-    struct PropEqual {
-        bool operator()(const PropExpNode *lhs, const PropExpNode *rhs) const {
-            return lhs->isEqual(*rhs);
-        }
-    };
-
     std::unordered_map<PropExpNode *, qc::MatrixDD, PropHash, PropEqual> projectorMap;
 
-    // for random state generation
+    // for random sgit statate generation
     std::mt19937_64 mt{};
 };
 #endif//DDSIMULATION_HPP

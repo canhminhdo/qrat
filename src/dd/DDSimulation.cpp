@@ -72,6 +72,20 @@ void DDSimulation::initProperty(ExpNode *expNode) {
     }
 }
 
+std::unordered_map<PropExpNode *, qc::MatrixDD, DDSimulation::PropHash, DDSimulation::PropEqual>
+DDSimulation::getProjectorMap() {
+    return projectorMap;
+}
+
+void DDSimulation::initProperty2() {
+    for (auto &prop: prog->getPropTab().getPropTab()) {
+        auto *propExpNode = prop.second;
+        if (projectorMap.find(propExpNode) == projectorMap.end()) {
+            projectorMap[propExpNode] = buildProjector(propExpNode);
+        }
+    }
+}
+
 qc::Controls DDSimulation::buildControls(UnitaryStmNode *stm) {
     qc::Controls controls;
     for (int i = 0; i < stm->getControls().size(); i++) {

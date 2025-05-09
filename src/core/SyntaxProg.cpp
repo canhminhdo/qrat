@@ -98,12 +98,20 @@ ExpNode *SyntaxProg::makeNode(ExpNode *node) {
     return cachedNodes.makeNode(node);
 }
 
+void SyntaxProg::addProp(Token name, PropExpNode *value) {
+    propTab.addProp(name.code(), value);
+}
+
 std::size_t SyntaxProg::getNqubits() const {
     return nqubits;
 }
 
 std::vector<VarSymbol *> SyntaxProg::getVars() const {
     return symTab.getVars();
+}
+
+PropTable SyntaxProg::getPropTab() const {
+    return propTab;
 }
 
 void SyntaxProg::dump() const {
@@ -116,4 +124,6 @@ void SyntaxProg::dump() const {
         stmSeq->dump();
     std::cout << "CachedNodes: " << std::endl;
     cachedNodes.dump();
+    std::cout << "Propositions: " << std::endl;
+    propTab.dump();
 }

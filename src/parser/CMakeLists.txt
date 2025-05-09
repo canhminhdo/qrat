@@ -57,12 +57,14 @@ add_library(
     ../ast/CachedNode.cpp
     ../ast/EndStmNode.cpp
     ../core/StateTransitionGraph.cpp
+    ../core/StateTransitionGraph2.cpp
     ../ast/PropExpNode.cpp
     ../ast/InitExpNode.cpp
     ../ast/BoolExpNode.cpp
     ../utility/Timer.cpp
     ../utility/Tty.cpp
     ../utility/fileReader.cpp
+    ../core/PropTable.cpp
 )
 
 target_include_directories(Parser PUBLIC ${CMAKE_CURRENT_BINARY_DIR})

@@ -6,6 +6,7 @@
 #define INTERPRETER_HPP
 
 #include "StateTransitionGraph.hpp"
+#include "StateTransitionGraph2.hpp"
 #include "core/SyntaxProg.hpp"
 #include "core/Token.hpp"
 #include "dd/DDSimulation.hpp"
@@ -24,11 +25,19 @@ public:
 
     void initGraphSearch(ExpNode *propExp, Search::Type type, int numSols, int maxDepth);
 
+    void initGraphSearch2(char* property);
+
     void execute();
+
+    void execute2();
 
     void initializeSearch(int progName, ExpNode *propExp, Search::Type type, int numSols, int maxDepth);
 
+    void initializeSearch2(int progName, char* property);
+
     void cleanSearch();
+
+    void cleanSearch2();
 
     void finalizeProg();
 
@@ -38,6 +47,7 @@ private:
     SyntaxProg *currentProg;
     DDSimulation *ddSim;
     StateTransitionGraph *graphSearch;
+    StateTransitionGraph2 *graphSearch2;
     std::unordered_map<int, SyntaxProg *> savedProgs;
 };
 #endif//INTERPRETER_HPP

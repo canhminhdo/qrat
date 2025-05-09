@@ -55,6 +55,7 @@ extern std::vector<char *> pendingFiles;
 #define EXP_NODE(node) dynamic_cast<ExpNode *>(node)
 #define STM_NODE(node) dynamic_cast<StmNode *>(node)
 #define NUM_EXP_NODE(node) dynamic_cast<NumExpNode *>(node)
+#define PROP_EXP_NODE(node) dynamic_cast<PropExpNode *>(node)
 %}
 
 %union {
@@ -71,14 +72,14 @@ extern std::vector<char *> pendingFiles;
     qc::fp param;
     std::vector<qc::fp> *params;
     std::pair<int, int> *searchParams;
-    char *filePath;
+    char *str;
 }
 
 /* declare tokens */
 /* for programs */
-%token KW_PROG KW_IS KW_VAR KW_CONST KW_WHERE KW_INIT KW_BEGIN KW_END
+%token KW_PROG KW_IS KW_VAR KW_CONST KW_WHERE KW_INIT KW_PROP KW_BEGIN KW_END
 %token KW_LOAD KW_QUIT
-%token <filePath> FILENAME
+%token <str> FILENAME
 %token KW_QUBIT KW_COMPLEX
 %token <yyToken> IDENTIFIER
 %token KW_SKIP
@@ -100,16 +101,18 @@ extern std::vector<char *> pendingFiles;
 %token KW_MEASURE
 %token KW_EQUAL
 /* for commands */
+%token KW_PMC
+%token <str> FORMULA_STR
 %token KW_SEARCH KW_IN KW_WITH KW_SUCH KW_THAT
 %token KW_ARROW_ONE KW_ARROW_STAR KW_ARROW_PLUS KW_ARROW_EXCLAMATION
-%token KW_TRUE KW_FALSE KW_AND KW_OR KW_NOT KW_PROP
+%token KW_TRUE KW_FALSE KW_AND KW_OR KW_NOT KW_PROJ
 %token KW_SHOW KW_PATH
 %token KW_SET KW_TIMING KW_ON KW_OFF
 %token KW_SEED
 %token EOL
 
 /* types for nonterminal sysmbols */
-%nterm <yyToken> token varName
+%nterm <yyToken> token varName propName
 %nterm <type> typeName
 %nterm <gateInfo> operation operationWithParams
 %nterm <yyTokenList> varNameList
@@ -124,7 +127,7 @@ extern std::vector<char *> pendingFiles;
 %nterm <param> param
 %nterm <params> params
 %nterm <searchParams> searchParams
-%nterm <filePath> filePath
+%nterm <str> filePath
 /* start symbol
 %start top
 */
@@ -155,18 +158,18 @@ prog    :   KW_PROG
                     interpreter.setCurrentProg($2);
                     currentSyntaxProg = interpreter.getCurrentProg();
                 }
-            KW_IS startDecl startConst startWhere startInit begin KW_END
+            KW_IS startDecl startConst startWhere startInit startProp begin KW_END
                 {
                     interpreter.finalizeProg();
                 }
         |   KW_PROG token error KW_END
-            {
-                if (currentSyntaxProg != nullptr) {
-                    delete currentSyntaxProg;
+                {
+                    if (currentSyntaxProg != nullptr) {
+                        delete currentSyntaxProg;
+                    }
+                    yyerrok;
+                    yyclearin;
                 }
-                yyerrok;
-                yyclearin;
-            }
         ;
 token   :   IDENTIFIER;
 
@@ -214,6 +217,28 @@ startConst  :   /* empty */
 startWhere  :   /* empty */
             |   KW_WHERE decList
             ;
+
+/* atomic propositions */
+startProp   :   /* empty */
+            |   KW_PROP propList
+            ;
+
+propList    :   prop
+            |   propList prop
+            ;
+
+prop    :   propName KW_ASSIGN KW_PROJ '(' varName ',' basisProp ')'
+                {
+                    if (!currentSyntaxProg->hasVarSymbol($5)) {
+                        yyerror(("Variable " + std::string($5.name()) + " is undefined").c_str());
+                        YYERROR;
+                    }
+                    currentSyntaxProg->addProp($1, PROP_EXP_NODE(currentSyntaxProg->makeNode(new PropExpNode(currentSyntaxProg->lookup($5), $7))));
+               }
+           expectedSemi
+       ;
+
+propName    :   IDENTIFIER;
 
 /* initialization */
 startInit   :   /* empty */
@@ -456,13 +481,16 @@ expectedSemi    :   ';';
 /* expected dot */
 expectedDot :   '.';
 
+/* commands */
 command :   loadFile
+        |   pmc
         |   search
         |   showPath
         |   setParam
         |   quit
         ;
 
+/* load file */
 loadFile    :   KW_LOAD filePath expectedDot
                     {
                         // printFile($2);
@@ -479,6 +507,7 @@ filePath    :   IDENTIFIER  { $$ = strdup($1.name()); }
             |   FILENAME
             ;
 
+/* set showing time and random seed */
 setParam    :   setShowingTime
             |   setRandomSeed
             ;
@@ -508,6 +537,27 @@ setRandomSeed   :   KW_SET KW_KET_RANDOM KW_SEED number expectedDot
                         }
                 ;
 
+/* pmc command */
+pmc :   KW_PMC KW_IN token
+            {
+                if (!interpreter.existProg($3)) {
+                    yyerror(("PCheck in an undefined program: " + std::string($3.name())).c_str());
+                    YYERROR;
+                }
+                currentSyntaxProg = interpreter.getCurrentProg();
+            }
+        KW_WITH
+        FORMULA_STR
+        expectedDot
+            {
+                // interpreter.initializeSearch($4.code(), $10, $7, $2->first, $2->second);
+                // interpreter.execute();
+                interpreter.initializeSearch2($3.code(), $6);
+                interpreter.execute2();
+            }
+    ;
+
+/* search command */
 search  :   KW_SEARCH searchParams KW_IN
             token
                 {
@@ -535,42 +585,42 @@ search  :   KW_SEARCH searchParams KW_IN
         ;
 
 searchParams    :   /* empty */
-                    {
-                        $$ = new std::pair<int, int>(UNBOUNDED, UNBOUNDED);
-                    }
+                        {
+                            $$ = new std::pair<int, int>(UNBOUNDED, UNBOUNDED);
+                        }
                 |   '[' number ']'
-                    {
-                        if (!NUM_EXP_NODE($2)->isInt()) {
-                            yyerror("The number of solutions must be an integer");
+                        {
+                            if (!NUM_EXP_NODE($2)->isInt()) {
+                                yyerror("The number of solutions must be an integer");
+                                delete $2;
+                                YYERROR;
+                            }
+                            $$ = new std::pair<int, int>(NUM_EXP_NODE($2)->getIntVal(), UNBOUNDED);
                             delete $2;
-                            YYERROR;
                         }
-                        $$ = new std::pair<int, int>(NUM_EXP_NODE($2)->getIntVal(), UNBOUNDED);
-                        delete $2;
-                    }
                 |   '[' ',' number ']'
-                    {
-                        if (!NUM_EXP_NODE($3)->isInt()) {
-                            yyerror("The bounded depth must be an integer");
-                            YYERROR;
+                        {
+                            if (!NUM_EXP_NODE($3)->isInt()) {
+                                yyerror("The bounded depth must be an integer");
+                                YYERROR;
+                            }
+                            $$ = new std::pair<int, int>(UNBOUNDED, NUM_EXP_NODE($3)->getIntVal());
+                            delete $3;
                         }
-                        $$ = new std::pair<int, int>(UNBOUNDED, NUM_EXP_NODE($3)->getIntVal());
-                        delete $3;
-                    }
                 |   '[' number ',' number ']'
-                    {
-                        if (!NUM_EXP_NODE($2)->isInt()) {
-                            yyerror("The number of solutions must be an integer");
-                            YYERROR;
+                        {
+                            if (!NUM_EXP_NODE($2)->isInt()) {
+                                yyerror("The number of solutions must be an integer");
+                                YYERROR;
+                            }
+                            if (!NUM_EXP_NODE($4)->isInt()) {
+                                yyerror("The bounded depth must be an integer");
+                                YYERROR;
+                            }
+                            $$ = new std::pair<int, int>(NUM_EXP_NODE($2)->getIntVal(), NUM_EXP_NODE($4)->getIntVal());
+                            delete $2;
+                            delete $4;
                         }
-                        if (!NUM_EXP_NODE($4)->isInt()) {
-                            yyerror("The bounded depth must be an integer");
-                            YYERROR;
-                        }
-                        $$ = new std::pair<int, int>(NUM_EXP_NODE($2)->getIntVal(), NUM_EXP_NODE($4)->getIntVal());
-                        delete $2;
-                        delete $4;
-                    }
                 ;
 
 arrow   :   KW_ARROW_ONE
@@ -603,7 +653,7 @@ property    :   '(' property ')'
                     {
                         $$ = currentSyntaxProg->makeNode(new BoolExpNode(BoolType::FALSE));
                     }
-            |   KW_PROP '(' varName ',' basisProp ')'
+            |   KW_PROJ '(' varName ',' basisProp ')'
                     {
                         if (!currentSyntaxProg->hasVarSymbol($3)) {
                             yyerror(("Variable " + std::string($3.name()) + " is undefined").c_str());
@@ -637,14 +687,14 @@ basisProp   :   basis
             ;
 
 showPath    :   KW_SHOW KW_PATH number expectedDot
-                {
-                    if (!NUM_EXP_NODE($3)->isInt() || NUM_EXP_NODE($3)->getIntVal() < 0) {
-                        yyerror("State ID must be a natural number for showing the path");
-                        YYERROR;
+                    {
+                        if (!NUM_EXP_NODE($3)->isInt() || NUM_EXP_NODE($3)->getIntVal() < 0) {
+                            yyerror("State ID must be a natural number for showing the path");
+                            YYERROR;
+                        }
+                        interpreter.showPath(NUM_EXP_NODE($3)->getIntVal());
+                        delete $3;
                     }
-                    interpreter.showPath(NUM_EXP_NODE($3)->getIntVal());
-                    delete $3;
-                }
             |   KW_SHOW error expectedDot
                      {
                          yyerrok;

@@ -65,6 +65,7 @@ TwoTargetOpWithTwoParam         XXminusYY|XXplusYY
 "const"     { declFlag = CONST_DECL; return KW_CONST; }
 "where"     { return KW_WHERE; }
 "init"      { return KW_INIT; }
+"prop"      { return KW_PROP; }
 "begin"     { return KW_BEGIN; }
 "end"       { declFlag = NONE_DECL; return KW_END; }
 "while"     { return KW_WHILE; }
@@ -81,6 +82,8 @@ TwoTargetOpWithTwoParam         XXminusYY|XXplusYY
 "="		    { return KW_EQUAL; }
 ":="		{ return KW_ASSIGN; }
 
+"pmc"       { return KW_PMC; }
+
 "search"    { return KW_SEARCH; }
 "in"        { return KW_IN; }
 "with"      { return KW_WITH; }
@@ -92,7 +95,7 @@ TwoTargetOpWithTwoParam         XXminusYY|XXplusYY
 "=>!"       { return KW_ARROW_EXCLAMATION; }
 "true"      { return KW_TRUE; }
 "false"     { return KW_FALSE; }
-"P"         { return KW_PROP; }
+"P"         { return KW_PROJ; }
 "not"       { return KW_NOT; }
 "and"       { return KW_AND; }
 "or"        { return KW_OR; }
@@ -152,16 +155,20 @@ e         { return KW_E; }
                 // yylval.codeNr = stringTable.encode(yytext);
                 RETURN(IDENTIFIER);
             }
-[a-zA-Z0-9_\-]+\.[qQ][wW]   { yylval.filePath = strdup(yytext); return FILENAME; }
+[a-zA-Z0-9_\-]+\.[qQ][wW]   { yylval.str = strdup(yytext); return FILENAME; }
 [+-]?[0-9]+                 { return INTEGER; }
 [+-]?[0-9]+"/"[+-]?[0-9]+   { return RATIONAL; }
 [+-]?[0-9]+"."[0-9]*        { return REAL; }
 [+-]?("."[0-9]+)            { return REAL; }
 
+\'[^\']*\'  { yylval.str = strdup(yytext); return FORMULA_STR; }
+
 "//".*                  { /* Ignore single-line comment */ }
 "/*"                    { lexerCommentMode(); }
-<COMMENT_MODE>[^*]+     { /* Ignore content inside comments */ }
-<COMMENT_MODE>"*/"      { lexerInitialMode(); }
+<COMMENT_MODE>{
+[^*]+     { /* Ignore content inside comments */ }
+"*/"      { lexerInitialMode(); }
+}
 
 [ \t\f\v\t\r]       /* ignore whitespaces */
 \n          /* ignore EOL, otherwise return EOL; */

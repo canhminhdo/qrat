@@ -5,6 +5,7 @@
 #ifndef SYNTAXPROG_HPP
 #define SYNTAXPROG_HPP
 
+#include "PropTable.hpp"
 #include "ast/CachedNode.hpp"
 #include "ast/StmSeq.hpp"
 #include "core/SymbolTable.hpp"
@@ -41,9 +42,13 @@ public:
 
     ExpNode *makeNode(ExpNode *node);
 
+    void addProp(Token name, PropExpNode *value);
+
     std::size_t getNqubits() const;
 
     std::vector<VarSymbol *> getVars() const;
+
+    PropTable getPropTab() const;
 
     // for debugging
     void dump() const;
@@ -54,5 +59,6 @@ private:
     SymbolTable symTab; // store variables and constants
     StmSeq *stmSeq; // store statements (quantum programs)
     CachedNode cachedNodes; // cached nodes for some expressions in ASTs
+    PropTable propTab; // store propositions
 };
 #endif//SYNTAXPROG_HPP

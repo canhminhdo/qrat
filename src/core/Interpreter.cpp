@@ -35,6 +35,10 @@ void Interpreter::initGraphSearch(ExpNode *propExp, Search::Type type, int numSo
     graphSearch = new StateTransitionGraph(currentProg, ddSim, propExp, type, numSols, maxDepth);
 }
 
+void Interpreter::initGraphSearch2(char *property) {
+    graphSearch2 = new StateTransitionGraph2(currentProg, ddSim, property);
+}
+
 void Interpreter::execute() {
     assert(ddSim != nullptr);
     assert(graphSearch != nullptr);
@@ -42,6 +46,15 @@ void Interpreter::execute() {
     // graphSearch->dump();
     graphSearch->printSearchCommand();
     graphSearch->search();
+}
+
+void Interpreter::execute2() {
+    assert(ddSim != nullptr);
+    assert(graphSearch2 != nullptr);
+    // ddSim->dump();
+    // graphSearch->dump();
+    graphSearch2->printSearchCommand();
+    graphSearch2->search();
 }
 
 void Interpreter::initializeSearch(int progName, ExpNode *propExp, Search::Type type, int numSols, int maxDepth) {
@@ -60,6 +73,24 @@ void Interpreter::cleanSearch() {
         delete ddSim;
         ddSim = nullptr;
     }
+}
+
+void Interpreter::cleanSearch2() {
+    if (graphSearch2 != nullptr) {
+        delete graphSearch2;
+        graphSearch2 = nullptr;
+    }
+    if (ddSim != nullptr) {
+        delete ddSim;
+        ddSim = nullptr;
+    }
+}
+
+void Interpreter::initializeSearch2(int progName, char *property) {
+    assert(currentProg != nullptr && progName == currentProg->getName());
+    cleanSearch2();
+    initDDSimulation();
+    initGraphSearch2(property);
 }
 
 void Interpreter::finalizeProg() {
