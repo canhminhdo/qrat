@@ -42,7 +42,7 @@ public:
 
     ExpNode *makeNode(ExpNode *node);
 
-    void addProp(Token name, PropExpNode *value);
+    void addProp(Token name, ExpNode *value);
 
     std::size_t getNqubits() const;
 

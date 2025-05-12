@@ -58,7 +58,8 @@ void StateTransitionGraph2::search() {
 void StateTransitionGraph2::procState(State *currentState, const Timer &timer) {
     StmNode *stm = currentState->pc;
     if (auto *endProg = dynamic_cast<EndStmNode *>(stm); endProg != nullptr && endProg->getNext() == nullptr) {
-        ending.push_back(currentState->stateNr);
+        // todo: seem not necessary
+        // ending.push_back(currentState->stateNr);
         return;
     }
     StmNode *nextStm = getNextStatement(stm);
@@ -180,7 +181,7 @@ void StateTransitionGraph2::printSearchCommand() {
     if (Configuration::systemMode == LOADING_FILE_MODE) {
         std::cout << "==========================================\n";
     }
-    std::cout << "pmc in ";
+    std::cout << "pcheck in ";
     std::cout << Token::name(currentProg->getName());
     std::cout << " with " << property << "";
     std::cout << " .\n";

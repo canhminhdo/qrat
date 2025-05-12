@@ -6,7 +6,7 @@
 #include "core/Token.hpp"
 #include <iostream>
 
-void PropTable::addProp(int name, PropExpNode *value) {
+void PropTable::addProp(int name, ExpNode *value) {
     if (propTab.find(name) != propTab.end()) {
         std::cerr << "Error: " << Token::name(name) << " proposition already exists" << std::endl;
         exit(1);
@@ -15,18 +15,18 @@ void PropTable::addProp(int name, PropExpNode *value) {
     props.push_back(value);
 }
 
-PropExpNode * PropTable::lookup(int name) {
+ExpNode * PropTable::lookup(int name) {
     if (propTab.find(name) == propTab.end()) {
         return nullptr;
     }
     return propTab[name];
 }
 
-std::vector<PropExpNode *> PropTable::getProps() const {
+std::vector<ExpNode *> PropTable::getProps() const {
     return props;
 }
 
-std::unordered_map<int, PropExpNode *> PropTable::getPropTab() const {
+std::unordered_map<int, ExpNode *> PropTable::getPropTab() const {
     return propTab;
 }
 

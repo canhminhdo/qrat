@@ -79,10 +79,8 @@ DDSimulation::getProjectorMap() {
 
 void DDSimulation::initProperty2() {
     for (auto &prop: prog->getPropTab().getPropTab()) {
-        auto *propExpNode = prop.second;
-        if (projectorMap.find(propExpNode) == projectorMap.end()) {
-            projectorMap[propExpNode] = buildProjector(propExpNode);
-        }
+        auto *expNode = prop.second;
+        initProperty(expNode);
     }
 }
 

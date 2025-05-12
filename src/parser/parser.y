@@ -227,13 +227,9 @@ propList    :   prop
             |   propList prop
             ;
 
-prop    :   propName KW_ASSIGN KW_PROJ '(' varName ',' basisProp ')'
+prop    :   propName KW_ASSIGN property
                 {
-                    if (!currentSyntaxProg->hasVarSymbol($5)) {
-                        yyerror(("Variable " + std::string($5.name()) + " is undefined").c_str());
-                        YYERROR;
-                    }
-                    currentSyntaxProg->addProp($1, PROP_EXP_NODE(currentSyntaxProg->makeNode(new PropExpNode(currentSyntaxProg->lookup($5), $7))));
+                    currentSyntaxProg->addProp($1, $3);
                }
            expectedSemi
        ;

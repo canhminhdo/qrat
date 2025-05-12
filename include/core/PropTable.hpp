@@ -5,7 +5,7 @@
 #ifndef PROPTABLE_HPP
 #define PROPTABLE_HPP
 
-#include <ast/PropExpNode.hpp>
+#include "ast/ExpNode.hpp"
 #include <unordered_map>
 #include <vector>
 
@@ -15,19 +15,19 @@ public:
 
     ~PropTable() = default;
 
-    void addProp(int name, PropExpNode *value = nullptr);
+    void addProp(int name, ExpNode *value = nullptr);
 
-    PropExpNode *lookup(int name);
+    ExpNode *lookup(int name);
 
-    std::vector<PropExpNode *> getProps() const;
+    std::vector<ExpNode *> getProps() const;
 
-    std::unordered_map<int, PropExpNode *> getPropTab() const;
+    std::unordered_map<int, ExpNode *> getPropTab() const;
 
     void dump() const;
 
 private:
-    std::unordered_map<int, PropExpNode *> propTab;
-    std::vector<PropExpNode *> props;
+    std::unordered_map<int, ExpNode *> propTab;
+    std::vector<ExpNode *> props;
 };
 
 #endif //PROPTABLE_HPP

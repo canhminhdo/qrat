@@ -98,7 +98,7 @@ ExpNode *SyntaxProg::makeNode(ExpNode *node) {
     return cachedNodes.makeNode(node);
 }
 
-void SyntaxProg::addProp(Token name, PropExpNode *value) {
+void SyntaxProg::addProp(Token name, ExpNode *value) {
     propTab.addProp(name.code(), value);
 }
 

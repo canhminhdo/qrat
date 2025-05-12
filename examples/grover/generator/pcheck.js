@@ -1,10 +1,6 @@
 let pcheck = (nqubits) => {
     let prog = "\n";
-    let list = [];
-    for (i = 0; i < nqubits; i++) {
-        list.push('"target' + i + '"');
-    }
-    prog += "pcheck in GROVER with 'P=? [F (" + list.join(" & ") + ")]' .";
+    prog += "pcheck in GROVER with 'P=? [F \"target\"]' .";
     return prog;
 }
 
