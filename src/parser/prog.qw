@@ -1,7 +1,7 @@
 prog TELEPORT is
 var q0, q1, q2 : qubit;
 init
-    q0 := random;
+    q0 := |0>;
     q1 := |0>;
     q2 := |0>;
 prop
@@ -15,6 +15,6 @@ begin
     if M[q0] = 1 then q2 := Z[q2]; else skip; fi;
 end
 
-pmc in TELEPORT with '<> target2' .
+pcheck in TELEPORT with 'P=? [F "target"]' .
 
-search in TELEPORT with =>! such that P(q2, init[q0]) .
+// search in TELEPORT with =>! such that P(q2, init[q0]) .

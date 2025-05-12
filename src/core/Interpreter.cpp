@@ -3,8 +3,10 @@
 //
 
 #include "core/Interpreter.hpp"
+#include "model/DTMC.hpp"
 #include "utility/Tty.hpp"
 #include <iostream>
+#include "model/PrismRunner.hpp"
 
 void Interpreter::setCurrentProg(Token progName) {
     currentProg = new SyntaxProg(progName);
@@ -53,8 +55,16 @@ void Interpreter::execute2() {
     assert(graphSearch2 != nullptr);
     // ddSim->dump();
     // graphSearch->dump();
-    graphSearch2->printSearchCommand();
-    graphSearch2->search();
+    try {
+        PrismRunner::getPrismPath();
+        graphSearch2->printSearchCommand();
+        graphSearch2->search();
+        auto dtmc = DTMC(currentProg, graphSearch2);
+        dtmc.buildModel();
+        PrismRunner::modelCheck(dtmc.getFileModel()->getFileName(), std::string(graphSearch2->getProperty()));
+    } catch (std::runtime_error& e) {
+        std::cerr << Tty(Tty::RED) << "Error: " << Tty(Tty::RESET) << e.what() << std::endl;
+    }
 }
 
 void Interpreter::initializeSearch(int progName, ExpNode *propExp, Search::Type type, int numSols, int maxDepth) {

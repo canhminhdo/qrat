@@ -6,15 +6,20 @@ const {oracle} = require("./oracle.js");
 const {diffusion} = require("./diffusion.js");
 const {measure} = require("./measure.js");
 const {search} = require("./search.js");
+const {pcheck} = require("./pcheck.js");
+const {atomicProps} = require("./atomicProps.js");
 
-function grover(nqubits, targetState, nIters) {
+function grover(nqubits, targetState, nIters, searchCmd = true, pcheckCmd = false) {
     let headProg = header(nqubits);
     let initProg = init(nqubits);
     let oracleProg = oracle(nqubits, targetState);
     let diffusionProg = diffusion(nqubits);
     let searchProg = search(nqubits, targetState);
+    let pcheckProg = pcheck(nqubits);
+    let propProg = atomicProps(nqubits, targetState);
     let prog = "// #qubit: " + nqubits + ", marked state: " + targetState.split('').reverse().join('') + ", #iterations: " + nIters + "\n";
     prog += headProg;
+    if (pcheckCmd) prog += propProg;
     prog += "begin\n";
     prog += initProg;
     for (i = 0; i < nIters; i++) {
@@ -22,7 +27,8 @@ function grover(nqubits, targetState, nIters) {
     }
     prog += measure(nqubits);
     prog += "end\n"
-    prog += searchProg;
+    if (pcheckCmd) prog += pcheckProg;
+    if (searchCmd) prog += searchProg;
     return prog;
 }
 

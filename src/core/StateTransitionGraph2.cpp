@@ -10,6 +10,7 @@
 #include "utility/Tty.hpp"
 #include <Configuration.hpp>
 #include <iomanip>
+#include <unistd.h>
 
 StateTransitionGraph2::StateTransitionGraph2(SyntaxProg *currentProg, DDSimulation *ddSim, char *property) {
     this->currentProg = currentProg;
@@ -52,18 +53,12 @@ void StateTransitionGraph2::search() {
     printSearchTiming(timer);
     timer.stop();
     // dump();
-    for (auto p2s : prop2States) {
-        std::cout << "Property " << Token::name(p2s.first) << ": ";
-        for (auto s : p2s.second) {
-            std::cout << s << " ";
-        }
-        std::cout << std::endl;
-    }
 }
 
 void StateTransitionGraph2::procState(State *currentState, const Timer &timer) {
     StmNode *stm = currentState->pc;
     if (auto *endProg = dynamic_cast<EndStmNode *>(stm); endProg != nullptr && endProg->getNext() == nullptr) {
+        ending.push_back(currentState->stateNr);
         return;
     }
     StmNode *nextStm = getNextStatement(stm);
@@ -89,7 +84,7 @@ StmNode *StateTransitionGraph2::getNextStatement(StmNode *stm) {
 }
 
 void StateTransitionGraph2::procSkipStm(SkipStmNode *skipStm, State *currentState, StmNode *nextStm,
-                                       const Timer &timer) {
+                                        const Timer &timer) {
     auto [newState, inCache] = makeState(new State(nextStm, currentState->current, currentState->stateNr, currentState->depth + 1));
     currentState->nextStates.push_back(std::make_pair(newState->stateNr, 1));
     if (!inCache) {
@@ -98,7 +93,7 @@ void StateTransitionGraph2::procSkipStm(SkipStmNode *skipStm, State *currentStat
 }
 
 void StateTransitionGraph2::procUnitaryStm(UnitaryStmNode *unitaryStm, State *currentState, StmNode *nextStm,
-                                          const Timer &timer) {
+                                           const Timer &timer) {
     auto v = currentState->current;
     auto v1 = ddSim->applyGate(unitaryStm, v);
     auto [newState, inCache] = makeState(new State(nextStm, v1, currentState->stateNr, currentState->depth + 1));
@@ -123,7 +118,7 @@ void StateTransitionGraph2::procCondStm(CondStmNode *condStm, State *currentStat
 }
 
 void StateTransitionGraph2::procCondBranch(State *currentState, StmNode *nextStm, qc::VectorDD &v, qc::fp prob,
-                                          int outcome, const Timer &timer) {
+                                           int outcome, const Timer &timer) {
     if (prob == 0.0 || v.isZeroTerminal()) {
         return;
     }
@@ -135,7 +130,7 @@ void StateTransitionGraph2::procCondBranch(State *currentState, StmNode *nextStm
 }
 
 void StateTransitionGraph2::procWhileStm(WhileStmNode *whileStm, State *currentState, StmNode *nextStm,
-                                        const Timer &timer) {
+                                         const Timer &timer) {
     auto *condExp = dynamic_cast<CondExpNode *>(whileStm->getCond());
     auto *measExp = dynamic_cast<MeasExpNode *>(condExp->getLeft());
     auto *numExp = dynamic_cast<NumExpNode *>(condExp->getRight());
@@ -194,12 +189,12 @@ void StateTransitionGraph2::printSearchCommand() {
 void StateTransitionGraph2::dump() const {
     std::cout << "Initial state: \n";
     ddSim->getInitialState().printVector<dd::vNode>();
-     std::cout << "State Transition Graph\n";
-     std::cout << "State ID being considered: " << savedStateId << "\n";
-     std::cout << "-------------------\n";
-     if (seenStates.size() != 0) {
-         printState(seenStates[0]);
-     }
+    std::cout << "State Transition Graph\n";
+    std::cout << "State ID being considered: " << savedStateId << "\n";
+    std::cout << "-------------------\n";
+    if (seenStates.size() != 0) {
+        printState(seenStates[0]);
+    }
 }
 
 void StateTransitionGraph2::printState(State *s, bool recursive) const {
@@ -215,12 +210,12 @@ void StateTransitionGraph2::printState(State *s, bool recursive) const {
     std::cout << "[Quantum State]: \n";
     s->current.printVector<dd::vNode>();
     std::cout << "[Next States]: ";
-    for (const auto& [i, prob]: s->nextStates) {
+    for (const auto &[i, prob]: s->nextStates) {
         std::cout << i << " : " << prob << "\n";
     }
     std::cout << "\n";
     if (recursive) {
-        for (const auto& [i, prob] : s->nextStates) {
+        for (const auto &[i, prob]: s->nextStates) {
             if (i <= s->stateNr) {
                 // do not print backward states
                 std::cout << "Backward state detected\n";
@@ -229,4 +224,20 @@ void StateTransitionGraph2::printState(State *s, bool recursive) const {
             printState(seenStates[i]);
         }
     }
+}
+
+std::vector<StateTransitionGraph2::State *> &StateTransitionGraph2::getSeenStates() {
+    return seenStates;
+}
+
+std::unordered_map<int, std::vector<int>> &StateTransitionGraph2::getProp2States() {
+    return prop2States;
+}
+
+std::vector<int> &StateTransitionGraph2::getEndingStates() {
+    return ending;
+}
+
+char *StateTransitionGraph2::getProperty() {
+    return property;
 }

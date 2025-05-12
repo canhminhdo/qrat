@@ -82,7 +82,7 @@ TwoTargetOpWithTwoParam         XXminusYY|XXplusYY
 "="		    { return KW_EQUAL; }
 ":="		{ return KW_ASSIGN; }
 
-"pmc"       { return KW_PMC; }
+"pcheck"    { return KW_PCHECK; }
 
 "search"    { return KW_SEARCH; }
 "in"        { return KW_IN; }

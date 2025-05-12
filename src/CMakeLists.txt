@@ -7,6 +7,8 @@ add_executable(
     ${PROJECT_NAME}
     main/main.cpp
     utility/printUtils.cpp
+    model/DTMC.cpp
+    model/PrismRunner.cpp
 )
 
 # set include directories

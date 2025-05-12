@@ -101,7 +101,7 @@ extern std::vector<char *> pendingFiles;
 %token KW_MEASURE
 %token KW_EQUAL
 /* for commands */
-%token KW_PMC
+%token KW_PCHECK
 %token <str> FORMULA_STR
 %token KW_SEARCH KW_IN KW_WITH KW_SUCH KW_THAT
 %token KW_ARROW_ONE KW_ARROW_STAR KW_ARROW_PLUS KW_ARROW_EXCLAMATION
@@ -483,7 +483,7 @@ expectedDot :   '.';
 
 /* commands */
 command :   loadFile
-        |   pmc
+        |   pcheck
         |   search
         |   showPath
         |   setParam
@@ -537,25 +537,23 @@ setRandomSeed   :   KW_SET KW_KET_RANDOM KW_SEED number expectedDot
                         }
                 ;
 
-/* pmc command */
-pmc :   KW_PMC KW_IN token
-            {
-                if (!interpreter.existProg($3)) {
-                    yyerror(("PCheck in an undefined program: " + std::string($3.name())).c_str());
-                    YYERROR;
+/* pcheck command */
+pcheck  :   KW_PCHECK KW_IN token
+                {
+                    if (!interpreter.existProg($3)) {
+                        yyerror(("PCheck in an undefined program: " + std::string($3.name())).c_str());
+                        YYERROR;
+                    }
+                    currentSyntaxProg = interpreter.getCurrentProg();
                 }
-                currentSyntaxProg = interpreter.getCurrentProg();
-            }
-        KW_WITH
-        FORMULA_STR
-        expectedDot
-            {
-                // interpreter.initializeSearch($4.code(), $10, $7, $2->first, $2->second);
-                // interpreter.execute();
-                interpreter.initializeSearch2($3.code(), $6);
-                interpreter.execute2();
-            }
-    ;
+            KW_WITH
+            FORMULA_STR
+            expectedDot
+                {
+                    interpreter.initializeSearch2($3.code(), $6);
+                    interpreter.execute2();
+                }
+        ;
 
 /* search command */
 search  :   KW_SEARCH searchParams KW_IN

@@ -112,6 +112,14 @@ public:
 
     void printState(State *s, bool recursive = true) const;
 
+    std::vector<StateTransitionGraph2::State *> &getSeenStates();
+
+    std::unordered_map<int, std::vector<int>> &getProp2States();
+
+    std::vector<int> &getEndingStates();
+
+    char *getProperty();
+
 private:
     // for analysis
     std::unordered_map<State *, int, StateHash, StateEqual> stateTab;
@@ -122,6 +130,7 @@ private:
     DDSimulation *ddSim;
     char *property;
     std::unordered_map<int, std::vector<int>> prop2States;
+    std::vector<int> ending;
 };
 
 #endif//STATETRANSITIONGRAPH2_HPP

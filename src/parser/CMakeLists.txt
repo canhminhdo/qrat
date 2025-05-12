@@ -65,6 +65,7 @@ add_library(
     ../utility/Tty.cpp
     ../utility/fileReader.cpp
     ../core/PropTable.cpp
+    ../utility/FileWritter.cpp
 )
 
 target_include_directories(Parser PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
