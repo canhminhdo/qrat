@@ -165,7 +165,8 @@ void StateTransitionGraph2::checkState(State *s) {
 }
 
 void StateTransitionGraph2::printSearchTiming(const Timer &timer) const {
-    std::cout << "states: " << seenStates.size();
+    std::cout << "\n";
+    std::cout << "Time for state transition graph construction with states: " << seenStates.size();
     if (Configuration::showTiming) {
         Int64 real;
         Int64 virt;

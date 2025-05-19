@@ -28,6 +28,8 @@ public:
 
     FileWriter *getFileModel();
 
+    void printDtmcTiming(const Timer &timer);;
+
 private:
     FileWriter *fileWriter;
     StateTransitionGraph2 *graphSearch;

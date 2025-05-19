@@ -65,7 +65,7 @@ void handlePendingFiles(bool clearMemory) {
 bool handleCommandLine() {
     Configuration::systemMode = INTERACTIVE_MODE;
     std::string inputLine;
-    std::cout << "qrat> " << std::flush;
+    std::cout << "qcheck> " << std::flush;
     std::getline(std::cin, inputLine);
     if (std::cin.eof()) {// Check for EOF (Ctrl+D or Ctrl+Z)
         exit(0);

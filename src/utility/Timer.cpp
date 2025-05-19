@@ -82,6 +82,16 @@ void Timer::stop() {
         valid = false;
 }
 
+void Timer::total() {
+    std::cout << "\n";
+    Int64 real;
+    Int64 virt;
+    Int64 prof;
+    if (this->getTimes(real, virt, prof)) {
+        std::cout << "Total time in " << prof / 1000 << "ms cpu (" << real / 1000 << "ms real)\n";
+    }
+}
+
 bool Timer::getTimes(Int64 &real, Int64 &virt, Int64 &prof) const {
     if (valid) {
         real = realAcc;

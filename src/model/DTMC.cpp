@@ -4,6 +4,8 @@
 
 #include "model/DTMC.hpp"
 
+#include "Configuration.hpp"
+
 DTMC::DTMC(SyntaxProg *currentProg, StateTransitionGraph2 *graphSearch) {
     this->currentProg = currentProg;
     this->graphSearch = graphSearch;
@@ -22,6 +24,7 @@ void DTMC::addHeader() {
 }
 
 void DTMC::buildModel() {
+    Timer timer(true);
     addHeader();
     auto &seenStates = graphSearch->getSeenStates();
     fileWriter->writeLine("\ts : [0.." + std::to_string(seenStates.size() - 1) + "] init 0;");
@@ -50,14 +53,15 @@ void DTMC::buildModel() {
     }
     fileWriter->writeEmptyLine();
     addFooter();
+    this->printDtmcTiming(timer);
 }
 
 void DTMC::addFooter() {
     fileWriter->writeLine("endmodule");
     fileWriter->writeEmptyLine();
     addLabels();
-    fileWriter->writeEmptyLine();
-    addRewrads();
+    // fileWriter->writeEmptyLine();
+    // addRewrads();
 }
 
 void DTMC::addLabels() {
@@ -97,4 +101,17 @@ void DTMC::addRewrads() {
 
 FileWriter *DTMC::getFileModel() {
     return fileWriter;
+}
+
+void DTMC::printDtmcTiming(const Timer &timer) {
+    std::cout << "\n";
+    if (Configuration::showTiming) {
+        Int64 real;
+        Int64 virt;
+        Int64 prof;
+        if (timer.getTimes(real, virt, prof)) {
+            std::cout << "Timer for DTMC model generation in " << prof / 1000 << "ms cpu (" << real / 1000 << "ms real)";
+        }
+    }
+    std::cout << "\n";
 }

@@ -7,15 +7,16 @@
 
 #include <string>
 
-class PrismRunner {
-public:
-    static void modelCheck(const std::string &modelFile, const std::string &property);
-    static std::string getPrismPath();
+#include "Runner.hpp"
+#include "utility/Timer.hpp"
 
-private:
-    static std::string execCommand(const std::string &command);
-    static std::string parseTime(const std::string &output);
-    static void parseResult(const std::string &output);
+class PrismRunner : public Runner {
+public:
+    void modelCheck(const std::string &modelFile, const std::string &property) override;
+
+    std::string getPath() override;
+
+    bool isAvailable() override;
 };
 
 #endif//PRISMRUNNER_HPP

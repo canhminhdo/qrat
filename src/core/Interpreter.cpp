@@ -6,6 +6,7 @@
 #include "model/DTMC.hpp"
 #include "utility/Tty.hpp"
 #include <iostream>
+#include <model/StormRunner.hpp>
 #include "model/PrismRunner.hpp"
 
 void Interpreter::setCurrentProg(Token progName) {
@@ -55,16 +56,19 @@ void Interpreter::execute2() {
     assert(graphSearch2 != nullptr);
     // ddSim->dump();
     // graphSearch->dump();
-    try {
-        PrismRunner::getPrismPath();
+    Timer timer(true);
+    Runner* runner = new PrismRunner();
+    // Runner* runner = new StormRunner();
+    if (runner->isAvailable()) {
         graphSearch2->printSearchCommand();
         graphSearch2->search();
         auto dtmc = DTMC(currentProg, graphSearch2);
         dtmc.buildModel();
-        PrismRunner::modelCheck(dtmc.getFileModel()->getFileName(), std::string(graphSearch2->getProperty()));
-    } catch (std::runtime_error& e) {
-        std::cerr << Tty(Tty::RED) << "Error: " << Tty(Tty::RESET) << e.what() << std::endl;
+        runner->modelCheck(dtmc.getFileModel()->getFileName(), std::string(graphSearch2->getProperty()));
+        timer.total();
     }
+    delete runner;
+    timer.stop();
 }
 
 void Interpreter::initializeSearch(int progName, ExpNode *propExp, Search::Type type, int numSols, int maxDepth) {

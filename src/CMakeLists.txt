@@ -9,6 +9,8 @@ add_executable(
     utility/printUtils.cpp
     model/DTMC.cpp
     model/PrismRunner.cpp
+    model/Runner.cpp
+    model/StormRunner.cpp
 )
 
 # set include directories

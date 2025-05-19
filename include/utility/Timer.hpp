@@ -20,6 +20,8 @@ public:
 
     void stop();
 
+    void total();
+
 private:
     enum Constants {
         CYCLE_LENGTH = 10000000 // length of timer cycle in seconds
