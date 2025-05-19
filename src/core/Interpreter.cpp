@@ -54,11 +54,10 @@ void Interpreter::execute() {
 void Interpreter::execute2() {
     assert(ddSim != nullptr);
     assert(graphSearch2 != nullptr);
+    assert(runner != nullptr);
     // ddSim->dump();
     // graphSearch->dump();
     Timer timer(true);
-    Runner* runner = new PrismRunner();
-    // Runner* runner = new StormRunner();
     if (runner->isAvailable()) {
         graphSearch2->printSearchCommand();
         graphSearch2->search();
@@ -100,11 +99,33 @@ void Interpreter::cleanSearch2() {
     }
 }
 
-void Interpreter::initializeSearch2(int progName, char *property) {
+void Interpreter::initializeSearch2(int progName, char *property, std::vector<char *> *args) {
     assert(currentProg != nullptr && progName == currentProg->getName());
     cleanSearch2();
     initDDSimulation();
     initGraphSearch2(property);
+    initRunner(args);
+}
+
+void Interpreter::initRunner(std::vector<char *> *args) {
+    enum Flag {
+        PRISM,
+        STORM
+    };
+    Flag flag = Flag::PRISM;
+    for (int i = 0; i < args->size(); i++) {
+        if (strcmp(args->at(i), "--backend=Storm") == 0) {
+            flag = Flag::STORM;
+        } else if (strcmp(args->at(i), "--backend=PRISM") == 0) {
+            flag = Flag::PRISM;
+        }
+        delete args->at(i);
+    }
+    if (flag == Flag::PRISM) {
+        runner = new PrismRunner();
+    } else if (flag == Flag::STORM) {
+        runner = new StormRunner();
+    }
 }
 
 void Interpreter::finalizeProg() {

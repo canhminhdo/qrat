@@ -73,6 +73,7 @@ extern std::vector<char *> pendingFiles;
     std::vector<qc::fp> *params;
     std::pair<int, int> *searchParams;
     char *str;
+    std::vector<char *> *args;
 }
 
 /* declare tokens */
@@ -110,6 +111,7 @@ extern std::vector<char *> pendingFiles;
 %token KW_SET KW_TIMING KW_ON KW_OFF
 %token KW_SEED
 %token EOL
+%token <str> KW_ARGUMENT
 
 /* types for nonterminal sysmbols */
 %nterm <yyToken> token varName propName
@@ -127,7 +129,8 @@ extern std::vector<char *> pendingFiles;
 %nterm <param> param
 %nterm <params> params
 %nterm <searchParams> searchParams
-%nterm <str> filePath
+%nterm <str> filePath argument
+%nterm <args> arguments
 /* start symbol
 %start top
 */
@@ -544,12 +547,27 @@ pcheck  :   KW_PCHECK KW_IN token
                 }
             KW_WITH
             FORMULA_STR
+            arguments
             expectedDot
                 {
-                    interpreter.initializeSearch2($3.code(), $6);
+                    interpreter.initializeSearch2($3.code(), $6, $7);
                     interpreter.execute2();
+                    delete $7;
                 }
         ;
+
+arguments   :   /* empty */
+                {
+                    $$ = new std::vector<char *>();
+                }
+            |   arguments argument
+                {
+                    $1->push_back($2);
+                    $$ = $1;
+                }
+            ;
+
+argument    :   KW_ARGUMENT;
 
 /* search command */
 search  :   KW_SEARCH searchParams KW_IN

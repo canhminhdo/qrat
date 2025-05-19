@@ -14,6 +14,8 @@ public:
     std::string getPath() override;
 
     bool isAvailable() override;
+
+    void printTiming(const Timer &timer) override;
 };
 
 #endif //STORMRUNNER_HPP

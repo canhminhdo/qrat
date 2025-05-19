@@ -5,6 +5,7 @@
 #ifndef INTERPRETER_HPP
 #define INTERPRETER_HPP
 
+#include "model/Runner.hpp"
 #include "StateTransitionGraph.hpp"
 #include "StateTransitionGraph2.hpp"
 #include "core/SyntaxProg.hpp"
@@ -33,7 +34,9 @@ public:
 
     void initializeSearch(int progName, ExpNode *propExp, Search::Type type, int numSols, int maxDepth);
 
-    void initializeSearch2(int progName, char* property);
+    void initializeSearch2(int progName, char* property, std::vector<char *> *args);
+
+    void initRunner(std::vector<char *> *args);
 
     void cleanSearch();
 
@@ -48,6 +51,7 @@ private:
     DDSimulation *ddSim;
     StateTransitionGraph *graphSearch;
     StateTransitionGraph2 *graphSearch2;
+    Runner *runner;
     std::unordered_map<int, SyntaxProg *> savedProgs;
 };
 #endif//INTERPRETER_HPP

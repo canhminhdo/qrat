@@ -11,11 +11,17 @@
 class Runner {
 public:
     virtual ~Runner() = default;
+
     virtual void modelCheck(const std::string &modelFile, const std::string &property) = 0;
+
     virtual std::string getPath() = 0;
+
     virtual bool isAvailable() = 0;
-    void printTiming(const Timer &timer);
+
+    virtual void printTiming(const Timer &timer) = 0;
+
     std::string execCommand(const std::string &command);
+
     void parseResult(const std::string &output);
 };
 #endif //RUNNER_HPP

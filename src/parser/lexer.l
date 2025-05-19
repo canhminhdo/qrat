@@ -150,6 +150,8 @@ PI4|pi4   { return KW_PI_4; }
 TAU|tau   { return KW_TAU; }
 e         { return KW_E; }
 
+"--backend="(PRISM|Storm)   { yylval.str = strdup(yytext); return KW_ARGUMENT; }
+
 [_a-zA-Z]([_a-zA-Z0-9])*    {
                 // printf("identifier: %s at line %d\n", yytext, yylineno);
                 // yylval.codeNr = stringTable.encode(yytext);
