@@ -26,7 +26,7 @@ std::vector<ExpNode *> PropTable::getProps() const {
     return props;
 }
 
-std::unordered_map<int, ExpNode *> PropTable::getPropTab() const {
+const std::unordered_map<int, ExpNode *> &PropTable::getPropTab() const {
     return propTab;
 }
 

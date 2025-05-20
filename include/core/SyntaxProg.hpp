@@ -48,7 +48,7 @@ public:
 
     std::vector<VarSymbol *> getVars() const;
 
-    PropTable getPropTab() const;
+    const PropTable &getPropTab() const;
 
     // for debugging
     void dump() const;

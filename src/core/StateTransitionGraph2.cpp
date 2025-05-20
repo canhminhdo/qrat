@@ -86,7 +86,8 @@ StmNode *StateTransitionGraph2::getNextStatement(StmNode *stm) {
 
 void StateTransitionGraph2::procSkipStm(SkipStmNode *skipStm, State *currentState, StmNode *nextStm,
                                         const Timer &timer) {
-    auto [newState, inCache] = makeState(new State(nextStm, currentState->current, currentState->stateNr, currentState->depth + 1));
+    auto [newState, inCache] = makeState(new State(nextStm, currentState->current, currentState->stateNr,
+                                                   currentState->depth + 1));
     currentState->nextStates.push_back(std::make_pair(newState->stateNr, 1));
     if (!inCache) {
         checkState(newState);
@@ -123,7 +124,8 @@ void StateTransitionGraph2::procCondBranch(State *currentState, StmNode *nextStm
     if (prob == 0.0 || v.isZeroTerminal()) {
         return;
     }
-    auto [newState, inCache] = makeState(new StateWithOutcome(nextStm, v, currentState->stateNr, currentState->depth + 1, outcome));
+    auto [newState, inCache] = makeState(
+        new StateWithOutcome(nextStm, v, currentState->stateNr, currentState->depth + 1, outcome));
     currentState->nextStates.push_back(std::make_pair(newState->stateNr, prob));
     if (!inCache) {
         checkState(newState);

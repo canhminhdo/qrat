@@ -21,7 +21,7 @@ public:
 
     std::vector<ExpNode *> getProps() const;
 
-    std::unordered_map<int, ExpNode *> getPropTab() const;
+    const std::unordered_map<int, ExpNode *> &getPropTab() const;
 
     void dump() const;
 

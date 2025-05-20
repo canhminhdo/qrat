@@ -110,7 +110,7 @@ std::vector<VarSymbol *> SyntaxProg::getVars() const {
     return symTab.getVars();
 }
 
-PropTable SyntaxProg::getPropTab() const {
+const PropTable &SyntaxProg::getPropTab() const {
     return propTab;
 }
 
