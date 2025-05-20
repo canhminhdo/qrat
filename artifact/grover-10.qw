@@ -1,6 +1,8 @@
-// #qubit: 10, marked state: 0101101001, #iterations: 25
+// #qubit: 10, marked state: 1001011010, #iterations: 25
 prog GROVER is
 var q0, q1, q2, q3, q4, q5, q6, q7, q8, q9 : qubit;
+prop
+	target := P(q0, |0>) and P(q1, |1>) and P(q2, |0>) and P(q3, |1>) and P(q4, |1>) and P(q5, |0>) and P(q6, |1>) and P(q7, |0>) and P(q8, |0>) and P(q9, |1>);
 begin
 	// initialize superposition qubits
 	q0 := H[q0];
@@ -14,19 +16,19 @@ begin
 	q8 := H[q8];
 	q9 := H[q9];
 	// oracle
-	q1 := X[q1];
+	q0 := X[q0];
 	q2 := X[q2];
-	q4 := X[q4];
+	q5 := X[q5];
 	q7 := X[q7];
-	q9 := X[q9];
+	q8 := X[q8];
 	q9 := H[q9];
 	q0, q1, q2, q3, q4, q5, q6, q7, q8, q9 := MCX[q0, q1, q2, q3, q4, q5, q6, q7, q8, q9];
 	q9 := H[q9];
-	q1 := X[q1];
+	q0 := X[q0];
 	q2 := X[q2];
-	q4 := X[q4];
+	q5 := X[q5];
 	q7 := X[q7];
-	q9 := X[q9];
+	q8 := X[q8];
 	// diffusion
 	q0 := H[q0];
 	q1 := H[q1];
@@ -72,19 +74,19 @@ begin
 	q8 := H[q8];
 	q9 := H[q9];
 	// oracle
-	q1 := X[q1];
+	q0 := X[q0];
 	q2 := X[q2];
-	q4 := X[q4];
+	q5 := X[q5];
 	q7 := X[q7];
-	q9 := X[q9];
+	q8 := X[q8];
 	q9 := H[q9];
 	q0, q1, q2, q3, q4, q5, q6, q7, q8, q9 := MCX[q0, q1, q2, q3, q4, q5, q6, q7, q8, q9];
 	q9 := H[q9];
-	q1 := X[q1];
+	q0 := X[q0];
 	q2 := X[q2];
-	q4 := X[q4];
+	q5 := X[q5];
 	q7 := X[q7];
-	q9 := X[q9];
+	q8 := X[q8];
 	// diffusion
 	q0 := H[q0];
 	q1 := H[q1];
@@ -130,19 +132,19 @@ begin
 	q8 := H[q8];
 	q9 := H[q9];
 	// oracle
-	q1 := X[q1];
+	q0 := X[q0];
 	q2 := X[q2];
-	q4 := X[q4];
+	q5 := X[q5];
 	q7 := X[q7];
-	q9 := X[q9];
+	q8 := X[q8];
 	q9 := H[q9];
 	q0, q1, q2, q3, q4, q5, q6, q7, q8, q9 := MCX[q0, q1, q2, q3, q4, q5, q6, q7, q8, q9];
 	q9 := H[q9];
-	q1 := X[q1];
+	q0 := X[q0];
 	q2 := X[q2];
-	q4 := X[q4];
+	q5 := X[q5];
 	q7 := X[q7];
-	q9 := X[q9];
+	q8 := X[q8];
 	// diffusion
 	q0 := H[q0];
 	q1 := H[q1];
@@ -188,19 +190,19 @@ begin
 	q8 := H[q8];
 	q9 := H[q9];
 	// oracle
-	q1 := X[q1];
+	q0 := X[q0];
 	q2 := X[q2];
-	q4 := X[q4];
+	q5 := X[q5];
 	q7 := X[q7];
-	q9 := X[q9];
+	q8 := X[q8];
 	q9 := H[q9];
 	q0, q1, q2, q3, q4, q5, q6, q7, q8, q9 := MCX[q0, q1, q2, q3, q4, q5, q6, q7, q8, q9];
 	q9 := H[q9];
-	q1 := X[q1];
+	q0 := X[q0];
 	q2 := X[q2];
-	q4 := X[q4];
+	q5 := X[q5];
 	q7 := X[q7];
-	q9 := X[q9];
+	q8 := X[q8];
 	// diffusion
 	q0 := H[q0];
 	q1 := H[q1];
@@ -246,19 +248,19 @@ begin
 	q8 := H[q8];
 	q9 := H[q9];
 	// oracle
-	q1 := X[q1];
+	q0 := X[q0];
 	q2 := X[q2];
-	q4 := X[q4];
+	q5 := X[q5];
 	q7 := X[q7];
-	q9 := X[q9];
+	q8 := X[q8];
 	q9 := H[q9];
 	q0, q1, q2, q3, q4, q5, q6, q7, q8, q9 := MCX[q0, q1, q2, q3, q4, q5, q6, q7, q8, q9];
 	q9 := H[q9];
-	q1 := X[q1];
+	q0 := X[q0];
 	q2 := X[q2];
-	q4 := X[q4];
+	q5 := X[q5];
 	q7 := X[q7];
-	q9 := X[q9];
+	q8 := X[q8];
 	// diffusion
 	q0 := H[q0];
 	q1 := H[q1];
@@ -304,19 +306,19 @@ begin
 	q8 := H[q8];
 	q9 := H[q9];
 	// oracle
-	q1 := X[q1];
+	q0 := X[q0];
 	q2 := X[q2];
-	q4 := X[q4];
+	q5 := X[q5];
 	q7 := X[q7];
-	q9 := X[q9];
+	q8 := X[q8];
 	q9 := H[q9];
 	q0, q1, q2, q3, q4, q5, q6, q7, q8, q9 := MCX[q0, q1, q2, q3, q4, q5, q6, q7, q8, q9];
 	q9 := H[q9];
-	q1 := X[q1];
+	q0 := X[q0];
 	q2 := X[q2];
-	q4 := X[q4];
+	q5 := X[q5];
 	q7 := X[q7];
-	q9 := X[q9];
+	q8 := X[q8];
 	// diffusion
 	q0 := H[q0];
 	q1 := H[q1];
@@ -362,19 +364,19 @@ begin
 	q8 := H[q8];
 	q9 := H[q9];
 	// oracle
-	q1 := X[q1];
+	q0 := X[q0];
 	q2 := X[q2];
-	q4 := X[q4];
+	q5 := X[q5];
 	q7 := X[q7];
-	q9 := X[q9];
+	q8 := X[q8];
 	q9 := H[q9];
 	q0, q1, q2, q3, q4, q5, q6, q7, q8, q9 := MCX[q0, q1, q2, q3, q4, q5, q6, q7, q8, q9];
 	q9 := H[q9];
-	q1 := X[q1];
+	q0 := X[q0];
 	q2 := X[q2];
-	q4 := X[q4];
+	q5 := X[q5];
 	q7 := X[q7];
-	q9 := X[q9];
+	q8 := X[q8];
 	// diffusion
 	q0 := H[q0];
 	q1 := H[q1];
@@ -420,19 +422,19 @@ begin
 	q8 := H[q8];
 	q9 := H[q9];
 	// oracle
-	q1 := X[q1];
+	q0 := X[q0];
 	q2 := X[q2];
-	q4 := X[q4];
+	q5 := X[q5];
 	q7 := X[q7];
-	q9 := X[q9];
+	q8 := X[q8];
 	q9 := H[q9];
 	q0, q1, q2, q3, q4, q5, q6, q7, q8, q9 := MCX[q0, q1, q2, q3, q4, q5, q6, q7, q8, q9];
 	q9 := H[q9];
-	q1 := X[q1];
+	q0 := X[q0];
 	q2 := X[q2];
-	q4 := X[q4];
+	q5 := X[q5];
 	q7 := X[q7];
-	q9 := X[q9];
+	q8 := X[q8];
 	// diffusion
 	q0 := H[q0];
 	q1 := H[q1];
@@ -478,19 +480,19 @@ begin
 	q8 := H[q8];
 	q9 := H[q9];
 	// oracle
-	q1 := X[q1];
+	q0 := X[q0];
 	q2 := X[q2];
-	q4 := X[q4];
+	q5 := X[q5];
 	q7 := X[q7];
-	q9 := X[q9];
+	q8 := X[q8];
 	q9 := H[q9];
 	q0, q1, q2, q3, q4, q5, q6, q7, q8, q9 := MCX[q0, q1, q2, q3, q4, q5, q6, q7, q8, q9];
 	q9 := H[q9];
-	q1 := X[q1];
+	q0 := X[q0];
 	q2 := X[q2];
-	q4 := X[q4];
+	q5 := X[q5];
 	q7 := X[q7];
-	q9 := X[q9];
+	q8 := X[q8];
 	// diffusion
 	q0 := H[q0];
 	q1 := H[q1];
@@ -536,19 +538,19 @@ begin
 	q8 := H[q8];
 	q9 := H[q9];
 	// oracle
-	q1 := X[q1];
+	q0 := X[q0];
 	q2 := X[q2];
-	q4 := X[q4];
+	q5 := X[q5];
 	q7 := X[q7];
-	q9 := X[q9];
+	q8 := X[q8];
 	q9 := H[q9];
 	q0, q1, q2, q3, q4, q5, q6, q7, q8, q9 := MCX[q0, q1, q2, q3, q4, q5, q6, q7, q8, q9];
 	q9 := H[q9];
-	q1 := X[q1];
+	q0 := X[q0];
 	q2 := X[q2];
-	q4 := X[q4];
+	q5 := X[q5];
 	q7 := X[q7];
-	q9 := X[q9];
+	q8 := X[q8];
 	// diffusion
 	q0 := H[q0];
 	q1 := H[q1];
@@ -594,19 +596,19 @@ begin
 	q8 := H[q8];
 	q9 := H[q9];
 	// oracle
-	q1 := X[q1];
+	q0 := X[q0];
 	q2 := X[q2];
-	q4 := X[q4];
+	q5 := X[q5];
 	q7 := X[q7];
-	q9 := X[q9];
+	q8 := X[q8];
 	q9 := H[q9];
 	q0, q1, q2, q3, q4, q5, q6, q7, q8, q9 := MCX[q0, q1, q2, q3, q4, q5, q6, q7, q8, q9];
 	q9 := H[q9];
-	q1 := X[q1];
+	q0 := X[q0];
 	q2 := X[q2];
-	q4 := X[q4];
+	q5 := X[q5];
 	q7 := X[q7];
-	q9 := X[q9];
+	q8 := X[q8];
 	// diffusion
 	q0 := H[q0];
 	q1 := H[q1];
@@ -652,19 +654,19 @@ begin
 	q8 := H[q8];
 	q9 := H[q9];
 	// oracle
-	q1 := X[q1];
+	q0 := X[q0];
 	q2 := X[q2];
-	q4 := X[q4];
+	q5 := X[q5];
 	q7 := X[q7];
-	q9 := X[q9];
+	q8 := X[q8];
 	q9 := H[q9];
 	q0, q1, q2, q3, q4, q5, q6, q7, q8, q9 := MCX[q0, q1, q2, q3, q4, q5, q6, q7, q8, q9];
 	q9 := H[q9];
-	q1 := X[q1];
+	q0 := X[q0];
 	q2 := X[q2];
-	q4 := X[q4];
+	q5 := X[q5];
 	q7 := X[q7];
-	q9 := X[q9];
+	q8 := X[q8];
 	// diffusion
 	q0 := H[q0];
 	q1 := H[q1];
@@ -710,19 +712,19 @@ begin
 	q8 := H[q8];
 	q9 := H[q9];
 	// oracle
-	q1 := X[q1];
+	q0 := X[q0];
 	q2 := X[q2];
-	q4 := X[q4];
+	q5 := X[q5];
 	q7 := X[q7];
-	q9 := X[q9];
+	q8 := X[q8];
 	q9 := H[q9];
 	q0, q1, q2, q3, q4, q5, q6, q7, q8, q9 := MCX[q0, q1, q2, q3, q4, q5, q6, q7, q8, q9];
 	q9 := H[q9];
-	q1 := X[q1];
+	q0 := X[q0];
 	q2 := X[q2];
-	q4 := X[q4];
+	q5 := X[q5];
 	q7 := X[q7];
-	q9 := X[q9];
+	q8 := X[q8];
 	// diffusion
 	q0 := H[q0];
 	q1 := H[q1];
@@ -768,19 +770,19 @@ begin
 	q8 := H[q8];
 	q9 := H[q9];
 	// oracle
-	q1 := X[q1];
+	q0 := X[q0];
 	q2 := X[q2];
-	q4 := X[q4];
+	q5 := X[q5];
 	q7 := X[q7];
-	q9 := X[q9];
+	q8 := X[q8];
 	q9 := H[q9];
 	q0, q1, q2, q3, q4, q5, q6, q7, q8, q9 := MCX[q0, q1, q2, q3, q4, q5, q6, q7, q8, q9];
 	q9 := H[q9];
-	q1 := X[q1];
+	q0 := X[q0];
 	q2 := X[q2];
-	q4 := X[q4];
+	q5 := X[q5];
 	q7 := X[q7];
-	q9 := X[q9];
+	q8 := X[q8];
 	// diffusion
 	q0 := H[q0];
 	q1 := H[q1];
@@ -826,19 +828,19 @@ begin
 	q8 := H[q8];
 	q9 := H[q9];
 	// oracle
-	q1 := X[q1];
+	q0 := X[q0];
 	q2 := X[q2];
-	q4 := X[q4];
+	q5 := X[q5];
 	q7 := X[q7];
-	q9 := X[q9];
+	q8 := X[q8];
 	q9 := H[q9];
 	q0, q1, q2, q3, q4, q5, q6, q7, q8, q9 := MCX[q0, q1, q2, q3, q4, q5, q6, q7, q8, q9];
 	q9 := H[q9];
-	q1 := X[q1];
+	q0 := X[q0];
 	q2 := X[q2];
-	q4 := X[q4];
+	q5 := X[q5];
 	q7 := X[q7];
-	q9 := X[q9];
+	q8 := X[q8];
 	// diffusion
 	q0 := H[q0];
 	q1 := H[q1];
@@ -884,19 +886,19 @@ begin
 	q8 := H[q8];
 	q9 := H[q9];
 	// oracle
-	q1 := X[q1];
+	q0 := X[q0];
 	q2 := X[q2];
-	q4 := X[q4];
+	q5 := X[q5];
 	q7 := X[q7];
-	q9 := X[q9];
+	q8 := X[q8];
 	q9 := H[q9];
 	q0, q1, q2, q3, q4, q5, q6, q7, q8, q9 := MCX[q0, q1, q2, q3, q4, q5, q6, q7, q8, q9];
 	q9 := H[q9];
-	q1 := X[q1];
+	q0 := X[q0];
 	q2 := X[q2];
-	q4 := X[q4];
+	q5 := X[q5];
 	q7 := X[q7];
-	q9 := X[q9];
+	q8 := X[q8];
 	// diffusion
 	q0 := H[q0];
 	q1 := H[q1];
@@ -942,19 +944,19 @@ begin
 	q8 := H[q8];
 	q9 := H[q9];
 	// oracle
-	q1 := X[q1];
+	q0 := X[q0];
 	q2 := X[q2];
-	q4 := X[q4];
+	q5 := X[q5];
 	q7 := X[q7];
-	q9 := X[q9];
+	q8 := X[q8];
 	q9 := H[q9];
 	q0, q1, q2, q3, q4, q5, q6, q7, q8, q9 := MCX[q0, q1, q2, q3, q4, q5, q6, q7, q8, q9];
 	q9 := H[q9];
-	q1 := X[q1];
+	q0 := X[q0];
 	q2 := X[q2];
-	q4 := X[q4];
+	q5 := X[q5];
 	q7 := X[q7];
-	q9 := X[q9];
+	q8 := X[q8];
 	// diffusion
 	q0 := H[q0];
 	q1 := H[q1];
@@ -1000,19 +1002,19 @@ begin
 	q8 := H[q8];
 	q9 := H[q9];
 	// oracle
-	q1 := X[q1];
+	q0 := X[q0];
 	q2 := X[q2];
-	q4 := X[q4];
+	q5 := X[q5];
 	q7 := X[q7];
-	q9 := X[q9];
+	q8 := X[q8];
 	q9 := H[q9];
 	q0, q1, q2, q3, q4, q5, q6, q7, q8, q9 := MCX[q0, q1, q2, q3, q4, q5, q6, q7, q8, q9];
 	q9 := H[q9];
-	q1 := X[q1];
+	q0 := X[q0];
 	q2 := X[q2];
-	q4 := X[q4];
+	q5 := X[q5];
 	q7 := X[q7];
-	q9 := X[q9];
+	q8 := X[q8];
 	// diffusion
 	q0 := H[q0];
 	q1 := H[q1];
@@ -1058,19 +1060,19 @@ begin
 	q8 := H[q8];
 	q9 := H[q9];
 	// oracle
-	q1 := X[q1];
+	q0 := X[q0];
 	q2 := X[q2];
-	q4 := X[q4];
+	q5 := X[q5];
 	q7 := X[q7];
-	q9 := X[q9];
+	q8 := X[q8];
 	q9 := H[q9];
 	q0, q1, q2, q3, q4, q5, q6, q7, q8, q9 := MCX[q0, q1, q2, q3, q4, q5, q6, q7, q8, q9];
 	q9 := H[q9];
-	q1 := X[q1];
+	q0 := X[q0];
 	q2 := X[q2];
-	q4 := X[q4];
+	q5 := X[q5];
 	q7 := X[q7];
-	q9 := X[q9];
+	q8 := X[q8];
 	// diffusion
 	q0 := H[q0];
 	q1 := H[q1];
@@ -1116,19 +1118,19 @@ begin
 	q8 := H[q8];
 	q9 := H[q9];
 	// oracle
-	q1 := X[q1];
+	q0 := X[q0];
 	q2 := X[q2];
-	q4 := X[q4];
+	q5 := X[q5];
 	q7 := X[q7];
-	q9 := X[q9];
+	q8 := X[q8];
 	q9 := H[q9];
 	q0, q1, q2, q3, q4, q5, q6, q7, q8, q9 := MCX[q0, q1, q2, q3, q4, q5, q6, q7, q8, q9];
 	q9 := H[q9];
-	q1 := X[q1];
+	q0 := X[q0];
 	q2 := X[q2];
-	q4 := X[q4];
+	q5 := X[q5];
 	q7 := X[q7];
-	q9 := X[q9];
+	q8 := X[q8];
 	// diffusion
 	q0 := H[q0];
 	q1 := H[q1];
@@ -1174,19 +1176,19 @@ begin
 	q8 := H[q8];
 	q9 := H[q9];
 	// oracle
-	q1 := X[q1];
+	q0 := X[q0];
 	q2 := X[q2];
-	q4 := X[q4];
+	q5 := X[q5];
 	q7 := X[q7];
-	q9 := X[q9];
+	q8 := X[q8];
 	q9 := H[q9];
 	q0, q1, q2, q3, q4, q5, q6, q7, q8, q9 := MCX[q0, q1, q2, q3, q4, q5, q6, q7, q8, q9];
 	q9 := H[q9];
-	q1 := X[q1];
+	q0 := X[q0];
 	q2 := X[q2];
-	q4 := X[q4];
+	q5 := X[q5];
 	q7 := X[q7];
-	q9 := X[q9];
+	q8 := X[q8];
 	// diffusion
 	q0 := H[q0];
 	q1 := H[q1];
@@ -1232,19 +1234,19 @@ begin
 	q8 := H[q8];
 	q9 := H[q9];
 	// oracle
-	q1 := X[q1];
+	q0 := X[q0];
 	q2 := X[q2];
-	q4 := X[q4];
+	q5 := X[q5];
 	q7 := X[q7];
-	q9 := X[q9];
+	q8 := X[q8];
 	q9 := H[q9];
 	q0, q1, q2, q3, q4, q5, q6, q7, q8, q9 := MCX[q0, q1, q2, q3, q4, q5, q6, q7, q8, q9];
 	q9 := H[q9];
-	q1 := X[q1];
+	q0 := X[q0];
 	q2 := X[q2];
-	q4 := X[q4];
+	q5 := X[q5];
 	q7 := X[q7];
-	q9 := X[q9];
+	q8 := X[q8];
 	// diffusion
 	q0 := H[q0];
 	q1 := H[q1];
@@ -1290,19 +1292,19 @@ begin
 	q8 := H[q8];
 	q9 := H[q9];
 	// oracle
-	q1 := X[q1];
+	q0 := X[q0];
 	q2 := X[q2];
-	q4 := X[q4];
+	q5 := X[q5];
 	q7 := X[q7];
-	q9 := X[q9];
+	q8 := X[q8];
 	q9 := H[q9];
 	q0, q1, q2, q3, q4, q5, q6, q7, q8, q9 := MCX[q0, q1, q2, q3, q4, q5, q6, q7, q8, q9];
 	q9 := H[q9];
-	q1 := X[q1];
+	q0 := X[q0];
 	q2 := X[q2];
-	q4 := X[q4];
+	q5 := X[q5];
 	q7 := X[q7];
-	q9 := X[q9];
+	q8 := X[q8];
 	// diffusion
 	q0 := H[q0];
 	q1 := H[q1];
@@ -1348,19 +1350,19 @@ begin
 	q8 := H[q8];
 	q9 := H[q9];
 	// oracle
-	q1 := X[q1];
+	q0 := X[q0];
 	q2 := X[q2];
-	q4 := X[q4];
+	q5 := X[q5];
 	q7 := X[q7];
-	q9 := X[q9];
+	q8 := X[q8];
 	q9 := H[q9];
 	q0, q1, q2, q3, q4, q5, q6, q7, q8, q9 := MCX[q0, q1, q2, q3, q4, q5, q6, q7, q8, q9];
 	q9 := H[q9];
-	q1 := X[q1];
+	q0 := X[q0];
 	q2 := X[q2];
-	q4 := X[q4];
+	q5 := X[q5];
 	q7 := X[q7];
-	q9 := X[q9];
+	q8 := X[q8];
 	// diffusion
 	q0 := H[q0];
 	q1 := H[q1];
@@ -1406,19 +1408,19 @@ begin
 	q8 := H[q8];
 	q9 := H[q9];
 	// oracle
-	q1 := X[q1];
+	q0 := X[q0];
 	q2 := X[q2];
-	q4 := X[q4];
+	q5 := X[q5];
 	q7 := X[q7];
-	q9 := X[q9];
+	q8 := X[q8];
 	q9 := H[q9];
 	q0, q1, q2, q3, q4, q5, q6, q7, q8, q9 := MCX[q0, q1, q2, q3, q4, q5, q6, q7, q8, q9];
 	q9 := H[q9];
-	q1 := X[q1];
+	q0 := X[q0];
 	q2 := X[q2];
-	q4 := X[q4];
+	q5 := X[q5];
 	q7 := X[q7];
-	q9 := X[q9];
+	q8 := X[q8];
 	// diffusion
 	q0 := H[q0];
 	q1 := H[q1];
@@ -1476,4 +1478,4 @@ begin
 	if M[q9] = 1 then skip; else skip; fi;
 end
 
-search in GROVER with =>! such that P(q0, |1>) and P(q1, |0>) and P(q2, |0>) and P(q3, |1>) and P(q4, |0>) and P(q5, |1>) and P(q6, |1>) and P(q7, |0>) and P(q8, |1>) and P(q9, |0>) .
+pcheck in GROVER with 'P=? [F "target"]' --backend=Storm .
