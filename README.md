@@ -13,14 +13,14 @@ This repository presents a reachability analysis tool called `QRAT` for quantum 
 `QRAT` can be installed on your system using several ways as follows:
 
 ### 1. Downloading from executable files
-QRAT executable files are available for MacOS and Linux at the following link.
+QRAT executable files are available for macOS and Linux at the following link.
 ```
 https://github.com/canhminhdo/qrat/releases/tag/v1.0
 ```
 
-### 2. Running from Docker
+### 2. Running QRAT from Docker
 
-The `qrat` program is available from the command line in the docker container.
+The `qrat` program is available from the command line in the Docker container.
 
 ```shell
 $ docker build --no-cache -t qrat .
@@ -31,7 +31,7 @@ $ docker run --rm -it qrat
 `QRAT` can be installed on your system after building it from the source.
 ```shell
 $ git clone --recurse-submodules https://github.com/canhminhdo/qrat
-$ cd MQT-QRAT
+$ cd qrat
 $ cmake -S . -B build -D CMAKE_BUILD_TYPE=Release # configure the project to be built with `Release` mode
 $ cmake --build build --config Release -j 8 # building the project with `Release` mode and 8 workers in parallel
 $ ctest --test-dir build # testing the project with some test cases
