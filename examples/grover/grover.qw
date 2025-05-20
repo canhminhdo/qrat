@@ -154,4 +154,4 @@ begin
 	if M[q4] = 1 then skip; else skip; fi;
 end
 
-pcheck in GROVER with 'P=? [F "target"]' .
+pcheck in GROVER with 'P=? [F "target"]' --backend=Storm .
