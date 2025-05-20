@@ -42,7 +42,7 @@ $ cpack -G "ZIP" --config build/CPackConfig.cmake -B package # package the proje
 ```
 
 ## Probabilistic Model Checkers
-Make sure to install PRISM and Storm model checkers and set the following environment variables
+We install PRISM and Storm model checkers and set the following environment variables
 ```shell
 export PRISM_PATH=<path-to-the-folder-where-PRISM-is-available>
 export STORM_PATH=<path-to-the-folder-where-Storm-is-available>
