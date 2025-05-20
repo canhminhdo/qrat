@@ -115,3 +115,10 @@ void DTMC::printDtmcTiming(const Timer &timer) {
     }
     std::cout << "\n";
 }
+
+void DTMC::cleanup() {
+    if (fileWriter != nullptr) {
+        std::string fileName = fileWriter->getFileName();
+        std::remove(fileName.c_str());
+    }
+}

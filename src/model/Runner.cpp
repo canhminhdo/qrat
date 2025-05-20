@@ -38,3 +38,11 @@ void Runner::parseResult(const std::string &output) {
         }
     }
 }
+
+void Runner::setSaveModel(bool saveModel) {
+    this->saveModel = saveModel;
+}
+
+bool Runner::getSaveModel() {
+    return saveModel;
+}

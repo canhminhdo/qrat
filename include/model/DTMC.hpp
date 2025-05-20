@@ -28,7 +28,9 @@ public:
 
     FileWriter *getFileModel();
 
-    void printDtmcTiming(const Timer &timer);;
+    void printDtmcTiming(const Timer &timer);
+
+    void cleanup();
 
 private:
     FileWriter *fileWriter;

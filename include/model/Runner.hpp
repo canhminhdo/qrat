@@ -23,5 +23,12 @@ public:
     std::string execCommand(const std::string &command);
 
     void parseResult(const std::string &output);
+
+    void setSaveModel(bool saveModel);
+
+    bool getSaveModel();
+
+private:
+    bool saveModel = false;
 };
 #endif //RUNNER_HPP

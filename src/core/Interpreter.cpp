@@ -64,6 +64,9 @@ void Interpreter::execute2() {
         auto dtmc = DTMC(currentProg, graphSearch2);
         dtmc.buildModel();
         runner->modelCheck(dtmc.getFileModel()->getFileName(), std::string(graphSearch2->getProperty()));
+        if (!runner->getSaveModel()) {
+            dtmc.cleanup();
+        }
         timer.total();
     }
     delete runner;
@@ -113,11 +116,16 @@ void Interpreter::initRunner(std::vector<char *> *args) {
         STORM
     };
     Flag flag = Flag::PRISM;
+    bool saveModel = false;
     for (int i = 0; i < args->size(); i++) {
         if (strcmp(args->at(i), "--backend=Storm") == 0) {
             flag = Flag::STORM;
         } else if (strcmp(args->at(i), "--backend=PRISM") == 0) {
             flag = Flag::PRISM;
+        }  else if (strcmp(args->at(i), "--save-model=true") == 0) {
+            saveModel = true;
+        }  else if (strcmp(args->at(i), "--save-model=false") == 0) {
+            saveModel = false;
         }
         delete args->at(i);
     }
@@ -126,6 +134,7 @@ void Interpreter::initRunner(std::vector<char *> *args) {
     } else if (flag == Flag::STORM) {
         runner = new StormRunner();
     }
+    runner->setSaveModel(saveModel);
 }
 
 void Interpreter::finalizeProg() {

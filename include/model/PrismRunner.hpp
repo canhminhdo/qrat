@@ -7,7 +7,7 @@
 
 #include <string>
 
-#include "Runner.hpp"
+#include "model/Runner.hpp"
 #include "utility/Timer.hpp"
 
 class PrismRunner : public Runner {
