@@ -58,7 +58,7 @@ void printBanner() {
     capitalizeLetters(projectName);
 
     std::cout << "\t\t     \\|||||||||||||||||/\n";
-    std::cout << "\t\t   --- Welcome to " << Tty(Tty::RED) << 'Q' << Tty(Tty::BLUE) << 'R' << Tty(Tty::GREEN) << 'A' << Tty(Tty::YELLOW) << 'T' << Tty(Tty::RESET) << " ---\n";
+    std::cout << "\t\t   --- Welcome to " << projectName << " ---\n";
     std::cout << "\t\t     /|||||||||||||||||\\\n";
     std::cout << "\t     " << projectName << " " << PROJECT_VERSION << " built: " << PROJECT_BUILD_DATE << '\n';
     std::cout << "\t        Copyright 2025 Ogata Laboratory\n";
