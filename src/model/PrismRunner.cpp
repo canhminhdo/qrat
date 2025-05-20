@@ -19,7 +19,7 @@ void PrismRunner::modelCheck(const std::string &modelFile, const std::string &pr
 
 std::string PrismRunner::getPath() {
     const char *prismPath = std::getenv("PRISM_PATH");
-    return std::string(prismPath) + "/bin/prism";
+    return std::string(prismPath) + "/prism";
 }
 
 bool PrismRunner::isAvailable() {
