@@ -3,6 +3,8 @@
 //
 
 #include "model/Runner.hpp"
+#include <array>
+#include <memory>
 
 std::string Runner::execCommand(const std::string &command) {
     std::array<char, 128> buffer;
