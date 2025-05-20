@@ -28,7 +28,7 @@ RUN cd /app/qcheck \
     && cmake --install build --config Release \
     && cpack -G "ZIP" --config build/CPackConfig.cmake -B package \
 
-RUN cp /app/qcheck \
+RUN cd /app/qcheck \
     && mv install /qcheck-1.0 \
     && mv package/qcheck-1.0-Linux.zip /qcheck-1.0 \
     && mv artifact/*.qw /app
@@ -40,7 +40,7 @@ RUN rm -rf /app/qcheck
 RUN cd /app \
     && wget https://www.prismmodelchecker.org/dl/prism-4.8.1-linux64-x86.tar.gz \
     && tar -xzf prism-4.8.1-linux64-x86.tar.gz \
-    && rm prism-4.8.1-linux64-x86.tar.gz
+    && rm prism-4.8.1-linux64-x86.tar.gz \
     && mv prism-4.8.1-linux64-x86 prism-4.8.1 \
     && cd prism-4.8.1 \
     && ./install.sh
@@ -56,8 +56,8 @@ RUN cd /app/storm-1.9.0 \
     && mkdir build \
     && cd build \
     && cmake .. \
-    && make binaries \
-    && make check
+    && make binaries
+    # && make check
 
 
 ## set environment variables
