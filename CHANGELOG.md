@@ -1,3 +1,9 @@
+## [1.0] - 2025-05-01
+
+### Added
+- support the `pcheck` command for probabilistic model checking of quantum programs with PRISM and Storm as alternative backends.
+    + `pcheck in <progId> with '<property>' {--backend=(PRISM|Storm)} {--save-model=(yes|no)} .` 
+
 ## [1.0] - 2025-01-06
 
 ### Added
