@@ -10,6 +10,7 @@
 #include "utility/Tty.hpp"
 #include <Configuration.hpp>
 #include <iomanip>
+#include <ast/AtomicStmNode.hpp>
 
 StateTransitionGraph::StateTransitionGraph(SyntaxProg *currentProg, DDSimulation *ddSim, ExpNode *propExp,
                                            Search::Type type, int numSols, int maxDepth) {
@@ -23,7 +24,7 @@ StateTransitionGraph::StateTransitionGraph(SyntaxProg *currentProg, DDSimulation
 }
 
 StateTransitionGraph::~StateTransitionGraph() {
-    for (auto *state: seenStates) {
+    for (auto state: seenStates) {
         delete state;
     }
     seenStates.clear();
@@ -44,11 +45,11 @@ void StateTransitionGraph::search() {
     buildInitialState();
     solutionCount = 0;
     if (searchType == Type::ARROW_STAR) {
-        checkState(seenStates[0], timer);
+        checkState(seenStates.at(0), timer);
     }
     while (solutionCount < numSols && savedStateId < seenStates.size()) {
         // std::cout << "----------- ID: " << savedStateId << " -----------\n";
-        State *currentState = seenStates[savedStateId];
+        State *currentState = seenStates.at(savedStateId);
         if (currentState->depth >= depthBound || (searchType == Type::ARROW_ONE && currentState->depth >= 1)) {
             break;
         }
@@ -74,6 +75,8 @@ void StateTransitionGraph::procState(State *currentState, const Timer &timer) {
         procCondStm(condStm, currentState, timer);
     } else if (auto *whileStm = dynamic_cast<WhileStmNode *>(stm); whileStm != nullptr) {
         procWhileStm(whileStm, currentState, nextStm, timer);
+    } else if (auto *atomicStm = dynamic_cast<AtomicStmNode *>(stm); atomicStm != nullptr) {
+        procAtomicStm(atomicStm, currentState, nextStm, timer);
     } else {
         throw std::runtime_error("Unknown statement type");
     }
@@ -101,6 +104,9 @@ void StateTransitionGraph::procUnitaryStm(UnitaryStmNode *unitaryStm, State *cur
                                           const Timer &timer) {
     auto v = currentState->current;
     auto v1 = ddSim->applyGate(unitaryStm, v);
+    if (v1.p->ref == 0) {
+        ddSim->incRef(v1);
+    }
     auto [newState, inCache] = makeState(new State(nextStm, v1, currentState->stateNr, currentState->depth + 1,
                                                    currentState->prob));
     currentState->nextStates.push_back(newState->stateNr);
@@ -116,7 +122,6 @@ void StateTransitionGraph::procCondStm(CondStmNode *condStm, State *currentState
     assert(condExp != nullptr && measExp != nullptr && numExp != nullptr);
     auto isZero = numExp->isZero();
     auto [v0, pzero, v1, pone] = ddSim->measureWithProb(measExp, currentState->current);
-
     procCondBranch(currentState, isZero ? condStm->getThenStm()->getHead() : condStm->getElseStm()->getHead(), v0,
                    pzero, 0, timer);
     if (solutionCount < numSols) {
@@ -129,6 +134,9 @@ void StateTransitionGraph::procCondBranch(State *currentState, StmNode *nextStm,
                                           int outcome, const Timer &timer) {
     if (prob == 0.0 || v.isZeroTerminal()) {
         return;
+    }
+    if (v.p->ref == 0) {
+        ddSim->incRef(v);
     }
     auto [newState, inCache] = makeState(new StateWithOutcome(nextStm, v, currentState->stateNr,
                                                               currentState->depth + 1,
@@ -153,12 +161,45 @@ void StateTransitionGraph::procWhileStm(WhileStmNode *whileStm, State *currentSt
     }
 }
 
+void StateTransitionGraph::procAtomicStm(AtomicStmNode *atomicStm, State *currentState, StmNode *nextStm,
+    const Timer &timer) {
+    auto *body = atomicStm->getBody();
+    auto *current = body->getHead();
+    auto *tail = body->getTail();
+    if (current == nullptr || tail == nullptr) {
+        return;
+    }
+    auto v = currentState->current;
+    ddSim->incRef(v);
+    while (current != tail) {
+        if (auto *skipStm = dynamic_cast<SkipStmNode *>(current); skipStm != nullptr) {
+            // do nothing, skip statement
+        } else if (auto *unitaryStm = dynamic_cast<UnitaryStmNode *>(current); unitaryStm != nullptr) {
+            auto v1 = ddSim->applyGate(unitaryStm, v);
+            ddSim->decRef(v);
+            ddSim->incRef(v1);
+            ddSim->garbageCollect();
+            v = v1;
+        } else {
+            throw std::runtime_error("Unknown statement type in atomic statement");
+        }
+        current = current->getNext();
+    }
+    ddSim->garbageCollect(true);
+    auto [newState, inCache] = makeState(new State(nextStm, v, currentState->stateNr, currentState->depth + 1,
+                                                           currentState->prob));
+    currentState->nextStates.push_back(newState->stateNr);
+    if (!inCache) {
+        checkState(newState, timer);
+    }
+}
+
 void StateTransitionGraph::showPath(int stateNr, bool endState) const {
     if (stateNr >= seenStates.size()) {
         std::cout << Tty(Tty::RED) << "Error: State ID is invalid" << Tty(Tty::RESET) << std::endl;
         return;
     }
-    auto *s = seenStates[stateNr];
+    auto s = seenStates.at(stateNr);
     if (s->parent != -1) {
         showPath(s->parent, false);
     }
@@ -298,18 +339,18 @@ void StateTransitionGraph::printState(State *s, bool recursive) const {
     std::cout << "[Quantum State]: \n";
     s->current.printVector<dd::vNode>();
     std::cout << "[Next States]: ";
-    for (const int i: s->nextStates) {
+    for (auto i: s->nextStates) {
         std::cout << i << " ";
     }
     std::cout << "\n";
     if (recursive) {
-        for (const int i: s->nextStates) {
+        for (auto i: s->nextStates) {
             if (i <= s->stateNr) {
                 // do not print backward states
                 std::cout << "Backward state detected\n";
                 continue;
             };
-            printState(seenStates[i]);
+            printState(seenStates.at(i));
         }
     }
 }

@@ -1,6 +1,9 @@
-let pcheck = (nqubits) => {
+let pcheck = (nqubits, enable=true) => {
     let prog = "\n";
-    prog += "pcheck in GROVER with 'P=? [F \"target\"]' .";
+    if (!enable) {
+        prog += "// ";
+    }
+    prog += "pcheck in GROVER with 'P=? [F \"target\"]' --backend=Storm .";
     return prog;
 }
 

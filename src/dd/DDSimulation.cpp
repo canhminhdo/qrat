@@ -111,7 +111,7 @@ qc::MatrixDD DDSimulation::buildProjector(PropExpNode *propNode) {
     if (propNode->getVars().size() != 1) {
         throw std::runtime_error("Only support property with one variable");
     }
-    auto target = qVarMap[propNode->getVars()[0]->getName()];
+    auto target = qVarMap[propNode->getVars().at(0)->getName()];
     if (auto *ketNode = dynamic_cast<KetExpNode *>(propNode->getExpr())) {
         if (ketNode->getType() == KetType::KET_ZERO) {
             auto v0 = dd->makeBasisState(1, std::vector<bool>{false});
@@ -163,14 +163,14 @@ void DDSimulation::initQVarMap() {
         return numA < numB;
     });
     for (int i = 0; i < vars.size(); i++) {
-        qVarMap.insert({vars[i]->getName(), i});
-        revQVarMap.insert({i, vars[i]->getName()});
+        qVarMap.insert({vars.at(i)->getName(), i});
+        revQVarMap.insert({i, vars.at(i)->getName()});
     }
 }
 
 void DDSimulation::initQState() {
     std::vector<VarSymbol *> vars = prog->getVars();
-    for (auto &var: vars) {
+    for (const auto &var: vars) {
         if (Node *node = var->getValue(); node != nullptr) {
             if (auto *ketNode = dynamic_cast<KetExpNode *>(node); ketNode != nullptr) {
                 switch (ketNode->getType()) {
@@ -182,11 +182,12 @@ void DDSimulation::initQState() {
                         break;
                     case KetType::KET_RANDOM:
                         initStateMap[var->getName()] = generateRandomState();
+                        if (initStateMap[var->getName()].p->ref == 0)
+                            dd->incRef(initStateMap[var->getName()]);
                         break;
                     default:
                         throw std::runtime_error("Only support initialization with |0>, |1> or random state");
                 }
-                dd->incRef(initStateMap[var->getName()]);
             }
         } else {
             // not initialized, then set to |0> as default
@@ -195,11 +196,12 @@ void DDSimulation::initQState() {
     }
     assert(!vars.empty());
     // building initial state
-    initialState = initStateMap[vars[0]->getName()];
+    initialState = initStateMap[vars.at(0)->getName()];
     for (int i = 1; i < vars.size(); i++) {
-        initialState = dd->kronecker(initStateMap[vars[i]->getName()], initialState, i);
+        initialState = dd->kronecker(initStateMap[vars.at(i)->getName()], initialState, i);
     }
-    dd->incRef(initialState);
+    if (initialState.p->ref == 0)
+        dd->incRef(initialState);
 }
 
 qc::VectorDD DDSimulation::applyGate(UnitaryStmNode *stm, qc::VectorDD v) {
@@ -221,6 +223,18 @@ qc::VectorDD DDSimulation::applyGate(UnitaryStmNode *stm, qc::VectorDD v) {
     //     return v1;
     // }
     // throw std::runtime_error("Only support 1 & 2 qubit gate");
+}
+
+void DDSimulation::incRef(qc::VectorDD &v) {
+    dd->incRef(v);
+}
+
+void DDSimulation::decRef(qc::VectorDD &v) {
+    dd->decRef(v);
+}
+
+bool DDSimulation::garbageCollect(bool force) {
+    return dd->garbageCollect(force);
 }
 
 std::pair<qc::VectorDD, qc::VectorDD> DDSimulation::measure(MeasExpNode *expr, qc::VectorDD v) {
@@ -304,4 +318,8 @@ void DDSimulation::dump() {
         projector.first->dump(true);
         projector.second.printMatrix<dd::mNode>(nqubits);
     }
+}
+
+void DDSimulation::analyze() {
+    dd->analyze();
 }

@@ -14,12 +14,12 @@ function grover(nqubits, targetState, nIters, searchCmd = true, pcheckCmd = fals
     let initProg = init(nqubits);
     let oracleProg = oracle(nqubits, targetState);
     let diffusionProg = diffusion(nqubits);
-    let searchProg = search(nqubits, targetState);
-    let pcheckProg = pcheck(nqubits);
+    let searchProg = search(nqubits, targetState, searchCmd);
+    let pcheckProg = pcheck(nqubits, pcheckCmd);
     let propProg = atomicProps(nqubits, targetState);
     let prog = "// #qubit: " + nqubits + ", marked state: " + targetState.split('').reverse().join('') + ", #iterations: " + nIters + "\n";
     prog += headProg;
-    if (pcheckCmd) prog += propProg;
+    prog += propProg;
     prog += "begin\n";
     prog += initProg;
     for (i = 0; i < nIters; i++) {
@@ -27,8 +27,8 @@ function grover(nqubits, targetState, nIters, searchCmd = true, pcheckCmd = fals
     }
     prog += measure(nqubits);
     prog += "end\n"
-    if (pcheckCmd) prog += pcheckProg;
-    if (searchCmd) prog += searchProg;
+    prog += pcheckProg;
+    prog += searchProg;
     return prog;
 }
 

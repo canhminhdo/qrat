@@ -34,6 +34,7 @@ void WhileStmNode::dump(bool recursive) {
         next->dump();
     } else {
         std::cout << "do ... od" << std::endl;
+        next->dump();
     }
 }
 

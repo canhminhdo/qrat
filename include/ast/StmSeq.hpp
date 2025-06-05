@@ -21,6 +21,8 @@ public:
 
     void dump(bool recursive = true);
 
+    int size() const;
+
     void info();
 
 private:

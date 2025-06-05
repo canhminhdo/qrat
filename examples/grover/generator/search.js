@@ -1,4 +1,4 @@
-let search = (nqubits, targetState) => {
+let search = (nqubits, targetState, enable=true) => {
     let prog = "\n";
     let list = [];
     for (i = 0; i < nqubits; i++) {
@@ -7,6 +7,9 @@ let search = (nqubits, targetState) => {
         } else {
             list.push("P(q" + i + ", |1>)" )
         }
+    }
+    if (!enable) {
+        prog += "// ";
     }
     prog += "search in GROVER with =>! such that " + list.join(" and ") + " .";
     return prog;

@@ -66,6 +66,7 @@ add_library(
     ../utility/fileReader.cpp
     ../core/PropTable.cpp
     ../utility/FileWritter.cpp
+    ../ast/AtomicStmNode.cpp
 )
 
 target_include_directories(Parser PUBLIC ${CMAKE_CURRENT_BINARY_DIR})

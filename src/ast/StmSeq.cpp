@@ -45,6 +45,19 @@ void StmSeq::dump(bool recursive) {
     if (head)
         head->dump();
 }
+
+int StmSeq::size() const {
+    int count = 0;
+    auto current = head;
+    while (current != nullptr && current != tail) {
+        count++;
+        current = current->getNext();
+    }
+    if (dynamic_cast<EndStmNode *>(current) == nullptr)
+        count++;
+    return count;
+}
+
 void StmSeq::info() {
     StmNode *current = head;
     while (current != nullptr && current != tail) {

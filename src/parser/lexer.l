@@ -78,9 +78,10 @@ TwoTargetOpWithTwoParam         XXminusYY|XXplusYY
 "skip"      { return KW_SKIP; }
 "qubit"     { return KW_QUBIT; }
 "complex"   { return KW_COMPLEX; }
-[+\-*/:;,\[\]().]       { return *yytext; }
+[+\-*/:;,\[\]().{}]       { return *yytext; }
 "="		    { return KW_EQUAL; }
 ":="		{ return KW_ASSIGN; }
+"atomic"    { return KW_ATOMIC; }
 
 "pcheck"    { return KW_PCHECK; }
 

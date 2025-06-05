@@ -52,6 +52,10 @@ void SymbolTable::dump() const {
     }
 }
 
+int SymbolTable::size() const {
+    return vars.size();
+}
+
 std::vector<VarSymbol *> SymbolTable::getVars() const {
     return vars;
 }

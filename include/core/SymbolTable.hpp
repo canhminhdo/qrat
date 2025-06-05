@@ -27,6 +27,8 @@ public:
 
     void dump() const;
 
+    int size() const;
+
     std::vector<VarSymbol *> getVars() const;
 
 private:

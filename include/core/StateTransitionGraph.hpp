@@ -5,6 +5,8 @@
 #ifndef STATETRANSITIONGRAPH_HPP
 #define STATETRANSITIONGRAPH_HPP
 
+#include <ast/AtomicStmNode.hpp>
+
 #include "Search.hpp"
 #include "ast/CondStmNode.hpp"
 #include "ast/EndStmNode.hpp"
@@ -98,6 +100,8 @@ public:
     void procCondStm(CondStmNode *condStm, State *currentState, const Timer &timer);
 
     void procWhileStm(WhileStmNode *whileStm, State *currentState, StmNode *nextStm, const Timer &timer);
+
+    void procAtomicStm(AtomicStmNode *atomicStm, State *currentState, StmNode *nextStm, const Timer &timer);
 
     void procCondBranch(State *currentState, StmNode *nextStm, qc::VectorDD &v, qc::fp prob, int outcome, const Timer &timer);
 

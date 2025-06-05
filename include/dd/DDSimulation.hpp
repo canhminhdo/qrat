@@ -51,6 +51,12 @@ public:
 
     qc::VectorDD applyGate(UnitaryStmNode *stm, qc::VectorDD v);
 
+    void incRef(qc::VectorDD &v);
+
+    void decRef(qc::VectorDD &v);
+
+    bool garbageCollect(bool force = false);
+
     std::pair<qc::VectorDD, qc::VectorDD> measure(MeasExpNode *expr, qc::VectorDD v);
 
     std::tuple<qc::VectorDD, qc::fp, qc::VectorDD, qc::fp> measureWithProb(MeasExpNode *expr, qc::VectorDD v);
@@ -60,6 +66,8 @@ public:
     bool test(qc::VectorDD v, ExpNode *expNode);
 
     void dump();
+
+    void analyze();
 
     void checkQubitRange(dd::Qubit qubit) {
         if (qubit > nqubits) {
@@ -124,8 +132,8 @@ private:
     std::unique_ptr<DDPackage> dd;
 
     // mapping from variable to qubit and vice versa
-    using QuantumVariableMap = std::map<int, std::size_t>;
-    using RevQuantumVariableMap = std::map<int, std::size_t>;
+    using QuantumVariableMap = std::map<int, int>;
+    using RevQuantumVariableMap = std::map<int, int>;
     QuantumVariableMap qVarMap;
     RevQuantumVariableMap revQVarMap;
 

@@ -20,6 +20,7 @@
 #include "ast/NumExpNode.hpp"
 #include "ast/StmNode.hpp"
 #include "ast/StmSeq.hpp"
+#include "ast/AtomicStmNode.hpp"
 #include "ast/SkipStmNode.hpp"
 #include "ast/UnitaryStmNode.hpp"
 #include "ast/MeasExpNode.hpp"
@@ -54,6 +55,7 @@ extern std::vector<char *> pendingFiles;
 
 #define EXP_NODE(node) dynamic_cast<ExpNode *>(node)
 #define STM_NODE(node) dynamic_cast<StmNode *>(node)
+#define ATOMIC_STM_NODE(node) dynamic_cast<AtomicStmNode *>(node)
 #define NUM_EXP_NODE(node) dynamic_cast<NumExpNode *>(node)
 #define PROP_EXP_NODE(node) dynamic_cast<PropExpNode *>(node)
 %}
@@ -112,6 +114,8 @@ extern std::vector<char *> pendingFiles;
 %token KW_SEED
 %token EOL
 %token <str> KW_ARGUMENT
+/* for atomic statement */
+%token KW_ATOMIC
 
 /* types for nonterminal sysmbols */
 %nterm <yyToken> token varName propName
@@ -123,7 +127,7 @@ extern std::vector<char *> pendingFiles;
 %nterm <stm> stm stmList unitaryStm condStm loopStm
 */
 %nterm <expr> expression number oneQubit basis measure condExp property basisProp
-%nterm <stm> stm unitaryStm condStm loopStm
+%nterm <stm> stm skipStm unitaryStm condStm loopStm atomicStm
 %nterm <stmSeq> stmList
 %nterm <searchType> arrow
 %nterm <param> param
@@ -347,18 +351,33 @@ stmList :   stm
                     $$ = $1;
                 }
         ;
-stm :   skip
-            {
-                $$ = new SkipStmNode();
-            }
+stm :   skipStm
     |   unitaryStm
     |   condStm
     |   loopStm
+    |   atomicStm
     ;
-/* skip */
-skip    :   KW_SKIP expectedSemi;
-/* unitary transformation */
 
+/* atomic statement */
+atomicStm   :   KW_ATOMIC '{' stmList  '}' expectedSemi
+                {
+                    $$ = new AtomicStmNode($3);
+                    if (!ATOMIC_STM_NODE($$)->isValid()) {
+                        yyerror("Invalid atomic statement since it constains a conditional or loop statement");
+                        delete $$;
+                        YYERROR;
+                    }
+                }
+            ;
+
+/* skip statement */
+skipStm :   KW_SKIP expectedSemi
+                {
+                    $$ = new SkipStmNode();
+                }
+        ;
+
+/* unitary transformation */
 unitaryStm  :   varNameList KW_ASSIGN operation '[' varNameList ']' expectedSemi
                     {
                         std::string errMsg = "";
