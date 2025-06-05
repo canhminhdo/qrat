@@ -86,6 +86,7 @@ TwoTargetOpWithTwoParam         XXminusYY|XXplusYY
 "pcheck"    { return KW_PCHECK; }
 
 "search"    { return KW_SEARCH; }
+"psearch"   { return KW_PSEARCH; }
 "in"        { return KW_IN; }
 "with"      { return KW_WITH; }
 "such"      { return KW_SUCH; }

@@ -106,7 +106,7 @@ extern std::vector<char *> pendingFiles;
 /* for commands */
 %token KW_PCHECK
 %token <str> FORMULA_STR
-%token KW_SEARCH KW_IN KW_WITH KW_SUCH KW_THAT
+%token KW_SEARCH KW_PSEARCH KW_IN KW_WITH KW_SUCH KW_THAT
 %token KW_ARROW_ONE KW_ARROW_STAR KW_ARROW_PLUS KW_ARROW_EXCLAMATION
 %token KW_TRUE KW_FALSE KW_AND KW_OR KW_NOT KW_PROJ
 %token KW_SHOW KW_PATH
@@ -503,6 +503,7 @@ expectedDot :   '.';
 command :   loadFile
         |   pcheck
         |   search
+        |   psearch
         |   showPath
         |   setParam
         |   quit
@@ -587,6 +588,33 @@ arguments   :   /* empty */
             ;
 
 argument    :   KW_ARGUMENT;
+
+/* psearch command */
+psearch :   KW_PSEARCH searchParams KW_IN
+            token
+                {
+                    if (!interpreter.existProg($4)) {
+                        yyerror(("Search in an undefined program: " + std::string($4.name())).c_str());
+                        YYERROR;
+                    }
+                    currentSyntaxProg = interpreter.getCurrentProg();
+                }
+            KW_WITH
+            arrow
+            KW_SUCH KW_THAT
+            property
+            expectedDot
+                {
+                    interpreter.initializePSearch($4.code(), $10, $7, $2->first, $2->second);
+                    interpreter.pexecute();
+                    delete $2;
+                }
+        |   KW_PSEARCH error expectedDot
+                {
+                    yyerrok;
+                    yyclearin;
+                }
+        ;
 
 /* search command */
 search  :   KW_SEARCH searchParams KW_IN

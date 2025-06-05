@@ -57,6 +57,7 @@ add_library(
     ../ast/CachedNode.cpp
     ../ast/EndStmNode.cpp
     ../core/StateTransitionGraph.cpp
+    ../core/PStateTransitionGraph.cpp
     ../core/StateTransitionGraph2.cpp
     ../ast/PropExpNode.cpp
     ../ast/InitExpNode.cpp
