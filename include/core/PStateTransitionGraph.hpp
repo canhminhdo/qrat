@@ -133,6 +133,8 @@ public:
 
     void jacobiMethod(int maxIter=10000, qc::fp tol = 1e-9);
 
+    std::unordered_set<int> backwardReachable();
+
 private:
     // for analysis
     std::unordered_map<State *, int, StateHash, StateEqual> stateTab;

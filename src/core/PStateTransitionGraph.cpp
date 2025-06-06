@@ -232,16 +232,12 @@ std::pair<PStateTransitionGraph::State *, bool> PStateTransitionGraph::makeState
 void PStateTransitionGraph::checkState(State *s, const Timer &timer) {
     if (searchType == Type::ARROW_EXCLAMATION) {
         if (!s->isFinalState()) {
-            probTab[s->stateNr] = 0;
             return;
         }
     }
     if (ddSim->test(s->current, propExp)) {
         targetStates.insert(s->stateNr);
         solutionCount++;
-        probTab[s->stateNr] = 1;
-    } else {
-        probTab[s->stateNr] = 0;
     }
 }
 
@@ -321,7 +317,7 @@ void PStateTransitionGraph::dump() const {
     // } else {
     //     std::cout << depthBound << "\n";
     // }
-    for(auto &prob : probTab) {
+    for (auto &prob: probTab) {
         std::cout << "State ID: " << prob.first << ", Probability: " << prob.second << "\n";
     }
     // std::cout << "State Transition Graph\n";
@@ -351,7 +347,7 @@ void PStateTransitionGraph::printState(State *s, bool recursive) const {
     }
     std::cout << "\n";
     if (recursive) {
-        for (auto [i, prob] : s->nextStates) {
+        for (auto [i, prob]: s->nextStates) {
             if (i <= s->stateNr) {
                 // do not print backward states
                 std::cout << "Backward state detected\n";
@@ -364,9 +360,11 @@ void PStateTransitionGraph::printState(State *s, bool recursive) const {
 
 void PStateTransitionGraph::gaussSeidelMethod(int maxIter, qc::fp tol) {
     std::cout << "Running Gauss-Seidel method for probabilistic state transition graph...\n";
+    auto backwardStates = backwardReachable();
     for (int i = 0; i < maxIter; i++) {
         qc::fp maxDiff = 0.0;
-        for (auto state: seenStates) {
+        for (auto stateNr: backwardStates) {
+            auto state = seenStates.at(stateNr);
             if (targetStates.find(state->stateNr) != targetStates.end()) {
                 continue;
             }
@@ -391,10 +389,12 @@ void PStateTransitionGraph::gaussSeidelMethod(int maxIter, qc::fp tol) {
 
 void PStateTransitionGraph::jacobiMethod(int maxIter, qc::fp tol) {
     std::cout << "Running Jacobi method for probabilistic state transition graph...\n";
+    auto backwardStates = backwardReachable();
     for (int i = 0; i < maxIter; i++) {
         qc::fp maxDiff = 0.0;
         std::unordered_map<int, qc::fp> newProbTab;
-        for (auto state: seenStates) {
+        for (auto stateNr: backwardStates) {
+            auto state = seenStates.at(stateNr);
             if (targetStates.find(state->stateNr) != targetStates.end()) {
                 newProbTab[state->stateNr] = 1.0;
                 continue;
@@ -416,4 +416,29 @@ void PStateTransitionGraph::jacobiMethod(int maxIter, qc::fp tol) {
         }
     }
     std::cout << "Result: " << probTab[0] << std::endl;
+}
+
+std::unordered_set<int> PStateTransitionGraph::backwardReachable() {
+    std::unordered_set<int> visited;
+    std::queue<int> q;
+    for (auto id: targetStates) {
+        visited.insert(id);
+        q.push(id);
+        probTab[id] = 1.0;
+    }
+    int count = targetStates.size();
+    while (!q.empty()) {
+        int stateId = q.front();
+        q.pop();
+        if (count == 0) {
+            probTab[stateId] = 0.0;
+        } else {
+            count--;
+        }
+        auto parentId = seenStates.at(stateId)->parent;
+        if (parentId != -1 && visited.insert(parentId).second) {
+            q.push(parentId);
+        }
+    }
+    return visited;
 }
