@@ -12,6 +12,7 @@
 #include "core/SyntaxProg.hpp"
 #include "core/Token.hpp"
 #include "dd/DDSimulation.hpp"
+#include "core/SearchGraph.hpp"
 
 class Interpreter {
 public:
@@ -25,11 +26,11 @@ public:
 
     void initDDSimulation();
 
-    void initGraphSearch(ExpNode *propExp, Search::Type type, int numSols, int maxDepth);
+    void initGraphSearch(ExpNode *propExp, Search::Type type, int numSols, int maxDepth, bool probMode = false);
 
     void initPGraphSearch(ExpNode *propExp, Search::Type type, int numSols, int maxDepth);
 
-    void initGraphSearch2(char* property);
+    void initGraphSearch(char* property);
 
     void execute();
 
@@ -37,7 +38,7 @@ public:
 
     void execute2();
 
-    void initializeSearch(int progName, ExpNode *propExp, Search::Type type, int numSols, int maxDepth);
+    void initializeSearch(int progName, ExpNode *propExp, Search::Type type, int numSols, int maxDepth, bool probMode = false);
 
     void initializePSearch(int progName, ExpNode *propExp, Search::Type type, int numSols, int maxDepth);
 
@@ -56,7 +57,7 @@ public:
 private:
     SyntaxProg *currentProg;
     DDSimulation *ddSim;
-    StateTransitionGraph *graphSearch;
+    SearchGraph *graphSearch;
     PStateTransitionGraph *graphSearchP;
     StateTransitionGraph2 *graphSearch2;
     Runner *runner;

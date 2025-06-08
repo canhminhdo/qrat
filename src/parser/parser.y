@@ -605,8 +605,8 @@ psearch :   KW_PSEARCH searchParams KW_IN
             property
             expectedDot
                 {
-                    interpreter.initializePSearch($4.code(), $10, $7, $2->first, $2->second);
-                    interpreter.pexecute();
+                    interpreter.initializeSearch($4.code(), $10, $7, $2->first, $2->second, true);
+                    interpreter.execute();
                     delete $2;
                 }
         |   KW_PSEARCH error expectedDot

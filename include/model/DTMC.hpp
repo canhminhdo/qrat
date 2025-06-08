@@ -6,13 +6,12 @@
 #define DTMC_H
 
 #include "utility/FileWriter.hpp"
-
-#include <core/StateTransitionGraph2.hpp>
+#include <core/StateSpaceGraph.hpp>
 
 class DTMC {
 
 public:
-    DTMC(SyntaxProg *currentProg, StateTransitionGraph2 *graphSearch);
+    DTMC(SyntaxProg *currentProg, StateSpaceGraph *graphSearch);
 
     ~DTMC();
 
@@ -34,8 +33,8 @@ public:
 
 private:
     FileWriter *fileWriter;
-    StateTransitionGraph2 *graphSearch;
+    StateSpaceGraph *graphSearch;
     SyntaxProg *currentProg;
 };
 
-#endif //DTMC_H
+#endif//DTMC_H

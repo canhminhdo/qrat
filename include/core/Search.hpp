@@ -20,6 +20,26 @@ public:
         "=>+",
         "=>!"
     };
+
+    const char *getSearchType(Type searchType) const {
+        return typeNames[static_cast<int>(searchType)];
+    }
+
+    bool isArrowExclamation(Type searchType) const {
+        return searchType == Type::ARROW_EXCLAMATION;
+    }
+
+    bool isArrowStar(Type searchType) const {
+        return searchType == Type::ARROW_STAR;
+    }
+
+    bool isArrowPlus(Type searchType) const {
+        return searchType == Type::ARROW_PLUS;
+    }
+
+    bool isArrowOne(Type searchType) const {
+        return searchType == Type::ARROW_ONE;
+    }
 };
 
 #endif //SEARCH_HPP

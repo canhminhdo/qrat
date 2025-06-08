@@ -4,10 +4,11 @@
 
 #include "core/Interpreter.hpp"
 #include "model/DTMC.hpp"
-#include "utility/Tty.hpp"
-#include <iostream>
-#include <model/StormRunner.hpp>
 #include "model/PrismRunner.hpp"
+#include "utility/Tty.hpp"
+#include <core/StateSpaceGraph.hpp>
+#include <iostream>
+#include "model/RunnerFactory.hpp"
 
 void Interpreter::setCurrentProg(Token progName) {
     currentProg = new SyntaxProg(progName);
@@ -34,16 +35,16 @@ void Interpreter::initDDSimulation() {
     }
 }
 
-void Interpreter::initGraphSearch(ExpNode *propExp, Search::Type type, int numSols, int maxDepth) {
-    graphSearch = new StateTransitionGraph(currentProg, ddSim, propExp, type, numSols, maxDepth);
+void Interpreter::initGraphSearch(ExpNode *propExp, Search::Type type, int numSols, int maxDepth, bool probMode) {
+    graphSearch = new StateTransitionGraph(currentProg, ddSim, propExp, type, numSols, maxDepth, probMode);
 }
 
 void Interpreter::initPGraphSearch(ExpNode *propExp, Search::Type type, int numSols, int maxDepth) {
     graphSearchP = new PStateTransitionGraph(currentProg, ddSim, propExp, type, numSols, maxDepth);
 }
 
-void Interpreter::initGraphSearch2(char *property) {
-    graphSearch2 = new StateTransitionGraph2(currentProg, ddSim, property);
+void Interpreter::initGraphSearch(char *property) {
+    graphSearch = new StateSpaceGraph(currentProg, ddSim, property);
 }
 
 void Interpreter::execute() {
@@ -51,7 +52,7 @@ void Interpreter::execute() {
     assert(graphSearch != nullptr);
     // ddSim->dump();
     // graphSearch->dump();
-    graphSearch->printSearchCommand();
+    graphSearch->printCommand();
     graphSearch->search();
 }
 
@@ -65,17 +66,18 @@ void Interpreter::pexecute() {
 
 void Interpreter::execute2() {
     assert(ddSim != nullptr);
-    assert(graphSearch2 != nullptr);
+    assert(graphSearch != nullptr);
     assert(runner != nullptr);
     // ddSim->dump();
     // graphSearch->dump();
     Timer timer(true);
-    if (runner->isAvailable()) {
-        graphSearch2->printSearchCommand();
-        graphSearch2->search();
-        auto dtmc = DTMC(currentProg, graphSearch2);
+    auto *stateSpaceGraph = dynamic_cast<StateSpaceGraph *>(graphSearch);
+    if (runner->isAvailable() && stateSpaceGraph != nullptr) {
+        stateSpaceGraph->printCommand();
+        stateSpaceGraph->search();
+        auto dtmc = DTMC(currentProg, stateSpaceGraph);
         dtmc.buildModel();
-        runner->modelCheck(dtmc.getFileModel()->getFileName(), std::string(graphSearch2->getProperty()));
+        runner->modelCheck(dtmc.getFileModel()->getFileName(), std::string(stateSpaceGraph->getProperty()));
         if (!runner->getSaveModel()) {
             dtmc.cleanup();
         }
@@ -85,11 +87,11 @@ void Interpreter::execute2() {
     timer.stop();
 }
 
-void Interpreter::initializeSearch(int progName, ExpNode *propExp, Search::Type type, int numSols, int maxDepth) {
+void Interpreter::initializeSearch(int progName, ExpNode *propExp, Search::Type type, int numSols, int maxDepth, bool probMode) {
     assert(currentProg != nullptr && progName == currentProg->getName());
     cleanSearch();
     initDDSimulation();
-    initGraphSearch(propExp, type, numSols, maxDepth);
+    initGraphSearch(propExp, type, numSols, maxDepth, probMode);
 }
 
 void Interpreter::initializePSearch(int progName, ExpNode *propExp, Search::Type type, int numSols, int maxDepth) {
@@ -100,10 +102,6 @@ void Interpreter::initializePSearch(int progName, ExpNode *propExp, Search::Type
 }
 
 void Interpreter::cleanSearch() {
-    if (graphSearchP != nullptr) {
-        delete graphSearchP;
-        graphSearchP = nullptr;
-    }
     if (graphSearch != nullptr) {
         delete graphSearch;
         graphSearch = nullptr;
@@ -127,37 +125,14 @@ void Interpreter::cleanSearch2() {
 
 void Interpreter::initializeSearch2(int progName, char *property, std::vector<char *> *args) {
     assert(currentProg != nullptr && progName == currentProg->getName());
-    cleanSearch2();
+    cleanSearch();
     initDDSimulation();
-    initGraphSearch2(property);
+    initGraphSearch(property);
     initRunner(args);
 }
 
 void Interpreter::initRunner(std::vector<char *> *args) {
-    enum Flag {
-        PRISM,
-        STORM
-    };
-    Flag flag = Flag::PRISM;
-    bool saveModel = false;
-    for (int i = 0; i < args->size(); i++) {
-        if (strcmp(args->at(i), "--backend=Storm") == 0) {
-            flag = Flag::STORM;
-        } else if (strcmp(args->at(i), "--backend=PRISM") == 0) {
-            flag = Flag::PRISM;
-        }  else if (strcmp(args->at(i), "--save-model=true") == 0) {
-            saveModel = true;
-        }  else if (strcmp(args->at(i), "--save-model=false") == 0) {
-            saveModel = false;
-        }
-        delete args->at(i);
-    }
-    if (flag == Flag::PRISM) {
-        runner = new PrismRunner();
-    } else if (flag == Flag::STORM) {
-        runner = new StormRunner();
-    }
-    runner->setSaveModel(saveModel);
+    runner = RunnerFactory::createRunner(args);
 }
 
 void Interpreter::finalizeProg() {

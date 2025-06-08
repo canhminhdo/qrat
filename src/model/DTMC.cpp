@@ -3,10 +3,9 @@
 //
 
 #include "model/DTMC.hpp"
-
 #include "Configuration.hpp"
 
-DTMC::DTMC(SyntaxProg *currentProg, StateTransitionGraph2 *graphSearch) {
+DTMC::DTMC(SyntaxProg *currentProg, StateSpaceGraph *graphSearch) {
     this->currentProg = currentProg;
     this->graphSearch = graphSearch;
     std::string fileName = std::string(Token::name(currentProg->getName())) + ".pm";
