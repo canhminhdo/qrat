@@ -3,32 +3,50 @@ Random seed is set to 0.
 ==========================================
 prog TELEPORT
 ==========================================
+pcheck in TELEPORT with 'P=? [F "target"]' --backend=Storm .
+
+Time for state transition graph construction with states: 14
+
+
+
+Result (for initial states): 1
+
+==========================================
 search in TELEPORT with =>! such that P(q2, init[q0]) .
 
-Solution 1 (state 13)
-states: 14
-probability: 0.25, quantum state: 
+Solution 1 (state 10)
+states: 11
+quantum state: 
 000: (0.71,-0.701)
 100: (0.0446,0.0441)
 
-Solution 2 (state 14)
-states: 15
-probability: 0.25, quantum state: 
+Solution 2 (state 11)
+states: 12
+quantum state: 
 001: (0.71,-0.701)
 101: (0.0446,0.0441)
 
-Solution 3 (state 15)
-states: 16
-probability: 0.25, quantum state: 
+Solution 3 (state 12)
+states: 13
+quantum state: 
 010: (0.71,-0.701)
 110: (0.0446,0.0441)
 
-Solution 4 (state 16)
-states: 17
-probability: 0.25, quantum state: 
+Solution 4 (state 13)
+states: 14
+quantum state: 
 011: (0.71,-0.701)
 111: (0.0446,0.0441)
 
 No more solutions.
-states: 17
+states: 14
+==========================================
+psearch in TELEPORT with =>! such that P(q2, init[q0]) .
+Building state transition graph ...
+Running Gauss-Seidel method for probabilistic state transition graph...
+Gauss-Seidel method converged after 6 iterations.
+
+Result: 1
+
+states: 14
 Bye.

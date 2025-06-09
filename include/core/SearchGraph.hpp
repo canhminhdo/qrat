@@ -24,6 +24,7 @@ public:
         StmNode *pc;           // program counter
         qc::VectorDD current{};// current quantum state
         int parent;
+        vector<int> otherParents; // other parents of this state;
         std::vector<std::pair<int, qc::fp>> nextStates;
         int depth{0};
 
@@ -79,6 +80,8 @@ public:
     void buildInitialState();
 
     virtual void search() = 0;
+
+    virtual void handleInCache(int currStateId, int nextStateId);
 
     virtual bool checkSearchCondition() = 0;
 

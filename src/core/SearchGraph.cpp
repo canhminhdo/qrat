@@ -25,6 +25,9 @@ void SearchGraph::buildInitialState() {
     makeState(initialState);
 }
 
+void SearchGraph::handleInCache(int currStateId, int nextStateId) {
+}
+
 void SearchGraph::procState(State *currentState, const Timer &timer) {
     StmNode *stm = currentState->pc;
     if (auto *endProg = dynamic_cast<EndStmNode *>(stm); endProg != nullptr && endProg->getNext() == nullptr) {
@@ -51,6 +54,8 @@ void SearchGraph::procSkipStm(SkipStmNode *skipStm, State *currentState, StmNode
     currentState->nextStates.push_back(std::make_pair(newState->stateNr, 1));
     if (!inCache) {
         checkState(newState, timer);
+    } else {
+        handleInCache(currentState->stateNr, newState->stateNr);
     }
 }
 void SearchGraph::procUnitaryStm(UnitaryStmNode *unitaryStm, State *currentState, StmNode *nextStm, const Timer &timer) {
@@ -63,6 +68,8 @@ void SearchGraph::procUnitaryStm(UnitaryStmNode *unitaryStm, State *currentState
     currentState->nextStates.push_back(std::make_pair(newState->stateNr, 1));
     if (!inCache) {
         checkState(newState, timer);
+    } else {
+        handleInCache(currentState->stateNr, newState->stateNr);
     }
 }
 void SearchGraph::procCondStm(CondStmNode *condStm, State *currentState, const Timer &timer) {
@@ -119,6 +126,8 @@ void SearchGraph::procAtomicStm(AtomicStmNode *atomicStm, State *currentState, S
     currentState->nextStates.push_back(std::make_pair(newState->stateNr, 1));
     if (!inCache) {
         checkState(newState, timer);
+    } else {
+        handleInCache(currentState->stateNr, newState->stateNr);
     }
 }
 void SearchGraph::procCondBranch(State *currentState, StmNode *nextStm, qc::VectorDD &v, qc::fp prob, int outcome, const Timer &timer) {
@@ -133,6 +142,8 @@ void SearchGraph::procCondBranch(State *currentState, StmNode *nextStm, qc::Vect
     currentState->nextStates.push_back(std::make_pair(newState->stateNr, prob));
     if (!inCache) {
         checkState(newState, timer);
+    } else {
+        handleInCache(currentState->stateNr, newState->stateNr);
     }
 }
 

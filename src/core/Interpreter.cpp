@@ -3,6 +3,9 @@
 //
 
 #include "core/Interpreter.hpp"
+
+#include <Configuration.hpp>
+
 #include "model/DTMC.hpp"
 #include "model/PrismRunner.hpp"
 #include "utility/Tty.hpp"
@@ -65,7 +68,7 @@ void Interpreter::executePCheck() {
         if (!runner->getSaveModel()) {
             dtmc.cleanup();
         }
-        timer.total();
+        if (Configuration::showTiming) timer.total();
     }
     delete runner;
     timer.stop();

@@ -17,11 +17,18 @@ public:
     StateTransitionGraph(SyntaxProg *currentProg, DDSimulation *ddSim, ExpNode *propExp, Search::Type type, int numSols,
                          int maxDepth, bool probMode = false);
 
+    void handleInCache(int currStateId, int nextStateId) override;
+
     void search() override;
+
     bool checkSearchCondition() override;
+
     void checkState(State *s, const Timer &timer) override;
+
     void printExploredStates(const Timer &timer) const override;
+
     void printCommand() override;
+
     void dump() const override;
 
 protected:
@@ -30,9 +37,9 @@ protected:
     void printState(State *s, bool recursive = true) const;
 
     // for iterative methods
-    void gaussSeidelMethod(int maxIter = 10000, qc::fp tol = 1e-9);
+    void gaussSeidelMethod(int maxIter = 100000, qc::fp tol = 1e-9);
 
-    void jacobiMethod(int maxIter = 10000, qc::fp tol = 1e-9);
+    void jacobiMethod(int maxIter = 100000, qc::fp tol = 1e-9);
 
     std::unordered_set<int> backwardReachable();
 
@@ -45,7 +52,7 @@ private:
     int depthBound{UNBOUNDED};
 
     // for probabilistic calculation
-    std::unordered_map<int, qc::fp> probTab{};// maps stateNr to the probability of reaching a target state
-    std::unordered_set<int> targetStates{};   // set of target states
+    std::unordered_map<int, qc::fp> probTab{}; // maps stateNr to the probability of reaching a target state
+    std::unordered_set<int> targetStates{}; // set of target states
 };
 #endif//STATETRANSITIONGRAPH_HPP

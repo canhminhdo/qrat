@@ -23,3 +23,8 @@ TEST(ProgTest, loopProg) {
     int res = std::system("bash testScript.sh loop");
     EXPECT_EQ(res, 0);
 }
+
+TEST(ProgTest, groverProg) {
+    int res = std::system("bash testScript.sh grover");
+    EXPECT_EQ(res, 0);
+}

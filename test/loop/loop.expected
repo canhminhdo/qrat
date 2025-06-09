@@ -1,15 +1,33 @@
 Show timing is off.
 Random seed is set to 0.
 ==========================================
-prog PROG_LOOP
+prog LOOP
 ==========================================
-search in PROG_LOOP with =>! such that true .
+pcheck in LOOP with 'P>=1 [F "target"]' --backend=Storm .
+
+Time for state transition graph construction with states: 4
+
+
+
+Result (for initial states): true
+
+==========================================
+search in LOOP with =>! such that P(q, |0>) .
 
 Solution 1 (state 2)
 states: 3
-probability: 0.501, quantum state: 
-0: (0.754,-0.657)
+quantum state: 
+0: (1,0)
 
 No more solutions.
-states: 5
+states: 4
+==========================================
+psearch in LOOP with =>! such that P(q, |0>) .
+Building state transition graph ...
+Running Gauss-Seidel method for probabilistic state transition graph...
+Gauss-Seidel method converged after 31 iterations.
+
+Result: 1
+
+states: 4
 Bye.

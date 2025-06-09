@@ -20,6 +20,12 @@ StateTransitionGraph::StateTransitionGraph(SyntaxProg *currentProg, DDSimulation
     this->ddSim->initProperty(propExp);
 }
 
+void StateTransitionGraph::handleInCache(int currStateId, int nextStateId) {
+    if (probMod) {
+        seenStates.at(nextStateId)->otherParents.push_back(currStateId);
+    }
+}
+
 void StateTransitionGraph::search() {
     if (probMod) {
         DEBUG(
@@ -225,9 +231,15 @@ std::unordered_set<int> StateTransitionGraph::backwardReachable() {
         } else {
             count--;
         }
-        auto parentId = seenStates.at(stateId)->parent;
-        if (parentId != -1 && visited.insert(parentId).second) {
-            q.push(parentId);
+        auto state = seenStates.at(stateId);
+        auto processParent = [&](int parentId) {
+            if (parentId != -1 && visited.insert(parentId).second) {
+                q.push(parentId);
+            }
+        };
+        processParent(state->parent);
+        for (auto otherParentId : state->otherParents) {
+            processParent(otherParentId);
         }
     }
     return visited;
