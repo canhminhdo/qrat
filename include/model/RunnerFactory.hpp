@@ -29,7 +29,6 @@ public:
             } else if (strcmp(args->at(i), "--save-model=false") == 0) {
                 saveModel = false;
             }
-            delete args->at(i);
         }
         Runner *runner = nullptr;
         if (backend == Backend::PRISM) {

@@ -71,12 +71,12 @@ void SearchGraph::procCondStm(CondStmNode *condStm, State *currentState, const T
     auto *numExp = dynamic_cast<NumExpNode *>(condExp->getRight());
     assert(condExp != nullptr && measExp != nullptr && numExp != nullptr);
     auto isZero = numExp->isZero();
-    auto [v0, pzero, v1, pone] = ddSim->measureWithProb(measExp, currentState->current);
+    auto [v0, pZero, v1, pOne] = ddSim->measureWithProb(measExp, currentState->current);
     procCondBranch(currentState, isZero ? condStm->getThenStm()->getHead() : condStm->getElseStm()->getHead(), v0,
-                   pzero, 0, timer);
+                   pZero, 0, timer);
     if (checkSearchCondition()) {
         procCondBranch(currentState, isZero ? condStm->getElseStm()->getHead() : condStm->getThenStm()->getHead(), v1,
-                       pone, 1, timer);
+                       pOne, 1, timer);
     }
 }
 void SearchGraph::procWhileStm(WhileStmNode *whileStm, State *currentState, StmNode *nextStm, const Timer &timer) {
@@ -85,10 +85,10 @@ void SearchGraph::procWhileStm(WhileStmNode *whileStm, State *currentState, StmN
     auto *numExp = dynamic_cast<NumExpNode *>(condExp->getRight());
     assert(condExp != nullptr && measExp != nullptr && numExp != nullptr);
     auto isZero = numExp->isZero();
-    auto [v0, pzero, v1, pone] = ddSim->measureWithProb(measExp, currentState->current);
-    procCondBranch(currentState, isZero ? whileStm->getBody()->getHead() : nextStm, v0, pzero, 0, timer);
+    auto [v0, pZero, v1, pOne] = ddSim->measureWithProb(measExp, currentState->current);
+    procCondBranch(currentState, isZero ? whileStm->getBody()->getHead() : nextStm, v0, pZero, 0, timer);
     if (checkSearchCondition()) {
-        procCondBranch(currentState, isZero ? nextStm : whileStm->getBody()->getHead(), v1, pone, 1, timer);
+        procCondBranch(currentState, isZero ? nextStm : whileStm->getBody()->getHead(), v1, pOne, 1, timer);
     }
 }
 void SearchGraph::procAtomicStm(AtomicStmNode *atomicStm, State *currentState, StmNode *nextStm, const Timer &timer) {

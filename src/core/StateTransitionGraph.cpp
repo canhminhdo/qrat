@@ -3,11 +3,10 @@
 //
 
 #include "core/StateTransitionGraph.hpp"
-
 #include "ast/CondExpNode.hpp"
 #include "core/global.hpp"
 #include "utility/Tty.hpp"
-#include <Configuration.hpp>
+#include "Configuration.hpp"
 
 StateTransitionGraph::StateTransitionGraph(SyntaxProg *currentProg, DDSimulation *ddSim, ExpNode *propExp,
                                            Search::Type type, int numSols, int maxDepth, bool probMode) {
@@ -22,7 +21,11 @@ StateTransitionGraph::StateTransitionGraph(SyntaxProg *currentProg, DDSimulation
 }
 
 void StateTransitionGraph::search() {
-    // std::cout << "----------- SEARCH START -----------\n";
+    if (probMod) {
+        DEBUG(
+            std::cout << "Building state transition graph ...\n";
+        )
+    }
     Timer timer(true);
     buildInitialState();
     solutionCount = 0;
@@ -31,7 +34,6 @@ void StateTransitionGraph::search() {
         checkState(seenStates.at(0), timer);
     }
     while (solutionCount < numSols && savedStateId < seenStates.size()) {
-        // std::cout << "----------- ID: " << savedStateId << " -----------\n";
         State *currentState = seenStates.at(savedStateId);
         if (currentState->depth >= depthBound || (isArrowOne(searchType) && currentState->depth >= 1)) {
             break;
@@ -39,18 +41,16 @@ void StateTransitionGraph::search() {
         procState(currentState, timer);
         savedStateId++;
     }
-    // std::cout << "----------- SEARCH END -----------\n";
     if (probMod) gaussSeidelMethod();
     printExploredStates(timer);
     timer.stop();
 }
 
 bool StateTransitionGraph::checkSearchCondition() {
-    std::cout << "Checking search condition in StateTransitionGraph...\n";
     return solutionCount < numSols;
 }
+
 void StateTransitionGraph::checkState(State *s, const Timer &timer) {
-    std::cout << "Checking state in StateTransitionGraph...\n";
     if (isArrowExclamation(searchType)) {
         if (!s->isFinalState())
             return;
@@ -70,7 +70,6 @@ void StateTransitionGraph::printExploredStates(const Timer &timer) const {
         return;
     std::cout << "\n";
     if (!probMod) {
-        std::cout << "ProbMode is off, so no probabilistic calculation.\n";
         solutionCount == 0 ? std::cout << "No solution.\n" : std::cout << "No more solutions.\n";
     }
     std::cout << "states: " << seenStates.size();
@@ -82,7 +81,7 @@ void StateTransitionGraph::printExploredStates(const Timer &timer) const {
             std::cout << " in " << prof / 1000 << "ms cpu (" << real / 1000 << "ms real)";
         }
     }
-    std::cout << "\n";
+    std::cout << std::endl;
 }
 
 void StateTransitionGraph::printCommand() {
@@ -93,7 +92,7 @@ void StateTransitionGraph::printCommand() {
     std::cout << Token::name(currentProg->getName());
     std::cout << " with " << getSearchType(searchType) << " such that ";
     propExp->info();
-    std::cout << " .\n";
+    std::cout << " ." << std::endl;
 }
 
 void StateTransitionGraph::printSearchTiming(State *s, const Timer &timer) const {
@@ -113,6 +112,7 @@ void StateTransitionGraph::printSearchTiming(State *s, const Timer &timer) const
     std::cout << "\n";
     std::cout << "quantum state: \n";
     s->current.printVector<dd::vNode>();
+    std::cout.flush();
 }
 
 void StateTransitionGraph::dump() const {
@@ -134,7 +134,6 @@ void StateTransitionGraph::dump() const {
         std::cout << depthBound << "\n";
     }
     // std::cout << "State Transition Graph\n";
-    // std::cout << "State ID being considered: " << savedStateId << "\n";
     // std::cout << "-------------------\n";
     // if (seenStates.size() != 0) {
     //     printState(seenStates[0]);
@@ -142,7 +141,9 @@ void StateTransitionGraph::dump() const {
 }
 
 void StateTransitionGraph::gaussSeidelMethod(int maxIter, qc::fp tol) {
-    std::cout << "Running Gauss-Seidel method for probabilistic state transition graph...\n";
+    DEBUG(
+        std::cout << "Running Gauss-Seidel method for probabilistic state transition graph...\n";
+    );
     auto backwardStates = backwardReachable();
     for (int i = 0; i < maxIter; i++) {
         qc::fp maxDiff = 0.0;
@@ -163,15 +164,19 @@ void StateTransitionGraph::gaussSeidelMethod(int maxIter, qc::fp tol) {
             maxDiff = std::max(maxDiff, std::abs(newProb - oldProb));
         }
         if (maxDiff < tol) {
-            std::cout << "Gauss-Seidel method converged after " << i + 1 << " iterations.\n";
+            DEBUG(
+                std::cout << "Gauss-Seidel method converged after " << i + 1 << " iterations.\n";
+            );
             break;
         }
     }
-    std::cout << "Result: " << probTab[0] << std::endl;
+    std::cout << "\nResult: " << probTab[0] << std::endl;
 }
 
 void StateTransitionGraph::jacobiMethod(int maxIter, qc::fp tol) {
-    std::cout << "Running Jacobi method for probabilistic state transition graph...\n";
+    DEBUG(
+        std::cout << "Running Jacobi method for probabilistic state transition graph...\n";
+    );
     auto backwardStates = backwardReachable();
     for (int i = 0; i < maxIter; i++) {
         qc::fp maxDiff = 0.0;
@@ -194,11 +199,13 @@ void StateTransitionGraph::jacobiMethod(int maxIter, qc::fp tol) {
         }
         probTab = std::move(newProbTab);
         if (maxDiff < tol) {
-            std::cout << "Jacobi method converged after " << i + 1 << " iterations.\n";
+            DEBUG(
+                std::cout << "Jacobi method converged after " << i + 1 << " iterations.\n";
+            );
             break;
         }
     }
-    std::cout << "Result: " << probTab[0] << std::endl;
+    std::cout << "\nResult: " << probTab[0] << std::endl;
 }
 
 std::unordered_set<int> StateTransitionGraph::backwardReachable() {

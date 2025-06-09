@@ -9,7 +9,8 @@
 
 class StateSpaceGraph : public SearchGraph {
 public:
-    StateSpaceGraph(SyntaxProg *currentProg, DDSimulation *ddSim, char *property);
+    StateSpaceGraph(SyntaxProg *currentProg, DDSimulation *ddSim, char *property, std::vector<char *> *args);
+    ~StateSpaceGraph() override;
 
     void search() override;
     bool checkSearchCondition() override;
@@ -25,6 +26,7 @@ private:
     char *property;
     std::unordered_map<int, std::vector<int>> prop2States;
     std::vector<int> ending;
+    std::vector<char *> *args;
 };
 
 #endif//STATESPACEGRAPH_HPP

@@ -25,7 +25,7 @@ end
 
 pcheck in TELEPORT with 'P=? [F "target"]' --backend=Storm .
 
-search in TELEPORT with =>! such that P(q2, init[q0]) .
+search in TELEPORT with =>! such that not P(q2, init[q0]) .
 
 psearch in TELEPORT with =>! such that P(q2, init[q0]) .
 

@@ -39,37 +39,21 @@ void Interpreter::initGraphSearch(ExpNode *propExp, Search::Type type, int numSo
     graphSearch = new StateTransitionGraph(currentProg, ddSim, propExp, type, numSols, maxDepth, probMode);
 }
 
-void Interpreter::initPGraphSearch(ExpNode *propExp, Search::Type type, int numSols, int maxDepth) {
-    graphSearchP = new PStateTransitionGraph(currentProg, ddSim, propExp, type, numSols, maxDepth);
-}
-
-void Interpreter::initGraphSearch(char *property) {
-    graphSearch = new StateSpaceGraph(currentProg, ddSim, property);
+void Interpreter::initGraphSearch(char *property, std::vector<char *> *args) {
+    graphSearch = new StateSpaceGraph(currentProg, ddSim, property, args);
 }
 
 void Interpreter::execute() {
     assert(ddSim != nullptr);
     assert(graphSearch != nullptr);
-    // ddSim->dump();
-    // graphSearch->dump();
     graphSearch->printCommand();
     graphSearch->search();
 }
 
-void Interpreter::pexecute() {
-    assert(ddSim != nullptr);
-    assert(graphSearchP != nullptr);
-    graphSearchP->printSearchCommand();
-    graphSearchP->search();
-    // graphSearchP->dump();
-}
-
-void Interpreter::execute2() {
+void Interpreter::executePCheck() {
     assert(ddSim != nullptr);
     assert(graphSearch != nullptr);
     assert(runner != nullptr);
-    // ddSim->dump();
-    // graphSearch->dump();
     Timer timer(true);
     auto *stateSpaceGraph = dynamic_cast<StateSpaceGraph *>(graphSearch);
     if (runner->isAvailable() && stateSpaceGraph != nullptr) {
@@ -94,13 +78,6 @@ void Interpreter::initializeSearch(int progName, ExpNode *propExp, Search::Type 
     initGraphSearch(propExp, type, numSols, maxDepth, probMode);
 }
 
-void Interpreter::initializePSearch(int progName, ExpNode *propExp, Search::Type type, int numSols, int maxDepth) {
-    assert(currentProg != nullptr && progName == currentProg->getName());
-    cleanSearch();
-    initDDSimulation();
-    initPGraphSearch(propExp, type, numSols, maxDepth);
-}
-
 void Interpreter::cleanSearch() {
     if (graphSearch != nullptr) {
         delete graphSearch;
@@ -112,22 +89,11 @@ void Interpreter::cleanSearch() {
     }
 }
 
-void Interpreter::cleanSearch2() {
-    if (graphSearch2 != nullptr) {
-        delete graphSearch2;
-        graphSearch2 = nullptr;
-    }
-    if (ddSim != nullptr) {
-        delete ddSim;
-        ddSim = nullptr;
-    }
-}
-
-void Interpreter::initializeSearch2(int progName, char *property, std::vector<char *> *args) {
+void Interpreter::initializePCheck(int progName, char *property, std::vector<char *> *args) {
     assert(currentProg != nullptr && progName == currentProg->getName());
     cleanSearch();
     initDDSimulation();
-    initGraphSearch(property);
+    initGraphSearch(property, args);
     initRunner(args);
 }
 
@@ -140,13 +106,13 @@ void Interpreter::finalizeProg() {
     auto oldProg = savedProgs.find(currentProg->getName());
     if (oldProg == savedProgs.end()) {
         savedProgs.insert({currentProg->getName(), currentProg});
-        std::cout << "==========================================" << std::endl;
+        std::cout << "==========================================\n";
         std::cout << "prog " << Token::name(currentProg->getName()) << std::endl;
     } else {
         delete oldProg->second;
         oldProg->second = currentProg;
-        std::cout << "==========================================" << std::endl;
-        std::cout << "prog " << Token::name(currentProg->getName()) << std::endl;
+        std::cout << "==========================================\n";
+        std::cout << "prog " << Token::name(currentProg->getName()) << '\n';
         std::cout << Tty(Tty::GREEN) << "Advisory: " << Tty(Tty::RESET) << "redefining program " << Tty(Tty::MAGENTA) << Token::name(currentProg->getName()) << Tty(Tty::RESET) << "." << std::endl;
     }
 }

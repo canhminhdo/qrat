@@ -56,9 +56,9 @@ add_library(
     ../dd/DDSimulation.cpp
     ../ast/CachedNode.cpp
     ../ast/EndStmNode.cpp
+    ../core/SearchGraph.cpp
+    ../core/StateSpaceGraph.cpp
     ../core/StateTransitionGraph.cpp
-    ../core/PStateTransitionGraph.cpp
-    ../core/StateTransitionGraph2.cpp
     ../ast/PropExpNode.cpp
     ../ast/InitExpNode.cpp
     ../ast/BoolExpNode.cpp
@@ -68,8 +68,6 @@ add_library(
     ../core/PropTable.cpp
     ../utility/FileWritter.cpp
     ../ast/AtomicStmNode.cpp
-    ../core/SearchGraph.cpp
-    ../core/StateSpaceGraph.cpp
 )
 
 target_include_directories(Parser PUBLIC ${CMAKE_CURRENT_BINARY_DIR})

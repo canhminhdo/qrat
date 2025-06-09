@@ -40,4 +40,10 @@ typedef long Int64;
            << message << endl),                                        \
      abort())
 
+#ifdef NDEBUG
+#define DEBUG(statements)
+#else
+#define DEBUG(statements) statements
+#endif
+
 #endif//QRAT_MACROS_HPP

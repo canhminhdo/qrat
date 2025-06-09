@@ -9,7 +9,7 @@ const {search} = require("./search.js");
 const {pcheck} = require("./pcheck.js");
 const {atomicProps} = require("./atomicProps.js");
 
-function grover(nqubits, targetState, nIters, searchCmd = true, pcheckCmd = false) {
+function grover(nqubits, targetState, nIters, searchCmd = true, pcheckCmd = false, atomic = true) {
     let headProg = header(nqubits);
     let initProg = init(nqubits);
     let oracleProg = oracle(nqubits, targetState);
@@ -21,9 +21,15 @@ function grover(nqubits, targetState, nIters, searchCmd = true, pcheckCmd = fals
     prog += headProg;
     prog += propProg;
     prog += "begin\n";
+    if (atomic) {
+        prog += "\tatomic {\n";
+    }
     prog += initProg;
     for (i = 0; i < nIters; i++) {
         prog += oracleProg + diffusionProg;
+    }
+    if (atomic) {
+        prog += "\t};\n";
     }
     prog += measure(nqubits);
     prog += "end\n"

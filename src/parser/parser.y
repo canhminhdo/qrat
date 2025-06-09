@@ -570,9 +570,8 @@ pcheck  :   KW_PCHECK KW_IN token
             arguments
             expectedDot
                 {
-                    interpreter.initializeSearch2($3.code(), $6, $7);
-                    interpreter.execute2();
-                    delete $7;
+                    interpreter.initializePCheck($3.code(), $6, $7);
+                    interpreter.executePCheck();
                 }
         ;
 

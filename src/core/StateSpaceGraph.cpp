@@ -6,7 +6,7 @@
 
 #include <Configuration.hpp>
 
-StateSpaceGraph::StateSpaceGraph(SyntaxProg *currentProg, DDSimulation *ddSim, char *property) {
+StateSpaceGraph::StateSpaceGraph(SyntaxProg *currentProg, DDSimulation *ddSim, char *property, std::vector<char *> *args) {
     this->currentProg = currentProg;
     this->ddSim = ddSim;
     this->property = property;
@@ -14,28 +14,32 @@ StateSpaceGraph::StateSpaceGraph(SyntaxProg *currentProg, DDSimulation *ddSim, c
     for (auto &prop: currentProg->getPropTab().getPropTab()) {
         prop2States[prop.first] = std::vector<int>();
     }
+    this->args = args;
+}
+
+StateSpaceGraph::~StateSpaceGraph() {
+    delete[] property;
+    for (auto arg: *args) {
+        delete[] arg;
+    }
+    delete args;
 }
 
 void StateSpaceGraph::search() {
-    // std::cout << "----------- SEARCH START -----------\n";
     Timer timer(true);
     buildInitialState();
     checkState(seenStates[0], timer);
     int savedStateId = 0;
     while (savedStateId < seenStates.size()) {
-        // std::cout << "----------- ID: " << savedStateId << " -----------\n";
         State *currentState = seenStates[savedStateId];
         procState(currentState, timer);
         savedStateId++;
     }
-    // std::cout << "----------- SEARCH END -----------\n";
     printExploredStates(timer);
     timer.stop();
-    // dump();
 }
 
 bool StateSpaceGraph::checkSearchCondition() {
-    std::cout << "Checking search condition in StateSpaceGraph...\n";
     return true;
 }
 
@@ -59,7 +63,7 @@ void StateSpaceGraph::printExploredStates(const Timer &timer) const {
             std::cout << " in " << prof / 1000 << "ms cpu (" << real / 1000 << "ms real)";
         }
     }
-    std::cout << "\n";
+    std::cout << std::endl;
 }
 
 void StateSpaceGraph::printCommand() {
@@ -69,7 +73,10 @@ void StateSpaceGraph::printCommand() {
     std::cout << "pcheck in ";
     std::cout << Token::name(currentProg->getName());
     std::cout << " with " << property << "";
-    std::cout << " .\n";
+    for (auto arg: *args) {
+        std::cout << " " << arg;
+    }
+    std::cout << " ." << std::endl;
 }
 
 void StateSpaceGraph::dump() const {
@@ -78,7 +85,7 @@ void StateSpaceGraph::dump() const {
     std::cout << "State Transition Graph\n";
     std::cout << "-------------------\n";
     if (seenStates.size() != 0) {
-        printState(seenStates[0]);
+        printState(seenStates.at(0));
     }
 }
 
