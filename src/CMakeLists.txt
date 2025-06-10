@@ -2,6 +2,9 @@
 configure_file(${PROJECT_SOURCE_DIR}/src/parser/prog.qw prog.qw)
 configure_file(${PROJECT_SOURCE_DIR}/examples/loop/loop.qw loop.qw)
 configure_file(${PROJECT_SOURCE_DIR}/examples/grover/grover.qw grover.qw)
+configure_file(${PROJECT_SOURCE_DIR}/examples/secretsharing/secretsharing.qw secretsharing.qw)
+configure_file(${PROJECT_SOURCE_DIR}/examples/replay/replay.qw replay.qw)
+configure_file(${PROJECT_SOURCE_DIR}/examples/biteleport/biteleport.qw biteleport.qw)
 
 add_executable(
     ${PROJECT_NAME}

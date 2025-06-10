@@ -75,6 +75,9 @@ void DTMC::addLabels() {
                 label += " | ";
             }
         }
+        if (stateIds.size() == 0) {
+            label += "false";
+        }
         label += ";";
         fileWriter->writeLine(label);
     }
