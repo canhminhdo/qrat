@@ -49,6 +49,10 @@ public:
 
     qc::MatrixDD buildProjector(PropExpNode *propNode);
 
+    qc::MatrixDD buildProjectorOne(PropExpNode *propNode);
+
+    qc::MatrixDD buildProjectorTwo(PropExpNode *propNode);
+
     qc::VectorDD applyGate(UnitaryStmNode *stm, qc::VectorDD v);
 
     void incRef(qc::VectorDD &v);

@@ -11,6 +11,11 @@ PropExpNode::PropExpNode(Symbol *var, ExpNode *expr) : expr{expr} {
     vars.push_back(var);
 }
 
+PropExpNode::PropExpNode(Symbol *var1, Symbol *var2, ExpNode *expr) : expr{expr}{
+    vars.push_back(var1);
+    vars.push_back(var2);
+}
+
 bool PropExpNode::isEqual(const Node &other) const {
     const auto *otherProp = dynamic_cast<const PropExpNode *>(&other);
     if (otherProp == nullptr || vars.size() != otherProp->vars.size() || !expr->isEqual(*otherProp->expr))

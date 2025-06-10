@@ -15,6 +15,7 @@
 #include "dd/GateMatrixDefinitions.hpp"
 #include "dd/Operations.hpp"
 #include "dd/Package.hpp"
+#include "dd/GateMatrixDefinitionExt.hpp"
 
 // using DDPackage = typename dd::Package<DDSimulationPackageConfig>;
 DDSimulation::DDSimulation(SyntaxProg *prog) : prog{prog}, dd{std::make_unique<DDPackage>(prog->getNqubits())},
@@ -53,6 +54,7 @@ void DDSimulation::initProperty(ExpNode *expNode) {
     if (auto *propNode = dynamic_cast<PropExpNode *>(expNode)) {
         if (projectorMap.find(propNode) == projectorMap.end()) {
             projectorMap[propNode] = buildProjector(propNode);
+            // projectorMap[propNode].printMatrix<dd::mNode>(nqubits);
         }
         return;
     }
@@ -108,9 +110,17 @@ qc::Qubit DDSimulation::getQubit(Symbol *symbol) {
 }
 
 qc::MatrixDD DDSimulation::buildProjector(PropExpNode *propNode) {
-    if (propNode->getVars().size() != 1) {
-        throw std::runtime_error("Only support property with one variable");
+    auto size = propNode->getVars().size();
+    if (size == 1) {
+        return buildProjectorOne(propNode);
     }
+    if (size == 2) {
+        return buildProjectorTwo(propNode);
+    }
+    throw std::runtime_error("Only support property with one or two variables");
+}
+
+qc::MatrixDD DDSimulation::buildProjectorOne(PropExpNode *propNode) {
     auto target = qVarMap[propNode->getVars().at(0)->getName()];
     if (auto *ketNode = dynamic_cast<KetExpNode *>(propNode->getExpr())) {
         if (ketNode->getType() == KetType::KET_ZERO) {
@@ -121,12 +131,41 @@ qc::MatrixDD DDSimulation::buildProjector(PropExpNode *propNode) {
             auto v1 = dd->makeBasisState(1, std::vector<bool>{true});
             return dd->outerProduct(v1, target);
         }
+        if (ketNode->getType() == KetType::KET_PLUS) {
+            auto v1 = dd->makeBasisState(1, std::vector<dd::BasisStates>{dd::BasisStates::plus});
+            return dd->outerProduct(v1, target);
+        }
+        if (ketNode->getType() == KetType::KET_MINUS) {
+            auto v1 = dd->makeBasisState(1, std::vector<dd::BasisStates>{dd::BasisStates::minus});
+            return dd->outerProduct(v1, target);
+        }
         throw std::runtime_error("Only support initialization with |0>, |1> or initial state");
     }
     if (auto *initNode = dynamic_cast<InitExpNode *>(propNode->getExpr())) {
         return dd->outerProduct(initStateMap[initNode->getVar()->getName()], target);
     }
-    throw std::runtime_error("Only support projector from |0>, |1> or initial state");
+    throw std::runtime_error("Only support projector from |0>, |1>, |+>, |->, or the initial state");
+}
+
+qc::MatrixDD DDSimulation::buildProjectorTwo(PropExpNode *propNode) {
+    auto target1 = qVarMap[propNode->getVars().at(0)->getName()];
+    auto target2 = qVarMap[propNode->getVars().at(1)->getName()];
+    // assert(target1 == target2 - 1);
+    if (auto *ketNode = dynamic_cast<KetExpNode *>(propNode->getExpr())) {
+        if (ketNode->getType() == KetType::KET_PHI_PLUS) {
+            return dd->outerProduct(PHI_PLUS_MAT, target1, target2);
+        }
+        if (ketNode->getType() == KetType::KET_PHI_MINUS) {
+            return dd->outerProduct(PHI_MINUS_MAT, target1, target2);
+        }
+        if (ketNode->getType() == KetType::KET_PSI_PLUS) {
+            return dd->outerProduct(PSI_PLUS_MAT, target1, target2);
+        }
+        if (ketNode->getType() == KetType::KET_PSI_MINUS) {
+            return dd->outerProduct(PSI_MINUS_MAT, target1, target2);
+        }
+    }
+    throw std::runtime_error("Only support projector from |phi+>, |phi->, |psi+>, or |psi->");
 }
 
 void DDSimulation::initialize() {
@@ -180,10 +219,16 @@ void DDSimulation::initQState() {
                     case KetType::KET_ONE:
                         initStateMap[var->getName()] = dd->makeBasisState(1, std::vector<bool>{true});
                         break;
+                    case KetType::KET_PLUS:
+                        initStateMap[var->getName()] = dd->makeBasisState(1, std::vector<dd::BasisStates>{dd::BasisStates::plus});
+                        break;
+                    case KetType::KET_MINUS:
+                        initStateMap[var->getName()] = dd->makeBasisState(1, std::vector<dd::BasisStates>{dd::BasisStates::minus});
+                        break;
                     case KetType::KET_RANDOM:
                         initStateMap[var->getName()] = generateRandomState();
-                        if (initStateMap[var->getName()].p->ref == 0)
-                            dd->incRef(initStateMap[var->getName()]);
+                        // if (initStateMap[var->getName()].p->ref == 0)
+                        //     dd->incRef(initStateMap[var->getName()]);
                         break;
                     default:
                         throw std::runtime_error("Only support initialization with |0>, |1> or random state");

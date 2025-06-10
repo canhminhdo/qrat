@@ -11,7 +11,9 @@
 
 class PropExpNode : public ExpNode {
 public:
-    explicit PropExpNode(Symbol *var, ExpNode *expr);
+    PropExpNode(Symbol *var, ExpNode *expr);
+
+    PropExpNode(Symbol *var1, Symbol *var2, ExpNode *expr);
 
     ~PropExpNode() override = default;
 

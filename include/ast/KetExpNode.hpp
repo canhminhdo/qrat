@@ -9,13 +9,21 @@
 
 // ODR-usable enum class
 enum class KetType {
+    // one-qubit states
     KET_ZERO,
     KET_ONE,
-    KET_RANDOM
+    KET_PLUS,
+    KET_MINUS,
+    KET_RANDOM,
+    // two-qubit states
+    KET_PHI_PLUS,
+    KET_PHI_MINUS,
+    KET_PSI_PLUS,
+    KET_PSI_MINUS,
 };
 
 // inline initialization with ODR
-inline static const char *KetNames[] = {"|0>", "|1>", "random"};
+inline static const char *KetNames[] = {"|0>", "|1>", "|+>", "|->", "random", "|phi+>", "|phi->", "|psi+>", "|psi->"};
 
 class KetExpNode : public ExpNode {
 public:

@@ -89,9 +89,7 @@ extern std::vector<char *> pendingFiles;
 %token KW_IF KW_THEN KW_ELSE KW_FI
 %token KW_WHILE KW_DO KW_OD
 %token KW_ASSIGN
-%token KW_KET_ZERO
-%token KW_KET_ONE
-%token KW_KET_RANDOM
+%token KW_KET_ZERO KW_KET_ONE KW_KET_RANDOM KW_KET_PLUS KW_KET_MINUS KW_KET_PHI_PLUS KW_KET_PHI_MINUS KW_KET_PSI_PLUS KW_KET_PSI_MINUS
 %token INTEGER RATIONAL REAL
 %token KW_PI KW_PI_2 KW_PI_4 KW_TAU KW_E
 %token <gateInfo> KW_SINGLE_TARGET_OP KW_SINGLE_TARGET_COP KW_SINGLE_TARGET_MCOP
@@ -126,7 +124,7 @@ extern std::vector<char *> pendingFiles;
 %nterm <expr> expression number oneQubit basis measure condExp
 %nterm <stm> stm stmList unitaryStm condStm loopStm
 */
-%nterm <expr> expression number oneQubit basis measure condExp property basisProp
+%nterm <expr> expression number oneQubit basis bellState measure condExp property basisProp
 %nterm <stm> stm skipStm unitaryStm condStm loopStm atomicStm
 %nterm <stmSeq> stmList
 %nterm <searchType> arrow
@@ -272,11 +270,38 @@ basis   :   KW_KET_ZERO
                 {
                     $$ = currentSyntaxProg->makeNode(new KetExpNode(KetType::KET_ONE));
                 }
+        |   KW_KET_PLUS
+                {
+                    $$ = currentSyntaxProg->makeNode(new KetExpNode(KetType::KET_PLUS));
+                }
+        |   KW_KET_MINUS
+                {
+                    $$ = currentSyntaxProg->makeNode(new KetExpNode(KetType::KET_MINUS));
+                }
         |   KW_KET_RANDOM
                 {
                     $$ = currentSyntaxProg->makeNode(new KetExpNode(KetType::KET_RANDOM));
                 }
         ;
+
+bellState   :   KW_KET_PHI_PLUS
+                    {
+                        $$ = currentSyntaxProg->makeNode(new KetExpNode(KetType::KET_PHI_PLUS));
+                    }
+            |   KW_KET_PHI_MINUS
+                    {
+                        $$ = currentSyntaxProg->makeNode(new KetExpNode(KetType::KET_PHI_MINUS));
+                    }
+            |   KW_KET_PSI_PLUS
+                    {
+                        $$ = currentSyntaxProg->makeNode(new KetExpNode(KetType::KET_PSI_PLUS));
+                    }
+            |   KW_KET_PSI_MINUS
+                    {
+                        $$ = currentSyntaxProg->makeNode(new KetExpNode(KetType::KET_PSI_MINUS));
+                    }
+            ;
+
 expression  :   '(' expression ')'
                     {
                         $$ = $2;
@@ -522,8 +547,8 @@ loadFile    :   KW_LOAD filePath expectedDot
                         pendingFiles.push_back($2);
                     }
             ;
-filePath    :   IDENTIFIER  { $$ = strdup($1.name()); }
-            |   FILENAME
+
+filePath    :   FILENAME
             ;
 
 /* set showing time and random seed */
@@ -718,6 +743,18 @@ property    :   '(' property ')'
                             YYERROR;
                         }
                         $$ = currentSyntaxProg->makeNode(new PropExpNode(currentSyntaxProg->lookup($3), $5));
+                    }
+            |   KW_PROJ '(' varName ',' varName ',' bellState ')'
+                    {
+                        if (!currentSyntaxProg->hasVarSymbol($3)) {
+                            yyerror(("Variable " + std::string($3.name()) + " is undefined").c_str());
+                            YYERROR;
+                        }
+                        if (!currentSyntaxProg->hasVarSymbol($5)) {
+                                yyerror(("Variable " + std::string($5.name()) + " is undefined").c_str());
+                                YYERROR;
+                        }
+                        $$ = currentSyntaxProg->makeNode(new PropExpNode(currentSyntaxProg->lookup($3), currentSyntaxProg->lookup($5), $7));
                     }
             |   property KW_AND property
                     {

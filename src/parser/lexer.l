@@ -113,6 +113,8 @@ TwoTargetOpWithTwoParam         XXminusYY|XXplusYY
 
 "|0>"		{ return KW_KET_ZERO; }
 "|1>"		{ return KW_KET_ONE; }
+"|+>"		{ return KW_KET_PLUS; }
+"|->"		{ return KW_KET_MINUS; }
 "random"	{ return KW_KET_RANDOM; }
 
 "quit"      { return KW_QUIT; }
@@ -145,28 +147,34 @@ SingleTargetOpWithTwoParam          { Token token; token.tokenize(yytext, yyline
 "C"{TwoTargetOpWithTwoParam}    { Token token; token.tokenize(yytext, yylineno); yylval.gateInfo = {token, TWO_TARGET_COP_WITH_TWO_PARAM}; return KW_TWO_TARGET_COP_WITH_TWO_PARAM; }
 "MC"{TwoTargetOpWithTwoParam}   { Token token; token.tokenize(yytext, yylineno); yylval.gateInfo = {token, TWO_TARGET_MCOP_WITH_TWO_PARAM}; return KW_TWO_TARGET_MCOP_WITH_TWO_PARAM; }
 
-"M"         { return KW_MEASURE; }
+"M"       { return KW_MEASURE; }
 PI|pi     { return KW_PI; }
 PI2|pi2   { return KW_PI_2; }
 PI4|pi4   { return KW_PI_4; }
 TAU|tau   { return KW_TAU; }
 e         { return KW_E; }
 
+("|phi+>"|"|PHI+>") { return KW_KET_PHI_PLUS; }
+("|phi->"|"|PHI->") { return KW_KET_PHI_MINUS; }
+("|psi+>"|"|psi+>") { return KW_KET_PSI_PLUS; }
+("|psi->"|"|psi->") { return KW_KET_PSI_MINUS; }
+
 "--backend="(PRISM|Storm)   { yylval.str = strdup(yytext); return KW_ARGUMENT; }
 "--save-model="(true|false)  { yylval.str = strdup(yytext); return KW_ARGUMENT; }
 
-[_a-zA-Z]([_a-zA-Z0-9])*    {
-                // printf("identifier: %s at line %d\n", yytext, yylineno);
-                // yylval.codeNr = stringTable.encode(yytext);
-                RETURN(IDENTIFIER);
-            }
-[a-zA-Z0-9_\-]+\.[qQ][wW]   { yylval.str = strdup(yytext); return FILENAME; }
+[a-zA-Z0-9_\-\/\.]+\.[qQ][wW]   { yylval.str = strdup(yytext); return FILENAME; }
 [+-]?[0-9]+                 { return INTEGER; }
 [+-]?[0-9]+"/"[+-]?[0-9]+   { return RATIONAL; }
 [+-]?[0-9]+"."[0-9]*        { return REAL; }
 [+-]?("."[0-9]+)            { return REAL; }
 
 \'[^\']*\'  { yylval.str = strdup(yytext); return FORMULA_STR; }
+
+[_a-zA-Z]([_a-zA-Z0-9])*    {
+                // printf("identifier: %s at line %d\n", yytext, yylineno);
+                // yylval.codeNr = stringTable.encode(yytext);
+                RETURN(IDENTIFIER);
+            }
 
 "//".*                  { /* Ignore single-line comment */ }
 "/*"                    { lexerCommentMode(); }
