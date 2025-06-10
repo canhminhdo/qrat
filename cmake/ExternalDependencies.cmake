@@ -28,7 +28,7 @@ endfunction()
 check_submodule_present(mqt-core)
 check_submodule_present(googletest)
 
-set(MQT_CORE_VERSION 2.4.0 CACHE STRING "MQT Core version")
+set(MQT_CORE_VERSION 2.7.0 CACHE STRING "MQT Core version")
 
 # A different way to get GoogleTest
 #include(FetchContent)
