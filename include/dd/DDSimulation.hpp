@@ -69,6 +69,8 @@ public:
 
     bool test(qc::VectorDD v, ExpNode *expNode);
 
+    qc::fp fidelity(qc::VectorDD v1, qc::VectorDD v2);
+
     void dump();
 
     void analyze();

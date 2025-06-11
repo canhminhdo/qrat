@@ -344,6 +344,10 @@ bool DDSimulation::test(qc::VectorDD v, ExpNode *expNode) {
     throw std::runtime_error("Unsupported expression type");
 }
 
+qc::fp DDSimulation::fidelity(qc::VectorDD v1, qc::VectorDD v2) {
+    return dd->fidelity(v1, v2);
+}
+
 void DDSimulation::dump() {
     for (auto &qVar: qVarMap) {
         std::cout << Token::name(qVar.first) << " -> " << qVar.second << std::endl;

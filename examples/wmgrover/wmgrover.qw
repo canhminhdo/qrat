@@ -1,0 +1,71 @@
+prog WMGROVER is
+var q0, q1, q2, q3, q4, q5, q6 : qubit;
+init
+    q0 := |1>;
+    q1 := |0>;
+    q2 := |0>;
+    q3 := |0>;
+    q4 := |0>;
+    q5 := |0>;
+    q6 := |0>;
+begin
+    atomic {
+    q4 := H[q4];
+    q5 := H[q5];
+    q6 := H[q6];
+    q4, q5, q0 := MCX[q4, q5, q0];
+    q0, q6, q1 := MCX[q0, q6, q1];
+    q1, q3 := CX[q1, q3];
+    q0, q6, q1 := MCX[q0, q6, q1];
+    q4, q5, q0 := MCX[q4, q5, q0];
+    q3, q2 := CU3[q3, q2](0.190332413, 0, 0);
+    q4, q5, q0 := MCX[q4, q5, q0];
+    q0, q6, q1 := MCX[q0, q6, q1];
+    q1, q3 := CX[q1, q3];
+    q0, q6, q1 := MCX[q0, q6, q1];
+    q4, q5, q0 := MCX[q4, q5, q0];
+    };
+    while M[q2] = 0 do
+        atomic {
+        q3 := X[q3];
+        q3 := H[q3];
+        q4, q5, q0 := MCX[q4, q5, q0];
+        q0, q6, q1 := MCX[q0, q6, q1];
+        q1, q3 := CX[q1, q3];
+        q0, q6, q1 := MCX[q0, q6, q1];
+        q4, q5, q0 := MCX[q4, q5, q0];
+        q3 := H[q3];
+        q3 := X[q3];
+        q4 := H[q4];
+        q5 := H[q5];
+        q6 := H[q6];
+        q4 := X[q4];
+        q5 := X[q5];
+        q6 := X[q6];
+        q4, q5, q0 := MCX[q4, q5, q0];
+        q0, q6 := CZ[q0, q6];
+        q4, q5, q0 := MCX[q4, q5, q0];
+        q4 := X[q4];
+        q5 := X[q5];
+        q6 := X[q6];
+        q4 := H[q4];
+        q5 := H[q5];
+        q6 := H[q6];
+        q4, q5, q0 := MCX[q4, q5, q0];
+        q0, q6, q1 := MCX[q0, q6, q1];
+        q1, q3 := CX[q1, q3];
+        q0, q6, q1 := MCX[q0, q6, q1];
+        q4, q5, q0 := MCX[q4, q5, q0];
+        q3, q2 := CU3[q3, q2](0.190332413, 0, 0);
+        q4, q5, q0 := MCX[q4, q5, q0];
+        q0, q6, q1 := MCX[q0, q6, q1];
+        q1, q3 := CX[q1, q3];
+        q0, q6, q1 := MCX[q0, q6, q1];
+        q4, q5, q0 := MCX[q4, q5, q0];
+        };
+    od;
+end
+
+search in WMGROVER with =>! such that true .
+
+quit .
