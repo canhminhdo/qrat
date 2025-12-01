@@ -1,4 +1,4 @@
-prog REPLAY_SCHEME is
+prog RELAY_SCHEME is
 var q0, q1, q2, q3, q4 : qubit;
 init
     q0 := random;
@@ -23,10 +23,10 @@ begin
     if M[q2] = 1 then q4 := Z[q4]; else skip; fi;
 end
 
-pcheck in REPLAY_SCHEME with 'P=? [F "target"]' --backend=Storm .
+pcheck in RELAY_SCHEME with 'P=? [F "target"]' --backend=Storm .
 
-search in REPLAY_SCHEME with =>! such that P(q4, init[q0]) .
+search in RELAY_SCHEME with =>! such that P(q4, init[q0]) .
 
-psearch in REPLAY_SCHEME with =>! such that P(q4, init[q0]) .
+psearch in RELAY_SCHEME with =>! such that P(q4, init[q0]) .
 
 quit .

@@ -9,6 +9,11 @@ install(
     ${PROJECT_SOURCE_DIR}/examples/teleport/teleport.qw
     ${PROJECT_SOURCE_DIR}/examples/loop/loop.qw
     ${PROJECT_SOURCE_DIR}/examples/grover/grover.qw
+    ${PROJECT_SOURCE_DIR}/examples/biteleport/biteleport.qw
+    ${PROJECT_SOURCE_DIR}/examples/entangleswap/entangleswap.qw
+    ${PROJECT_SOURCE_DIR}/examples/networkcoding/networkcoding.qw
+    ${PROJECT_SOURCE_DIR}/examples/relay/relay.qw
+    ${PROJECT_SOURCE_DIR}/examples/secretsharing/secretsharing.qw
     DESTINATION .)
 
 # CPack Configuration
