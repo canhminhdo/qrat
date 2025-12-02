@@ -6,14 +6,17 @@ install(TARGETS ${PROJECT_NAME}
     DESTINATION .)
 install(
     FILES
-    ${PROJECT_SOURCE_DIR}/examples/teleport/teleport.qw
     ${PROJECT_SOURCE_DIR}/examples/loop/loop.qw
-    ${PROJECT_SOURCE_DIR}/examples/grover/grover.qw
-    ${PROJECT_SOURCE_DIR}/examples/biteleport/biteleport.qw
+    ${PROJECT_SOURCE_DIR}/examples/teleport/teleport.qw
     ${PROJECT_SOURCE_DIR}/examples/entangleswap/entangleswap.qw
-    ${PROJECT_SOURCE_DIR}/examples/networkcoding/networkcoding.qw
-    ${PROJECT_SOURCE_DIR}/examples/relay/relay.qw
     ${PROJECT_SOURCE_DIR}/examples/secretsharing/secretsharing.qw
+    ${PROJECT_SOURCE_DIR}/examples/relay/relay.qw
+    ${PROJECT_SOURCE_DIR}/examples/biteleport/biteleport.qw
+    ${PROJECT_SOURCE_DIR}/examples/networkcoding/networkcoding.qw
+    ${PROJECT_SOURCE_DIR}/examples/grover/grover-5.qw
+    ${PROJECT_SOURCE_DIR}/examples/grover/grover-10.qw
+    ${PROJECT_SOURCE_DIR}/examples/grover/grover-15.qw
+    ${PROJECT_SOURCE_DIR}/examples/grover/grover-20.qw
     DESTINATION .)
 
 # CPack Configuration

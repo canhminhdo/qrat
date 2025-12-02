@@ -87,4 +87,4 @@ qcheck teleport.qw
 ```
 
 ## Acknowledgements
-This research was partially supported by the JAIST Research Grant for Fundamental Research, by JSPS KAKENHI Grant Numbers JP23K28060, JP23K19959, JP24K20757, and JP24KK0185.
+This research was partially supported by JSPS KAKENHI Grant Numbers JP23K28060, JP23K19959, JP24K20757, and JP24KK0185.

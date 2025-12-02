@@ -1,0 +1,27 @@
+prog ENTANGLE_SWAP is
+var q0, q1, q2, q3 : qubit;
+init
+    q0 := |0>;
+    q1 := |0>;
+    q2 := |0>;
+    q3 := |0>;
+prop
+    target := P(q0, q3, |phi+>);
+begin
+    q0 := H[q0];
+    q0, q1 := CX[q0, q1];
+    q2 := H[q2];
+    q2, q3 := CX[q2, q3];
+    q1, q2 := CX[q1, q2];
+    q1 := H[q1];
+    if M[q2] = 1 then q3 := X[q3]; else skip; fi;
+    if M[q1] = 1 then q3 := Z[q3]; else skip; fi;
+end
+
+pcheck in ENTANGLE_SWAP with 'P=? [F "target"]' --backend=Storm .
+
+search in ENTANGLE_SWAP with =>! such that P(q0, q3, |phi+>) .
+
+psearch in ENTANGLE_SWAP with =>! such that P(q0, q3, |phi+>) .
+
+quit .
