@@ -7,6 +7,7 @@
 #include "core/global.hpp"
 #include "utility/Tty.hpp"
 #include "Configuration.hpp"
+#include<queue>
 
 StateTransitionGraph::StateTransitionGraph(SyntaxProg *currentProg, DDSimulation *ddSim, ExpNode *propExp,
                                            Search::Type type, int numSols, int maxDepth, bool probMode) {

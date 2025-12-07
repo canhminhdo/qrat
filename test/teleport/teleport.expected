@@ -42,9 +42,6 @@ No more solutions.
 states: 14
 ==========================================
 psearch in TELEPORT with =>! such that P(q2, init[q0]) .
-Building state transition graph ...
-Running Gauss-Seidel method for probabilistic state transition graph...
-Gauss-Seidel method converged after 6 iterations.
 
 Result: 1
 

@@ -23,9 +23,6 @@ No more solutions.
 states: 126
 ==========================================
 psearch in GROVER with =>! such that P(q0, |1>) and P(q1, |1>) and P(q2, |0>) and P(q3, |0>) and P(q4, |0>) .
-Building state transition graph ...
-Running Gauss-Seidel method for probabilistic state transition graph...
-Gauss-Seidel method converged after 8 iterations.
 
 Result: 0.999182
 
