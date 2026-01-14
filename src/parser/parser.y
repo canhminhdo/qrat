@@ -103,8 +103,8 @@ extern std::vector<char *> pendingFiles;
 %token KW_EQUAL
 /* for commands */
 %token KW_PCHECK
-%token <str> FORMULA_STR
-%token KW_SEARCH KW_PSEARCH KW_IN KW_WITH KW_SUCH KW_THAT
+%token <str> FORMULA_STR BASIS_STR
+%token KW_SEARCH KW_PSEARCH KW_IN KW_WITH KW_SUCH KW_THAT KW_BASIS KW_PROB KW_OF KW_STATE
 %token KW_ARROW_ONE KW_ARROW_STAR KW_ARROW_PLUS KW_ARROW_EXCLAMATION
 %token KW_TRUE KW_FALSE KW_AND KW_OR KW_NOT KW_PROJ
 %token KW_SHOW KW_PATH
@@ -530,6 +530,8 @@ command :   loadFile
         |   search
         |   psearch
         |   showPath
+        |   showState
+        |   showProbBasis
         |   setParam
         |   quit
         ;
@@ -790,12 +792,49 @@ showPath    :   KW_SHOW KW_PATH number expectedDot
                         interpreter.showPath(NUM_EXP_NODE($3)->getIntVal());
                         delete $3;
                     }
-            |   KW_SHOW error expectedDot
+            |   KW_SHOW KW_PATH error expectedDot
                      {
                          yyerrok;
                          yyclearin;
                      }
             ;
+
+showState   :   KW_SHOW KW_STATE number expectedDot
+                    {
+                        if (!NUM_EXP_NODE($3)->isInt() || NUM_EXP_NODE($3)->getIntVal() < 0) {
+                            yyerror("State ID must be a natural number for showing the state");
+                            YYERROR;
+                        }
+                        interpreter.showState(NUM_EXP_NODE($3)->getIntVal());
+                        delete $3;
+                    }
+            |   KW_SHOW KW_STATE error expectedDot
+                     {
+                         yyerrok;
+                         yyclearin;
+                     }
+            ;
+
+showProbBasis   :   KW_SHOW KW_PROB KW_OF KW_BASIS BASIS_STR KW_IN KW_STATE number expectedDot
+                        {
+                            if (!NUM_EXP_NODE($8)->isInt() || NUM_EXP_NODE($8)->getIntVal() < 0) {
+                                yyerror("State ID must be a natural number for showing the state");
+                                YYERROR;
+                            }
+                            if (interpreter.getCurrentProg()->getNqubits() != strlen($5)) {
+                                yyerror("The length of the basis string does not match the number of qubits");
+                                YYERROR;
+                            }
+                            interpreter.showBasisProb(NUM_EXP_NODE($8)->getIntVal(), $5);
+                            delete $5;
+                            delete $8;
+                        }
+                |   KW_SHOW KW_PROB KW_OF KW_BASIS error expectedDot
+                         {
+                             yyerrok;
+                             yyclearin;
+                         }
+                ;
 
 quit    :   KW_QUIT expectedOrNotDot
                 {

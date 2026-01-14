@@ -91,6 +91,10 @@ TwoTargetOpWithTwoParam         XXminusYY|XXplusYY
 "with"      { return KW_WITH; }
 "such"      { return KW_SUCH; }
 "that"      { return KW_THAT; }
+"prob"      { return KW_PROB; }
+"of"        { return KW_OF; }
+"state"     { return KW_STATE; }
+"basis"     { return KW_BASIS; }
 "=>1"       { return KW_ARROW_ONE; }
 "=>*"       { return KW_ARROW_STAR; }
 "=>+"       { return KW_ARROW_PLUS; }
@@ -168,6 +172,7 @@ e         { return KW_E; }
 [+-]?[0-9]+"."[0-9]*        { return REAL; }
 [+-]?("."[0-9]+)            { return REAL; }
 
+\'[01]+\'|\"[01]+\" { yytext[yyleng - 1] = '\0'; yylval.str = strdup(yytext + 1); return BASIS_STR; }
 \'[^\']*\'  { yylval.str = strdup(yytext); return FORMULA_STR; }
 
 [_a-zA-Z]([_a-zA-Z0-9])*    {

@@ -177,6 +177,34 @@ void SearchGraph::showPath(int stateNr, bool endState) const {
     }
 }
 
+void SearchGraph::showState(int stateNr) const {
+    if (stateNr >= seenStates.size()) {
+        std::cout << Tty(Tty::RED) << "Error: State ID is invalid" << Tty(Tty::RESET) << std::endl;
+        return;
+    }
+    auto s = seenStates.at(stateNr);
+    if (s == nullptr) {
+        return;
+    }
+    std::cout << "state " << s->stateNr << ", ";
+    std::cout << "quantum state:\n";
+    s->current.printVector<dd::vNode>();
+}
+
+void SearchGraph::showBasisProb(int stateNr, std::string basis) const {
+    if (stateNr >= seenStates.size()) {
+        std::cout << Tty(Tty::RED) << "Error: State ID is invalid" << Tty(Tty::RESET) << std::endl;
+        return;
+    }
+    auto s = seenStates.at(stateNr);
+    if (s == nullptr) {
+        return;
+    }
+    const auto c = s->current.getValueByPath(currentProg->getNqubits(), basis);
+    const auto prob = std::norm(c);
+    std::cout << Tty(Tty::YELLOW) << "Probability of basis state |" << basis << "> in state " << stateNr << " is "<< prob << Tty(Tty::RESET) << std::endl;
+}
+
 void SearchGraph::printState(State *s, bool recursive) const {
     if (s == nullptr) {
         return;

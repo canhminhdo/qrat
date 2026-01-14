@@ -119,9 +119,26 @@ void Interpreter::finalizeProg() {
         std::cout << Tty(Tty::GREEN) << "Advisory: " << Tty(Tty::RESET) << "redefining program " << Tty(Tty::MAGENTA) << Token::name(currentProg->getName()) << Tty(Tty::RESET) << "." << std::endl;
     }
 }
+
 void Interpreter::showPath(int stateId) {
     if (graphSearch != nullptr) {
         graphSearch->showPath(stateId);
+    } else {
+        std::cout << Tty(Tty::RED) << "Warning: " << Tty(Tty::RESET) << "no state graph." << std::endl;
+    }
+}
+
+void Interpreter::showState(int stateId) {
+    if (graphSearch != nullptr) {
+        graphSearch->showState(stateId);
+    } else {
+        std::cout << Tty(Tty::RED) << "Warning: " << Tty(Tty::RESET) << "no state graph." << std::endl;
+    }
+}
+
+void Interpreter::showBasisProb(int stateId, std::string basis) {
+    if (graphSearch != nullptr) {
+        graphSearch->showBasisProb(stateId, basis);
     } else {
         std::cout << Tty(Tty::RED) << "Warning: " << Tty(Tty::RESET) << "no state graph." << std::endl;
     }

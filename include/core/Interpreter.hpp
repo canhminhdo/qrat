@@ -45,6 +45,10 @@ public:
 
     void showPath(int stateId);
 
+    void showState(int stateId);
+
+    void showBasisProb(int stateId, std::string basis);
+
 private:
     SyntaxProg *currentProg;
     DDSimulation *ddSim;

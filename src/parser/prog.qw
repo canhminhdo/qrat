@@ -23,4 +23,10 @@ end
 
 psearch in TELEPORT with =>! such that P(q2, init[q0]) .
 
+show state 0 .
+
+show prob of basis "000" in state 0 .
+
+show prob of basis '100' in state 0 .
+
 quit .

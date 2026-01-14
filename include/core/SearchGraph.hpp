@@ -103,6 +103,10 @@ public:
 
     void showPath(int stateNr, bool endState = true) const;
 
+    void showState(int stateNr) const;
+
+    void showBasisProb(int stateNr, std::string prob) const;
+
     void printState(State *s, bool recursive = true) const;
 
     std::pair<State *, bool> makeState(State *s);
