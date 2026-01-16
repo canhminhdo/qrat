@@ -15,9 +15,7 @@ begin
 	X[q2];
 	X[q3];
 	X[q4];
-	H[q4];
-	MCX[q0, q1, q2, q3, q4];
-	H[q4];
+	MCZ[q0, q1, q2, q3, q4];
 	X[q2];
 	X[q3];
 	X[q4];
@@ -32,9 +30,7 @@ begin
 	X[q2];
 	X[q3];
 	X[q4];
-	H[q4];
-	MCX[q0, q1, q2, q3, q4];
-	H[q4];
+	MCZ[q0, q1, q2, q3, q4];
 	X[q0];
 	X[q1];
 	X[q2];
@@ -49,9 +45,7 @@ begin
 	X[q2];
 	X[q3];
 	X[q4];
-	H[q4];
-	MCX[q0, q1, q2, q3, q4];
-	H[q4];
+	MCZ[q0, q1, q2, q3, q4];
 	X[q2];
 	X[q3];
 	X[q4];
@@ -66,9 +60,7 @@ begin
 	X[q2];
 	X[q3];
 	X[q4];
-	H[q4];
-	MCX[q0, q1, q2, q3, q4];
-	H[q4];
+	MCZ[q0, q1, q2, q3, q4];
 	X[q0];
 	X[q1];
 	X[q2];
@@ -83,9 +75,7 @@ begin
 	X[q2];
 	X[q3];
 	X[q4];
-	H[q4];
-	MCX[q0, q1, q2, q3, q4];
-	H[q4];
+	MCZ[q0, q1, q2, q3, q4];
 	X[q2];
 	X[q3];
 	X[q4];
@@ -100,9 +90,7 @@ begin
 	X[q2];
 	X[q3];
 	X[q4];
-	H[q4];
-	MCX[q0, q1, q2, q3, q4];
-	H[q4];
+	MCZ[q0, q1, q2, q3, q4];
 	X[q0];
 	X[q1];
 	X[q2];
@@ -117,9 +105,7 @@ begin
 	X[q2];
 	X[q3];
 	X[q4];
-	H[q4];
-	MCX[q0, q1, q2, q3, q4];
-	H[q4];
+	MCZ[q0, q1, q2, q3, q4];
 	X[q2];
 	X[q3];
 	X[q4];
@@ -134,9 +120,7 @@ begin
 	X[q2];
 	X[q3];
 	X[q4];
-	H[q4];
-	MCX[q0, q1, q2, q3, q4];
-	H[q4];
+	MCZ[q0, q1, q2, q3, q4];
 	X[q0];
 	X[q1];
 	X[q2];
@@ -156,5 +140,5 @@ begin
 	if M[q4] = 1 then skip; else skip; fi;
 end
 
-pcheck in GROVER with 'P=? [F "target"]' --backend=Storm .
-search in GROVER with =>! such that P(q0, |1>) and P(q1, |1>) and P(q2, |0>) and P(q3, |0>) and P(q4, |0>) .
+// pcheck in GROVER with 'P=? [F "target"]' --backend=Storm .
+psearch in GROVER with =>! such that P(q0, |1>) and P(q1, |1>) and P(q2, |0>) and P(q3, |0>) and P(q4, |0>) .
