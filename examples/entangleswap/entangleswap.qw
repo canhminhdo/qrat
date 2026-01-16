@@ -8,14 +8,14 @@ init
 prop
     target := P(q0, q3, |phi+>);
 begin
-    q0 := H[q0];
-    q0, q1 := CX[q0, q1];
-    q2 := H[q2];
-    q2, q3 := CX[q2, q3];
-    q1, q2 := CX[q1, q2];
-    q1 := H[q1];
-    if M[q2] = 1 then q3 := X[q3]; else skip; fi;
-    if M[q1] = 1 then q3 := Z[q3]; else skip; fi;
+    H[q0];
+    CX[q0, q1];
+    H[q2];
+    CX[q2, q3];
+    CX[q1, q2];
+    H[q1];
+    if M[q2] = 1 then X[q3]; else skip; fi;
+    if M[q1] = 1 then Z[q3]; else skip; fi;
 end
 
 pcheck in ENTANGLE_SWAP with 'P=? [F "target"]' --backend=Storm .

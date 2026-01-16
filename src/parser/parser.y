@@ -403,20 +403,20 @@ skipStm :   KW_SKIP expectedSemi
         ;
 
 /* unitary transformation */
-unitaryStm  :   varNameList KW_ASSIGN operation '[' varNameList ']' expectedSemi
+unitaryStm  :   operation '[' varNameList ']' expectedSemi
                     {
                         std::string errMsg = "";
-                        $$ = DDOperation::makeOperation(currentSyntaxProg, $1, $3, $5, nullptr, errMsg);
+                        $$ = DDOperation::makeOperation(currentSyntaxProg, $1, $3, nullptr, errMsg);
                         if (!errMsg.empty()) {
                             yyerror(errMsg.c_str());
                             YYERROR;
                         }
                     }
-            |   varNameList KW_ASSIGN operationWithParams '[' varNameList ']' '(' params ')' expectedSemi
+            |   operationWithParams '[' varNameList ']' '(' params ')' expectedSemi
                     {
                         std::string errMsg = "";
-                        $$ = DDOperation::makeOperation(currentSyntaxProg, $1, $3, $5, $8, errMsg);
-                        delete $8;
+                        $$ = DDOperation::makeOperation(currentSyntaxProg, $1, $3, $6, errMsg);
+                        delete $6;
                         if (!errMsg.empty()) {
                             yyerror(errMsg.c_str());
                             YYERROR;

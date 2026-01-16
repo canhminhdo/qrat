@@ -40,13 +40,11 @@ struct GateInfo {
 
 class DDOperation {
 public:
-    inline static UnitaryStmNode *makeOperation(SyntaxProg *prog, TokenList *vars1, GateInfo gateInfo, TokenList *vars2,
-                                                std::vector<qc::fp> *params, std::string& errorMsg) {
+    inline static UnitaryStmNode *makeOperation(SyntaxProg *prog, GateInfo gateInfo, TokenList *vars, std::vector<qc::fp> *params, std::string& errorMsg) {
         std::string opName(gateInfo.token.name());
         std::transform(opName.begin(), opName.end(), opName.begin(), [](unsigned char c) { return std::tolower(c); });
         qc::OpType type = qc::opTypeFromString(opName);
-        if (!validateArgs(vars1, vars2, errorMsg)) return nullptr;
-        auto varSymbols = validateSymbols(prog, vars1, errorMsg);
+        auto varSymbols = validateSymbols(prog, vars, errorMsg);
         if (!errorMsg.empty()) return nullptr;
         UnitaryStmNode *unitaryStmNode;
         auto parameters = params == nullptr ? std::vector<qc::fp>{} : *params;
@@ -61,7 +59,7 @@ public:
                 if (!validateThreeParams(params, errorMsg)) return nullptr;
             case SINGLE_TARGET_OP: {
             SINGLE_TARGET_OP:
-                if (!validateOneArgs(vars1, errorMsg)) return nullptr;
+                if (!validateOneArgs(vars, errorMsg)) return nullptr;
                 unitaryStmNode = new UnitaryStmNode(gateInfo.token.code(), type, {}, varSymbols, parameters);
                 break;
             }
@@ -75,7 +73,7 @@ public:
                 if (!validateThreeParams(params, errorMsg)) return nullptr;
             case SINGLE_TARGET_COP: {
             SINGLE_TARGET_COP:
-                if (!validateTwoArgs(vars1, errorMsg)) return nullptr;
+                if (!validateTwoArgs(vars, errorMsg)) return nullptr;
                 unitaryStmNode = new UnitaryStmNode(gateInfo.token.code(), type, {varSymbols.front()},
                                                     {varSymbols.back()}, parameters);
                 break;
@@ -91,7 +89,7 @@ public:
                 goto SINGLE_TARGET_MCOP;
             case SINGLE_TARGET_MCOP: {
             SINGLE_TARGET_MCOP:
-                if (!validateTwoOrMoreArgs(vars1, errorMsg)) return nullptr;
+                if (!validateTwoOrMoreArgs(vars, errorMsg)) return nullptr;
                 std::vector<Symbol *> controls(varSymbols.begin(), varSymbols.end() - 1);
                 unitaryStmNode = new UnitaryStmNode(gateInfo.token.code(), type, controls, {varSymbols.back()},
                                                     parameters);
@@ -105,7 +103,7 @@ public:
                 goto TWO_TARGET_OP;
             case TWO_TARGET_OP: {
             TWO_TARGET_OP:
-                if (!validateTwoArgs(vars1, errorMsg)) return nullptr;
+                if (!validateTwoArgs(vars, errorMsg)) return nullptr;
                 unitaryStmNode = new UnitaryStmNode(gateInfo.token.code(), type, {},
                                                     varSymbols, parameters);
                 break;
@@ -118,7 +116,7 @@ public:
                 goto TWO_TARGET_COP;
             case TWO_TARGET_COP: {
             TWO_TARGET_COP:
-                if (!validateThreeArgs(vars1, errorMsg)) return nullptr;
+                if (!validateThreeArgs(vars, errorMsg)) return nullptr;
                 std::vector<Symbol *> targets(varSymbols.end() - 2, varSymbols.end());
                 unitaryStmNode = new UnitaryStmNode(gateInfo.token.code(), type, {varSymbols.front()}, targets,
                                                     parameters);
@@ -132,7 +130,7 @@ public:
                 goto TWO_TARGET_MCOP;
             case TWO_TARGET_MCOP: {
             TWO_TARGET_MCOP:
-                if (!validateThreeOrMoreArgs(vars1, errorMsg)) return nullptr;
+                if (!validateThreeOrMoreArgs(vars, errorMsg)) return nullptr;
                 std::vector<Symbol *> controls(varSymbols.begin(), varSymbols.end() - 2);
                 std::vector<Symbol *> targets(varSymbols.end() - 2, varSymbols.end());
                 unitaryStmNode = new UnitaryStmNode(gateInfo.token.code(), type, controls, targets, parameters);

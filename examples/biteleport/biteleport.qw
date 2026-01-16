@@ -10,18 +10,18 @@ init
 prop
     target := P(q3, init[q0]) and P(q4, init[q1]);
 begin
-    q2 := H[q2];
-    q2, q3 := CX[q2, q3];
-    q4 := H[q4];
-    q4, q5 := CX[q4, q5];
-    q0, q2 := CX[q0, q2];
-    q1, q5 := CX[q1, q5];
-    q0 := H[q0];
-    q1 := H[q1];
-    if M[q2] = 1 then q3 := X[q3]; else skip; fi;
-    if M[q0] = 1 then q3 := Z[q3]; else skip; fi;
-    if M[q5] = 1 then q4 := X[q4]; else skip; fi;
-    if M[q1] = 1 then q4 := Z[q4]; else skip; fi;
+    H[q2];
+    CX[q2, q3];
+    H[q4];
+    CX[q4, q5];
+    CX[q0, q2];
+    CX[q1, q5];
+    H[q0];
+    H[q1];
+    if M[q2] = 1 then X[q3]; else skip; fi;
+    if M[q0] = 1 then Z[q3]; else skip; fi;
+    if M[q5] = 1 then X[q4]; else skip; fi;
+    if M[q1] = 1 then Z[q4]; else skip; fi;
 end
 
 pcheck in BIDIRECTIONAL_TELEPORT with 'P=? [F "target"]' --backend=Storm .

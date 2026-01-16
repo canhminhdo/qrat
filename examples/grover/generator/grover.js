@@ -17,7 +17,7 @@ function grover(nqubits, targetState, nIters, searchCmd = true, pcheckCmd = fals
     let searchProg = search(nqubits, targetState, searchCmd);
     let pcheckProg = pcheck(nqubits, pcheckCmd);
     let propProg = atomicProps(nqubits, targetState);
-    let prog = "// #qubit: " + nqubits + ", marked state: " + targetState.split('').reverse().join('') + ", #iterations: " + nIters + "\n";
+    let prog = "// #qubit: " + nqubits + ", marked state: " + targetState + " (rev: " + targetState.split('').reverse().join('') + "), #iterations: " + nIters + "\n";
     prog += headProg;
     prog += propProg;
     prog += "begin\n";

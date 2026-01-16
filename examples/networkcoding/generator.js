@@ -43,16 +43,16 @@ async function prop() {
 }
 async function con(n1, n2, n3) {
     let prog = "";
-    prog += "\tq" + n1 + ", q" + n2 + " := CX[q" + n1 + ", q" + n2 + "];\n";
-    prog += "\tif M[q" + n2 + "] = 1 then q" + n3 + " := X[" + "q" + n3 + "]; else skip; fi;\n";
+    prog += "\tCX[q" + n1 + ", q" + n2 + "];\n";
+    prog += "\tif M[q" + n2 + "] = 1 then X[" + "q" + n3 + "]; else skip; fi;\n";
     await appendContent(prog);
 }
 
 async function add(n1, n2, n3, n4) {
     let prog = "";
-    prog += "\tq" + n1 + ", q" + n3 + " := CX[q" + n1 + ", q" + n3 + "];\n";
-    prog += "\tq" + n2 + ", q" + n3 + " := CX[q" + n2 + ", q" + n3 + "];\n";
-    prog += "\tif M[q" + n3 + "] = 1 then q" + n4 + " := X[" + "q" + n4 + "]; else skip; fi;\n";
+    prog += "\tCX[q" + n1 + ", q" + n3 + "];\n";
+    prog += "\tCX[q" + n2 + ", q" + n3 + "];\n";
+    prog += "\tif M[q" + n3 + "] = 1 then X[" + "q" + n4 + "]; else skip; fi;\n";
     await appendContent(prog);
 }
 
@@ -63,34 +63,34 @@ async function fanout(n1, n2, n3, n4, n5) {
 
 async function rem(n1, n2) {
     let prog = "";
-    prog += "\tq" + n1 + " := H[q" + n1 + "];\n";
-    prog += "\tif M[q" + n1 + "] = 1 then q" + n2 + " := Z[q" + n2 + "]; else skip; fi;\n";
+    prog += "\tH[q" + n1 + "];\n";
+    prog += "\tif M[q" + n1 + "] = 1 then Z[q" + n2 + "]; else skip; fi;\n";
     await appendContent(prog);
 }
 
 async function remadd(n3, n1, n2) {
     let prog = "";
-    prog += "\tq" + n3 + " := H[q" + n3 + "];\n";
-    prog += "\tif M[q" + n3 + "] = 1 then q" + n1 + " := Z[q" + n1 + "]; q" + n2 + " := Z[q" + n2 + "]; else skip; fi;\n";
+    prog += "\tH[q" + n3 + "];\n";
+    prog += "\tif M[q" + n3 + "] = 1 then Z[q" + n1 + "]; Z[q" + n2 + "]; else skip; fi;\n";
     await appendContent(prog);
 }
 
 async function begin() {
     await appendContent("begin\n");
-    await appendContent("\tq0 := H[q0];\n");
-    await appendContent("\tq0, q1 := CX[q0, q1];\n");
-    await appendContent("\tq2 := H[q2];\n");
-    await appendContent("\tq2, q3 := CX[q2, q3];\n");
-    await appendContent("\tq4 := H[q4];\n");
-    await appendContent("\tq4, q5 := CX[q4, q5];\n");
-    await appendContent("\tq6 := H[q6];\n");
-    await appendContent("\tq6, q7 := CX[q6, q7];\n");
-    await appendContent("\tq8 := H[q8];\n");
-    await appendContent("\tq8, q9 := CX[q8, q9];\n");
-    await appendContent("\tq10 := H[q10];\n");
-    await appendContent("\tq10, q11 := CX[q10, q11];\n");
-    await appendContent("\tq12 := H[q12];\n");
-    await appendContent("\tq12, q13 := CX[q12, q13];\n");
+    await appendContent("\tH[q0];\n");
+    await appendContent("\tCX[q0, q1];\n");
+    await appendContent("\tH[q2];\n");
+    await appendContent("\tCX[q2, q3];\n");
+    await appendContent("\tH[q4];\n");
+    await appendContent("\tCX[q4, q5];\n");
+    await appendContent("\tH[q6];\n");
+    await appendContent("\tCX[q6, q7];\n");
+    await appendContent("\tH[q8];\n");
+    await appendContent("\tCX[q8, q9];\n");
+    await appendContent("\tH[q10];\n");
+    await appendContent("\tCX[q10, q11];\n");
+    await appendContent("\tH[q12];\n");
+    await appendContent("\tCX[q12, q13];\n");
 }
 
 async function end() {
@@ -109,8 +109,8 @@ async function generateNetworkCoding() {
     await con(4, 6, 7);
     await add(3, 7, 8, 9) ;
     await fanout(9, 10, 11, 12, 13);
-    await appendContent("\tq13, q5 := CX[q13, q5];\n");
-    await appendContent("\tq11, q1 := CX[q11, q1];\n");
+    await appendContent("\tCX[q13, q5];\n");
+    await appendContent("\tCX[q11, q1];\n");
     await rem(11, 9);
     await rem(13, 9);
     await remadd(9, 3, 7);
