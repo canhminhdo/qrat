@@ -92,6 +92,7 @@ TwoTargetOpWithTwoParam         XXminusYY|XXplusYY
 "such"      { return KW_SUCH; }
 "that"      { return KW_THAT; }
 "prob"      { return KW_PROB; }
+"amp"       { return KW_AMP; }
 "of"        { return KW_OF; }
 "state"     { return KW_STATE; }
 "basis"     { return KW_BASIS; }

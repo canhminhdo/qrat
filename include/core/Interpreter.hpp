@@ -47,7 +47,7 @@ public:
 
     void showState(int stateId);
 
-    void showBasisProb(int stateId, std::string basis);
+    void showBasisInfo(int stateId, std::string basis, bool isProb = true);
 
 private:
     SyntaxProg *currentProg;

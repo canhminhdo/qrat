@@ -2172,8 +2172,6 @@ end
 
 search in GROVER with =>! such that false .
 
-// show state 2 .
-
 show prob of basis "0101010101000000001" in state 1 .
 
 quit .

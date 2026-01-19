@@ -191,7 +191,7 @@ void SearchGraph::showState(int stateNr) const {
     s->current.printVector<dd::vNode>();
 }
 
-void SearchGraph::showBasisProb(int stateNr, std::string basis) const {
+void SearchGraph::showBasisInfo(int stateNr, std::string basis, bool isProb) const {
     if (stateNr >= seenStates.size()) {
         std::cout << Tty(Tty::RED) << "Error: State ID is invalid" << Tty(Tty::RESET) << std::endl;
         return;
@@ -201,8 +201,12 @@ void SearchGraph::showBasisProb(int stateNr, std::string basis) const {
         return;
     }
     const auto c = s->current.getValueByPath(currentProg->getNqubits(), basis);
-    const auto prob = std::norm(c);
-    std::cout << Tty(Tty::YELLOW) << "Probability of basis state |" << basis << "> in state " << stateNr << " is "<< prob << Tty(Tty::RESET) << std::endl;
+    if (isProb) {
+        const auto prob = std::norm(c);
+        std::cout << Tty(Tty::YELLOW) << "Probability of basis state |" << basis << "> in state " << stateNr << " is "<< prob << Tty(Tty::RESET) << std::endl;
+    } else {
+        std::cout << Tty(Tty::YELLOW) << "Amplitude of basis state |" << basis << "> in state " << stateNr << " is "<< c << Tty(Tty::RESET) << std::endl;
+    }
 }
 
 void SearchGraph::printState(State *s, bool recursive) const {

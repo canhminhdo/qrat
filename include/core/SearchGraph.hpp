@@ -105,7 +105,7 @@ public:
 
     void showState(int stateNr) const;
 
-    void showBasisProb(int stateNr, std::string prob) const;
+    void showBasisInfo(int stateNr, std::string prob, bool isProb = true) const;
 
     void printState(State *s, bool recursive = true) const;
 

@@ -136,9 +136,9 @@ void Interpreter::showState(int stateId) {
     }
 }
 
-void Interpreter::showBasisProb(int stateId, std::string basis) {
+void Interpreter::showBasisInfo(int stateId, std::string basis, bool isProb) {
     if (graphSearch != nullptr) {
-        graphSearch->showBasisProb(stateId, basis);
+        graphSearch->showBasisInfo(stateId, basis, isProb);
     } else {
         std::cout << Tty(Tty::RED) << "Warning: " << Tty(Tty::RESET) << "no state graph." << std::endl;
     }
