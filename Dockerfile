@@ -41,7 +41,7 @@ RUN cd /app/qrat \
 RUN cd /app/qrat \
     && mv install /qrat-2.0 \
     && mv package/qrat-2.0-Linux.zip /qrat-2.0 \
-    && mv artifact/*.qw /app
+    && mv artifact/* /app
 
 RUN rm -rf /app/qrat
 

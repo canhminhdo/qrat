@@ -17,7 +17,13 @@ install(
     ${PROJECT_SOURCE_DIR}/examples/grover/grover-10.qw
     ${PROJECT_SOURCE_DIR}/examples/grover/grover-15.qw
     ${PROJECT_SOURCE_DIR}/examples/grover/grover-20.qw
+    ${PROJECT_SOURCE_DIR}/examples/grover/grover-25.qw
     DESTINATION .)
+
+install(
+    DIRECTORY ${PROJECT_SOURCE_DIR}/examples/grover/autoq
+    DESTINATION .
+)
 
 # CPack Configuration
 include(CPack)
