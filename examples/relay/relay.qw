@@ -6,8 +6,6 @@ init
     q2 := |0>;
     q3 := |0>;
     q4 := |0>;
-prop
-    target := P(q4, init[q0]);
 begin
     H[q1];
     CX[q1, q2];
@@ -22,10 +20,6 @@ begin
     if M[q3] = 1 then X[q4]; else skip; fi;
     if M[q2] = 1 then Z[q4]; else skip; fi;
 end
-
-pcheck in RELAY_SCHEME with 'P=? [F "target"]' --backend=Storm .
-
-search in RELAY_SCHEME with =>! such that P(q4, init[q0]) .
 
 psearch in RELAY_SCHEME with =>! such that P(q4, init[q0]) .
 

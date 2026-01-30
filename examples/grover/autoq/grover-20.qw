@@ -141534,7 +141534,7 @@ H[q38];
 };
 end
 
-search in GROVER with =>! such that false .
+psearch in GROVER with =>! such that false .
 
 show prob of basis "010101010101010101010000000000000000001" in state 1 .
 

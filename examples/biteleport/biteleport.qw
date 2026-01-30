@@ -7,8 +7,6 @@ init
     q3 := |0>;
     q4 := |0>;
     q5 := |0>;
-prop
-    target := P(q3, init[q0]) and P(q4, init[q1]);
 begin
     H[q2];
     CX[q2, q3];
@@ -23,10 +21,6 @@ begin
     if M[q5] = 1 then X[q4]; else skip; fi;
     if M[q1] = 1 then Z[q4]; else skip; fi;
 end
-
-pcheck in BIDIRECTIONAL_TELEPORT with 'P=? [F "target"]' --backend=Storm .
-
-search in BIDIRECTIONAL_TELEPORT with =>! such that P(q3, init[q0]) and P(q4, init[q1]) .
 
 psearch in BIDIRECTIONAL_TELEPORT with =>! such that P(q3, init[q0]) and P(q4, init[q1]) .
 

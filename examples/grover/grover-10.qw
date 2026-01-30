@@ -1,8 +1,6 @@
-// #qubit: 10, marked state: 0101101001 (rev: 1001011010), #iterations: 25
+// #qubit: 10, marked state: 0101010101 (rev: 1010101010), #iterations: 25
 prog GROVER is
 var q0, q1, q2, q3, q4, q5, q6, q7, q8, q9 : qubit;
-prop
-	target := P(q0, |0>) and P(q1, |1>) and P(q2, |0>) and P(q3, |1>) and P(q4, |1>) and P(q5, |0>) and P(q6, |1>) and P(q7, |0>) and P(q8, |0>) and P(q9, |1>);
 begin
 	atomic {
 	// initialize superposition qubits
@@ -19,14 +17,14 @@ begin
 	// oracle
 	X[q0];
 	X[q2];
-	X[q5];
-	X[q7];
+	X[q4];
+	X[q6];
 	X[q8];
 	MCZ[q0, q1, q2, q3, q4, q5, q6, q7, q8, q9];
 	X[q0];
 	X[q2];
-	X[q5];
-	X[q7];
+	X[q4];
+	X[q6];
 	X[q8];
 	// diffusion
 	H[q0];
@@ -73,14 +71,14 @@ begin
 	// oracle
 	X[q0];
 	X[q2];
-	X[q5];
-	X[q7];
+	X[q4];
+	X[q6];
 	X[q8];
 	MCZ[q0, q1, q2, q3, q4, q5, q6, q7, q8, q9];
 	X[q0];
 	X[q2];
-	X[q5];
-	X[q7];
+	X[q4];
+	X[q6];
 	X[q8];
 	// diffusion
 	H[q0];
@@ -127,14 +125,14 @@ begin
 	// oracle
 	X[q0];
 	X[q2];
-	X[q5];
-	X[q7];
+	X[q4];
+	X[q6];
 	X[q8];
 	MCZ[q0, q1, q2, q3, q4, q5, q6, q7, q8, q9];
 	X[q0];
 	X[q2];
-	X[q5];
-	X[q7];
+	X[q4];
+	X[q6];
 	X[q8];
 	// diffusion
 	H[q0];
@@ -181,14 +179,14 @@ begin
 	// oracle
 	X[q0];
 	X[q2];
-	X[q5];
-	X[q7];
+	X[q4];
+	X[q6];
 	X[q8];
 	MCZ[q0, q1, q2, q3, q4, q5, q6, q7, q8, q9];
 	X[q0];
 	X[q2];
-	X[q5];
-	X[q7];
+	X[q4];
+	X[q6];
 	X[q8];
 	// diffusion
 	H[q0];
@@ -235,14 +233,14 @@ begin
 	// oracle
 	X[q0];
 	X[q2];
-	X[q5];
-	X[q7];
+	X[q4];
+	X[q6];
 	X[q8];
 	MCZ[q0, q1, q2, q3, q4, q5, q6, q7, q8, q9];
 	X[q0];
 	X[q2];
-	X[q5];
-	X[q7];
+	X[q4];
+	X[q6];
 	X[q8];
 	// diffusion
 	H[q0];
@@ -289,14 +287,14 @@ begin
 	// oracle
 	X[q0];
 	X[q2];
-	X[q5];
-	X[q7];
+	X[q4];
+	X[q6];
 	X[q8];
 	MCZ[q0, q1, q2, q3, q4, q5, q6, q7, q8, q9];
 	X[q0];
 	X[q2];
-	X[q5];
-	X[q7];
+	X[q4];
+	X[q6];
 	X[q8];
 	// diffusion
 	H[q0];
@@ -343,14 +341,14 @@ begin
 	// oracle
 	X[q0];
 	X[q2];
-	X[q5];
-	X[q7];
+	X[q4];
+	X[q6];
 	X[q8];
 	MCZ[q0, q1, q2, q3, q4, q5, q6, q7, q8, q9];
 	X[q0];
 	X[q2];
-	X[q5];
-	X[q7];
+	X[q4];
+	X[q6];
 	X[q8];
 	// diffusion
 	H[q0];
@@ -397,14 +395,14 @@ begin
 	// oracle
 	X[q0];
 	X[q2];
-	X[q5];
-	X[q7];
+	X[q4];
+	X[q6];
 	X[q8];
 	MCZ[q0, q1, q2, q3, q4, q5, q6, q7, q8, q9];
 	X[q0];
 	X[q2];
-	X[q5];
-	X[q7];
+	X[q4];
+	X[q6];
 	X[q8];
 	// diffusion
 	H[q0];
@@ -451,14 +449,14 @@ begin
 	// oracle
 	X[q0];
 	X[q2];
-	X[q5];
-	X[q7];
+	X[q4];
+	X[q6];
 	X[q8];
 	MCZ[q0, q1, q2, q3, q4, q5, q6, q7, q8, q9];
 	X[q0];
 	X[q2];
-	X[q5];
-	X[q7];
+	X[q4];
+	X[q6];
 	X[q8];
 	// diffusion
 	H[q0];
@@ -505,14 +503,14 @@ begin
 	// oracle
 	X[q0];
 	X[q2];
-	X[q5];
-	X[q7];
+	X[q4];
+	X[q6];
 	X[q8];
 	MCZ[q0, q1, q2, q3, q4, q5, q6, q7, q8, q9];
 	X[q0];
 	X[q2];
-	X[q5];
-	X[q7];
+	X[q4];
+	X[q6];
 	X[q8];
 	// diffusion
 	H[q0];
@@ -559,14 +557,14 @@ begin
 	// oracle
 	X[q0];
 	X[q2];
-	X[q5];
-	X[q7];
+	X[q4];
+	X[q6];
 	X[q8];
 	MCZ[q0, q1, q2, q3, q4, q5, q6, q7, q8, q9];
 	X[q0];
 	X[q2];
-	X[q5];
-	X[q7];
+	X[q4];
+	X[q6];
 	X[q8];
 	// diffusion
 	H[q0];
@@ -613,14 +611,14 @@ begin
 	// oracle
 	X[q0];
 	X[q2];
-	X[q5];
-	X[q7];
+	X[q4];
+	X[q6];
 	X[q8];
 	MCZ[q0, q1, q2, q3, q4, q5, q6, q7, q8, q9];
 	X[q0];
 	X[q2];
-	X[q5];
-	X[q7];
+	X[q4];
+	X[q6];
 	X[q8];
 	// diffusion
 	H[q0];
@@ -667,14 +665,14 @@ begin
 	// oracle
 	X[q0];
 	X[q2];
-	X[q5];
-	X[q7];
+	X[q4];
+	X[q6];
 	X[q8];
 	MCZ[q0, q1, q2, q3, q4, q5, q6, q7, q8, q9];
 	X[q0];
 	X[q2];
-	X[q5];
-	X[q7];
+	X[q4];
+	X[q6];
 	X[q8];
 	// diffusion
 	H[q0];
@@ -721,14 +719,14 @@ begin
 	// oracle
 	X[q0];
 	X[q2];
-	X[q5];
-	X[q7];
+	X[q4];
+	X[q6];
 	X[q8];
 	MCZ[q0, q1, q2, q3, q4, q5, q6, q7, q8, q9];
 	X[q0];
 	X[q2];
-	X[q5];
-	X[q7];
+	X[q4];
+	X[q6];
 	X[q8];
 	// diffusion
 	H[q0];
@@ -775,14 +773,14 @@ begin
 	// oracle
 	X[q0];
 	X[q2];
-	X[q5];
-	X[q7];
+	X[q4];
+	X[q6];
 	X[q8];
 	MCZ[q0, q1, q2, q3, q4, q5, q6, q7, q8, q9];
 	X[q0];
 	X[q2];
-	X[q5];
-	X[q7];
+	X[q4];
+	X[q6];
 	X[q8];
 	// diffusion
 	H[q0];
@@ -829,14 +827,14 @@ begin
 	// oracle
 	X[q0];
 	X[q2];
-	X[q5];
-	X[q7];
+	X[q4];
+	X[q6];
 	X[q8];
 	MCZ[q0, q1, q2, q3, q4, q5, q6, q7, q8, q9];
 	X[q0];
 	X[q2];
-	X[q5];
-	X[q7];
+	X[q4];
+	X[q6];
 	X[q8];
 	// diffusion
 	H[q0];
@@ -883,14 +881,14 @@ begin
 	// oracle
 	X[q0];
 	X[q2];
-	X[q5];
-	X[q7];
+	X[q4];
+	X[q6];
 	X[q8];
 	MCZ[q0, q1, q2, q3, q4, q5, q6, q7, q8, q9];
 	X[q0];
 	X[q2];
-	X[q5];
-	X[q7];
+	X[q4];
+	X[q6];
 	X[q8];
 	// diffusion
 	H[q0];
@@ -937,14 +935,14 @@ begin
 	// oracle
 	X[q0];
 	X[q2];
-	X[q5];
-	X[q7];
+	X[q4];
+	X[q6];
 	X[q8];
 	MCZ[q0, q1, q2, q3, q4, q5, q6, q7, q8, q9];
 	X[q0];
 	X[q2];
-	X[q5];
-	X[q7];
+	X[q4];
+	X[q6];
 	X[q8];
 	// diffusion
 	H[q0];
@@ -991,14 +989,14 @@ begin
 	// oracle
 	X[q0];
 	X[q2];
-	X[q5];
-	X[q7];
+	X[q4];
+	X[q6];
 	X[q8];
 	MCZ[q0, q1, q2, q3, q4, q5, q6, q7, q8, q9];
 	X[q0];
 	X[q2];
-	X[q5];
-	X[q7];
+	X[q4];
+	X[q6];
 	X[q8];
 	// diffusion
 	H[q0];
@@ -1045,14 +1043,14 @@ begin
 	// oracle
 	X[q0];
 	X[q2];
-	X[q5];
-	X[q7];
+	X[q4];
+	X[q6];
 	X[q8];
 	MCZ[q0, q1, q2, q3, q4, q5, q6, q7, q8, q9];
 	X[q0];
 	X[q2];
-	X[q5];
-	X[q7];
+	X[q4];
+	X[q6];
 	X[q8];
 	// diffusion
 	H[q0];
@@ -1099,14 +1097,14 @@ begin
 	// oracle
 	X[q0];
 	X[q2];
-	X[q5];
-	X[q7];
+	X[q4];
+	X[q6];
 	X[q8];
 	MCZ[q0, q1, q2, q3, q4, q5, q6, q7, q8, q9];
 	X[q0];
 	X[q2];
-	X[q5];
-	X[q7];
+	X[q4];
+	X[q6];
 	X[q8];
 	// diffusion
 	H[q0];
@@ -1153,14 +1151,14 @@ begin
 	// oracle
 	X[q0];
 	X[q2];
-	X[q5];
-	X[q7];
+	X[q4];
+	X[q6];
 	X[q8];
 	MCZ[q0, q1, q2, q3, q4, q5, q6, q7, q8, q9];
 	X[q0];
 	X[q2];
-	X[q5];
-	X[q7];
+	X[q4];
+	X[q6];
 	X[q8];
 	// diffusion
 	H[q0];
@@ -1207,14 +1205,14 @@ begin
 	// oracle
 	X[q0];
 	X[q2];
-	X[q5];
-	X[q7];
+	X[q4];
+	X[q6];
 	X[q8];
 	MCZ[q0, q1, q2, q3, q4, q5, q6, q7, q8, q9];
 	X[q0];
 	X[q2];
-	X[q5];
-	X[q7];
+	X[q4];
+	X[q6];
 	X[q8];
 	// diffusion
 	H[q0];
@@ -1261,14 +1259,14 @@ begin
 	// oracle
 	X[q0];
 	X[q2];
-	X[q5];
-	X[q7];
+	X[q4];
+	X[q6];
 	X[q8];
 	MCZ[q0, q1, q2, q3, q4, q5, q6, q7, q8, q9];
 	X[q0];
 	X[q2];
-	X[q5];
-	X[q7];
+	X[q4];
+	X[q6];
 	X[q8];
 	// diffusion
 	H[q0];
@@ -1315,14 +1313,14 @@ begin
 	// oracle
 	X[q0];
 	X[q2];
-	X[q5];
-	X[q7];
+	X[q4];
+	X[q6];
 	X[q8];
 	MCZ[q0, q1, q2, q3, q4, q5, q6, q7, q8, q9];
 	X[q0];
 	X[q2];
-	X[q5];
-	X[q7];
+	X[q4];
+	X[q6];
 	X[q8];
 	// diffusion
 	H[q0];
@@ -1367,18 +1365,10 @@ begin
 	H[q8];
 	H[q9];
 	};
-	// measure all qubits
-	if M[q0] = 1 then skip; else skip; fi;
-	if M[q1] = 1 then skip; else skip; fi;
-	if M[q2] = 1 then skip; else skip; fi;
-	if M[q3] = 1 then skip; else skip; fi;
-	if M[q4] = 1 then skip; else skip; fi;
-	if M[q5] = 1 then skip; else skip; fi;
-	if M[q6] = 1 then skip; else skip; fi;
-	if M[q7] = 1 then skip; else skip; fi;
-	if M[q8] = 1 then skip; else skip; fi;
-	if M[q9] = 1 then skip; else skip; fi;
 end
 
-// pcheck in GROVER with 'P=? [F "target"]' --backend=Storm .
-psearch in GROVER with =>! such that P(q0, |0>) and P(q1, |1>) and P(q2, |0>) and P(q3, |1>) and P(q4, |1>) and P(q5, |0>) and P(q6, |1>) and P(q7, |0>) and P(q8, |0>) and P(q9, |1>) .
+psearch in GROVER with =>! such that false .
+
+show prob of basis '0101010101' in state 1 .
+
+quit .

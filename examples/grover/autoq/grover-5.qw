@@ -183,7 +183,7 @@ begin
     };
 end
 
-search in GROVER with =>! such that false .
+psearch in GROVER with =>! such that false .
 
 // show state 2 .
 

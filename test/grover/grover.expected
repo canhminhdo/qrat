@@ -3,15 +3,6 @@ Random seed is set to 0.
 ==========================================
 prog GROVER
 ==========================================
-pcheck in GROVER with 'P=? [F "target"]' --backend=Storm .
-
-Time for state transition graph construction with states: 126
-
-
-
-Result (for initial states): 0.9991822159
-
-==========================================
 search in GROVER with =>! such that P(q0, |1>) and P(q1, |1>) and P(q2, |0>) and P(q3, |0>) and P(q4, |0>) .
 
 Solution 1 (state 118)

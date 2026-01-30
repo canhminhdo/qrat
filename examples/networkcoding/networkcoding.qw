@@ -16,8 +16,6 @@ init
 	q11 := |0>;
 	q12 := |0>;
 	q13 := |0>;
-prop
-	target := P(q1, q4, |phi+>) and P(q0, q5, |phi+>);
 begin
 	H[q0];
 	CX[q0, q1];
@@ -58,8 +56,6 @@ begin
 	if M[q7] = 1 then Z[q4]; else skip; fi;
 end
 
-pcheck in NETWORK_CODING with 'P=? [F "target"]' --backend=Storm .
-
-search in NETWORK_CODING with =>! such that P(q1, q4, |phi+>) and P(q0, q5, |phi+>) .
-
 psearch in NETWORK_CODING with =>! such that P(q1, q4, |phi+>) and P(q0, q5, |phi+>) .
+
+quit .

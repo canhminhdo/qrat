@@ -2,16 +2,10 @@ prog LOOP is
 var q : qubit;
 init
     q := |1>;
-prop
-    target := P(q,|0>);
 begin
-    q := H[q];
-    while M[q] = 1 do q := H[q]; od;
+    H[q];
+    while M[q] = 1 do H[q]; od;
 end
-
-pcheck in LOOP with 'P>=1 [F "target"]'  --backend=Storm .
-
-search in LOOP with =>! such that P(q,|0>) .
 
 psearch in LOOP with =>! such that P(q,|0>) .
 

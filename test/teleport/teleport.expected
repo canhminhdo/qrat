@@ -3,15 +3,6 @@ Random seed is set to 0.
 ==========================================
 prog TELEPORT
 ==========================================
-pcheck in TELEPORT with 'P=? [F "target"]' --backend=Storm .
-
-Time for state transition graph construction with states: 14
-
-
-
-Result (for initial states): 1
-
-==========================================
 search in TELEPORT with =>! such that P(q2, init[q0]) .
 
 Solution 1 (state 10)

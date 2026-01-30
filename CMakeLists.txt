@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.20..3.26)
-project(qcheck
-    VERSION 1.0
-    DESCRIPTION "QCHECK - A Framework for Probabilistic Model Checking of Quantum Programs"
-    HOMEPAGE_URL "https://github.com/canhminhdo/qcheck"
+project(qrat
+    VERSION 2.0
+    DESCRIPTION "QRAT - Probabilistic Reachability Analysis for Quantum Programs"
+    HOMEPAGE_URL "https://github.com/canhminhdo/qrat"
     LANGUAGES CXX
 )
 

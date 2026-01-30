@@ -1,8 +1,6 @@
-// #qubit: 5, marked state: 11000 (rev: 00011), #iterations: 4
+// #qubit: 5, marked state: 01010 (rev: 01010), #iterations: 4
 prog GROVER is
 var q0, q1, q2, q3, q4 : qubit;
-prop
-	target := P(q0, |1>) and P(q1, |1>) and P(q2, |0>) and P(q3, |0>) and P(q4, |0>);
 begin
 	atomic {
 	// initialize superposition qubits
@@ -12,12 +10,12 @@ begin
 	H[q3];
 	H[q4];
 	// oracle
+	X[q0];
 	X[q2];
-	X[q3];
 	X[q4];
 	MCZ[q0, q1, q2, q3, q4];
+	X[q0];
 	X[q2];
-	X[q3];
 	X[q4];
 	// diffusion
 	H[q0];
@@ -42,12 +40,12 @@ begin
 	H[q3];
 	H[q4];
 	// oracle
+	X[q0];
 	X[q2];
-	X[q3];
 	X[q4];
 	MCZ[q0, q1, q2, q3, q4];
+	X[q0];
 	X[q2];
-	X[q3];
 	X[q4];
 	// diffusion
 	H[q0];
@@ -72,12 +70,12 @@ begin
 	H[q3];
 	H[q4];
 	// oracle
+	X[q0];
 	X[q2];
-	X[q3];
 	X[q4];
 	MCZ[q0, q1, q2, q3, q4];
+	X[q0];
 	X[q2];
-	X[q3];
 	X[q4];
 	// diffusion
 	H[q0];
@@ -102,12 +100,12 @@ begin
 	H[q3];
 	H[q4];
 	// oracle
+	X[q0];
 	X[q2];
-	X[q3];
 	X[q4];
 	MCZ[q0, q1, q2, q3, q4];
+	X[q0];
 	X[q2];
-	X[q3];
 	X[q4];
 	// diffusion
 	H[q0];
@@ -132,13 +130,10 @@ begin
 	H[q3];
 	H[q4];
 	};
-	// measure all qubits
-	if M[q0] = 1 then skip; else skip; fi;
-	if M[q1] = 1 then skip; else skip; fi;
-	if M[q2] = 1 then skip; else skip; fi;
-	if M[q3] = 1 then skip; else skip; fi;
-	if M[q4] = 1 then skip; else skip; fi;
 end
 
-// pcheck in GROVER with 'P=? [F "target"]' --backend=Storm .
-psearch in GROVER with =>! such that P(q0, |1>) and P(q1, |1>) and P(q2, |0>) and P(q3, |0>) and P(q4, |0>) .
+psearch in GROVER with =>! such that false .
+
+show prob of basis '01010' in state 1 .
+
+quit .

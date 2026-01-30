@@ -1,8 +1,10 @@
-## [1.0] - 2025-05-01
+## [2.0] - 2026-01-19
 
 ### Added
-- support the `pcheck` command for probabilistic model checking of quantum programs with PRISM and Storm as alternative backends.
-    + `pcheck in <progId> with '<property>' {--backend=(PRISM|Storm)} {--save-model=(yes|no)} .` 
+- support the `psearch` command for probabilistic reachability analysis of quantum programs.
+    + `psearch in <progId> with <searchType> such that <condition> .`
+    + `show prob of basis <basisState> in state <stateID> .`
+    + `show amp of basis <basisState> in state <stateID> .`
 
 ## [1.0] - 2025-01-06
 

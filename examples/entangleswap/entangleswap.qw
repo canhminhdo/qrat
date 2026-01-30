@@ -5,8 +5,6 @@ init
     q1 := |0>;
     q2 := |0>;
     q3 := |0>;
-prop
-    target := P(q0, q3, |phi+>);
 begin
     H[q0];
     CX[q0, q1];
@@ -17,10 +15,6 @@ begin
     if M[q2] = 1 then X[q3]; else skip; fi;
     if M[q1] = 1 then Z[q3]; else skip; fi;
 end
-
-pcheck in ENTANGLE_SWAP with 'P=? [F "target"]' --backend=Storm .
-
-search in ENTANGLE_SWAP with =>! such that P(q0, q3, |phi+>) .
 
 psearch in ENTANGLE_SWAP with =>! such that P(q0, q3, |phi+>) .
 
