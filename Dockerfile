@@ -10,22 +10,9 @@ RUN apt-get -y update && apt-get install -y \
     g++ \
     bison \
     flex \
-    default-jre \
-    build-essential libssl-dev libboost-all-dev libcln-dev libgmp-dev libginac-dev automake libglpk-dev libhwloc-dev libz3-dev libxerces-c-dev libeigen3-dev
+    cmake
 
 RUN mkdir -p /app
-
-# building cmake manually
-RUN cd /app \
-    && wget https://github.com/Kitware/CMake/releases/download/v3.31.10/cmake-3.31.10.tar.gz \
-    && tar -xzvf cmake-3.31.10.tar.gz \
-    && rm cmake-3.31.10.tar.gz \
-    && cd cmake-3.31.10 \
-    && ./configure --prefix=/usr \
-    && make \
-    && make install
-
-RUN rm -rf /app/cmake-3.31.10
 
 # building qrat
 RUN cd /app \
@@ -36,7 +23,7 @@ RUN cd /app/qrat \
     && cmake -S . -B build -D CMAKE_BUILD_TYPE=Release -D CMAKE_CXX_COMPILER=c++ \
     && cmake --build build --config Release -j 8 \
     && cmake --install build --config Release \
-    && cpack -G "ZIP" --config build/CPackConfig.cmake -B package \
+    && cpack -G "ZIP" --config build/CPackConfig.cmake -B package
 
 RUN cd /app/qrat \
     && mv install /qrat-2.0 \
