@@ -1,13 +1,24 @@
-configure_file(${PROJECT_SOURCE_DIR}/examples/teleport/teleport.qw teleport.qw)
-configure_file(${PROJECT_SOURCE_DIR}/src/parser/prog.qw prog.qw)
-configure_file(${PROJECT_SOURCE_DIR}/examples/loop/loop.qw loop.qw)
-configure_file(${PROJECT_SOURCE_DIR}/examples/grover/grover.qw grover.qw)
-configure_file(${PROJECT_SOURCE_DIR}/examples/secretsharing/secretsharing.qw secretsharing.qw)
-configure_file(${PROJECT_SOURCE_DIR}/examples/relay/relay.qw relay.qw)
-configure_file(${PROJECT_SOURCE_DIR}/examples/biteleport/biteleport.qw biteleport.qw)
-configure_file(${PROJECT_SOURCE_DIR}/examples/entangleswap/entangleswap.qw entangleswap.qw)
-configure_file(${PROJECT_SOURCE_DIR}/examples/networkcoding/networkcoding.qw networkcoding.qw)
-configure_file(${PROJECT_SOURCE_DIR}/examples/wmgrover/wmgrover.qw wmgrover.qw)
+set(QW_EXAMPLE_FILES
+    examples/teleport/teleport.qw
+    src/parser/prog.qw
+    examples/loop/loop.qw
+    examples/grover/grover.qw
+    examples/secretsharing/secretsharing.qw
+    examples/relay/relay.qw
+    examples/biteleport/biteleport.qw
+    examples/entangleswap/entangleswap.qw
+    examples/networkcoding/networkcoding.qw
+    examples/wmgrover/wmgrover.qw
+)
+
+foreach(qw_file IN LISTS QW_EXAMPLE_FILES)
+    get_filename_component(qw_name "${qw_file}" NAME)
+    configure_file(
+        "${PROJECT_SOURCE_DIR}/${qw_file}"
+        "${qw_name}"
+        COPYONLY
+    )
+endforeach()
 
 add_executable(
     ${PROJECT_NAME}
@@ -19,12 +30,15 @@ add_executable(
     model/StormRunner.cpp
 )
 
-# set include directories
-include_directories(
-    ${PROJECT_NAME} PUBLIC
-    ${PROJECT_SOURCE_DIR}/include
-    ${PROJECT_BINARY_DIR}/include)
+# Warning suppression policy should not be forced on consumers
+target_compile_options(${PROJECT_NAME} PRIVATE -Wno-deprecated-literal-operator)
 
-target_link_libraries(${PROJECT_NAME} Parser)
+# set include directories
+target_include_directories(
+    ${PROJECT_NAME} PRIVATE
+    ${PROJECT_BINARY_DIR}/include
+)
 
 add_subdirectory(parser)
+
+target_link_libraries(${PROJECT_NAME} PRIVATE Parser)

@@ -120,7 +120,6 @@ const DwSimulation::mEdge &DwSimulation::buildGate(UnitaryStmNode *stm) {
     if (it != gateCache.end()) {
         return it->second;
     }
-    checkSupported(stm);
     auto name = qc::toString(stm->getOpType());
     std::vector<std::size_t> controls;
     for (int i = 0; i < stm->getControls().size(); i++) {

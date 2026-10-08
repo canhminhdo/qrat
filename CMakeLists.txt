@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.20..3.26)
+cmake_minimum_required(VERSION 3.20...3.26)
 project(qrat
     VERSION 2.0
     DESCRIPTION "QRAT - Probabilistic Reachability Analysis for Quantum Programs"
@@ -22,7 +22,10 @@ include(cmake/Format.cmake)
 include(cmake/ClangTidy.cmake)
 
 add_subdirectory(src)
-include_directories(include)
+
+if(APPLE)
+    set(CMAKE_OSX_DEPLOYMENT_TARGET "15.0" CACHE STRING "Minimum OSX version" FORCE)
+endif()
 
 # add documentation
 option(BUILD_QRAT_DOC "Build documentation for the QRAT project" ON) # only sets value if it is not already defined
@@ -34,7 +37,7 @@ endif()
 option(BUILD_QRAT_TESTS "Build tests for the QRAT project" ON)
 if(BUILD_QRAT_TESTS)
     enable_testing()
-    include(GoogleTest) # this modules defines functions to automatically discover test cases for Cmake with the use of GoogleTest
+    include(GoogleTest) # this module defines functions to automatically discover test cases for CMake with the use of GoogleTest
     add_subdirectory(test)
 endif()
 

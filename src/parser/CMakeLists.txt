@@ -9,30 +9,16 @@ add_subdirectory(
     EXCLUDE_FROM_ALL)
 
 # COPY FILE
-configure_file(prog.qw prog.qw)
-configure_file(prog-loop.qw prog-loop.qw)
-configure_file(lexerAux.cpp lexerAux.cpp)
+configure_file(prog.qw prog.qw COPYONLY)
+configure_file(prog-loop.qw prog-loop.qw COPYONLY)
+configure_file(lexerAux.cpp lexerAux.cpp COPYONLY)
 
 # FLEX & BISON
-find_package(BISON)
-find_package(FLEX)
-BISON_TARGET(Parser parser.y ${CMAKE_CURRENT_BINARY_DIR}/parser.cpp COMPILE_FLAGS -Wcounterexamples) # Optional param: DEFINES_FILE ${CMAKE_CURRENT_BINARY_DIR}/parser.hpp
-FLEX_TARGET(Scanner lexer.l ${CMAKE_CURRENT_BINARY_DIR}/lexer.cpp COMPILE_FLAGS --header-file=${CMAKE_CURRENT_BINARY_DIR}/lexer.hpp)
-ADD_FLEX_BISON_DEPENDENCY(Scanner Parser)
-
-#message("CMAKE CURRENT SOURCE DIR : ${CMAKE_CURRENT_SOURCE_DIR}")
-#add_custom_command(
-#    OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/lexer.cpp
-#    COMMAND flex++ -o ${CMAKE_CURRENT_SOURCE_DIR}/lexer.cpp ${CMAKE_CURRENT_SOURCE_DIR}/lexer.l
-#    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/lexer.l)
-#add_custom_target(lexer DEPENDS lexer.cpp)
-
-# set include directory for parsing files
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
-#message(${BISON_Parser_OUTPUTS})
-#message(${FLEX_Scanner_OUTPUTS})
-#message(${FLEX_LIBRARIES})
-#message(${FLEX_INCLUDE_DIRS})
+find_package(BISON REQUIRED)
+find_package(FLEX REQUIRED)
+bison_target(Parser parser.y ${CMAKE_CURRENT_BINARY_DIR}/parser.cpp COMPILE_FLAGS -Wcounterexamples) # Optional param: DEFINES_FILE ${CMAKE_CURRENT_BINARY_DIR}/parser.hpp
+flex_target(Scanner lexer.l ${CMAKE_CURRENT_BINARY_DIR}/lexer.cpp COMPILE_FLAGS --header-file=${CMAKE_CURRENT_BINARY_DIR}/lexer.hpp)
+add_flex_bison_dependency(Scanner Parser)
 
 add_library(
     Parser STATIC
@@ -74,11 +60,16 @@ add_library(
     ../utility/Tty.cpp
     ../utility/fileReader.cpp
     ../core/PropTable.cpp
-    ../utility/FileWritter.cpp
+    ../utility/FileWriter.cpp
     ../ast/AtomicStmNode.cpp
 )
 
-target_include_directories(Parser PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
+target_include_directories(
+    Parser PUBLIC
+    ${CMAKE_CURRENT_BINARY_DIR}
+    ${PROJECT_SOURCE_DIR}/include
+)
+
 #link the flex library if using default functions yywrap() and main()
 #target_link_libraries(Parser PUBLIC ${FLEX_LIBRARIES})
 target_link_libraries(Parser PUBLIC MQT::CoreDD ExactDD)
