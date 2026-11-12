@@ -1,5 +1,5 @@
 //
-// Created by Canh Minh Do on 2024/11/10.
+// Created by CanhDo on 2024/11/10.
 //
 
 #include "utility/StringTable.hpp"

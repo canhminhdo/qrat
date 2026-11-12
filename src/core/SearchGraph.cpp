@@ -1,5 +1,5 @@
 //
-// Created by Canh Minh Do on 2025/06/07.
+// Created by CanhDo on 2025/06/07.
 //
 
 #include "core/SearchGraph.hpp"

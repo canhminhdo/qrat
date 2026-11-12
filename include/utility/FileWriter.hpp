@@ -1,5 +1,5 @@
 //
-// Created by Canh Minh Do on 2025/05/10.
+// Created by CanhDo on 2025/05/10.
 //
 
 #ifndef FILEWRITER_H

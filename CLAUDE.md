@@ -61,6 +61,11 @@ the build tree at configure time, so re-run the CMake configure step after addin
   for enum-style constants (e.g. `Search::Type::ARROW_EXCLAMATION`).
 - **Headers**: classic `#ifndef`/`#define` include guards matching the file name (e.g. `SEARCHGRAPH_HPP`), not
   `#pragma once`.
+- **File header**: every `.cpp`/`.hpp`/`.h`/`.h.in` file under `src/`, `test/` and `include/` opens with a
+  three-line creator comment — `//`, `// Created by CanhDo on YYYY/MM/DD.`, `//` — then a blank line, where the
+  date is the file's creation date (see `src/utility/fileReader.cpp`). Always add it when creating a new file.
+  The Flex/Bison sources (`src/parser/lexer.l`, `src/parser/parser.y`) are exempt and keep their `/* ... */`
+  comments, since a leading `//` line is not safe in a Flex definitions section.
 - **Polymorphism**: base classes declare `virtual ~Base()` (usually `= default`); derived overrides use `override`
   (see `SearchGraph`, `Runner`, `StateTransitionGraph`).
 
