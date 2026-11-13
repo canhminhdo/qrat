@@ -1,0 +1,14 @@
+set show timing off .
+set random seed 0 .
+
+prog EMPTY is
+var q : qubit;
+init
+    q := |0>;
+end
+
+search in EMPTY with =>! such that P(q, |0>) .
+
+psearch in EMPTY with =>! such that P(q, |0>) .
+
+quit .

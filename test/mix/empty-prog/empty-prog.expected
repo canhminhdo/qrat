@@ -1,0 +1,21 @@
+Show timing is off.
+Random seed is set to 0.
+==========================================
+prog EMPTY
+==========================================
+search in EMPTY with =>! such that P(q, |0>) .
+
+Solution 1 (state 0)
+states: 1
+quantum state: 
+0: (1,0)
+
+No more solutions.
+states: 1
+==========================================
+psearch in EMPTY with =>! such that P(q, |0>) .
+
+Result: 1
+
+states: 1
+Bye.

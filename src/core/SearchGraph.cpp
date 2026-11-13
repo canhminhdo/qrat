@@ -149,7 +149,10 @@ void SearchGraph::procCondBranch(State *currentState, StmNode *nextStm, QState &
 
 StmNode *SearchGraph::getNextStatement(StmNode *stm) {
     StmNode *nextStm = stm->getNext();
-    if (auto *endStm = dynamic_cast<EndStmNode *>(stm->getNext()); endStm != nullptr && endStm->getNext() != nullptr) {
+    while (auto *endStm = dynamic_cast<EndStmNode *>(nextStm)) {
+        if (endStm->getNext() == nullptr) {
+            break; // end of the program
+        }
         nextStm = endStm->getNext();
     }
     return nextStm;
@@ -251,4 +254,8 @@ std::pair<SearchGraph::State *, bool> SearchGraph::makeState(State *s) {
 
 std::vector<SearchGraph::State *> &SearchGraph::getSeenStates() {
     return seenStates;
+}
+
+const SyntaxProg *SearchGraph::getProg() const {
+    return currentProg;
 }

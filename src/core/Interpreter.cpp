@@ -128,12 +128,20 @@ void Interpreter::initRunner(std::vector<char *> *args) {
 
 void Interpreter::finalizeProg() {
     assert(currentProg != nullptr);
+    if (currentProg->getStmSeq() == nullptr) {
+        // no begin section: an empty statement list
+        currentProg->addStmSeq(new StmSeq());
+    }
     auto oldProg = savedProgs.find(currentProg->getName());
     if (oldProg == savedProgs.end()) {
         savedProgs.insert({currentProg->getName(), currentProg});
         std::cout << "==========================================\n";
         std::cout << "prog " << Token::name(currentProg->getName()) << std::endl;
     } else {
+        if (graphSearch != nullptr && graphSearch->getProg() == oldProg->second) {
+            // the state graph points into the program being deleted
+            cleanSearch();
+        }
         delete oldProg->second;
         oldProg->second = currentProg;
         std::cout << "==========================================\n";

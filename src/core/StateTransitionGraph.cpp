@@ -37,7 +37,7 @@ void StateTransitionGraph::search() {
     buildInitialState();
     solutionCount = 0;
     int savedStateId = 0;
-    if (isArrowStar(searchType)) {
+    if (isArrowStar(searchType) || isArrowExclamation(searchType)) {
         checkState(seenStates.at(0), timer);
     }
     while (solutionCount < numSols && savedStateId < seenStates.size()) {

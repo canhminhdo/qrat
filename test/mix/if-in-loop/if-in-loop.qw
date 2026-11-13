@@ -1,0 +1,22 @@
+set show timing off .
+set random seed 0 .
+
+prog IFINLOOP is
+var a, b : qubit;
+init
+    a := |+>;
+    b := |+>;
+begin
+    while M[a] = 1 do
+        H[a];
+        if M[b] = 0 then X[b]; else skip; fi;
+    od;
+end
+
+psearch in IFINLOOP with =>! such that P(b, |1>) .
+
+set backend dw .
+
+psearch in IFINLOOP with =>! such that P(b, |1>) .
+
+quit .

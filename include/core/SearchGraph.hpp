@@ -122,6 +122,8 @@ public:
 
     std::vector<State *> &getSeenStates();
 
+    const SyntaxProg *getProg() const;
+
 protected:
     // for analysis
     std::unordered_map<State *, int, StateHash, StateEqual> stateTab;

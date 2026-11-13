@@ -10,6 +10,7 @@
 #include <iostream>
 
 #include "ast/CondStmNode.hpp"
+#include "ast/WhileStmNode.hpp"
 
 SyntaxProg::SyntaxProg(Token prog) {
     name = prog.code();
@@ -63,6 +64,11 @@ void SyntaxProg::addEndStm(StmSeq *stmSeq) {
             condStm->getElseStm()->addStm(new EndStmNode(next));
             addEndStm(condStm->getThenStm());
             addEndStm(condStm->getElseStm());
+        }
+        auto *whileStm = dynamic_cast<WhileStmNode *>(head);
+        if (whileStm != nullptr) {
+            // conditionals may be nested in the while loop
+            addEndStm(whileStm->getBody());
         }
         head = next;
     }

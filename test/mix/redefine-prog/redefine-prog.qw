@@ -1,0 +1,27 @@
+set show timing off .
+set random seed 0 .
+
+prog REDEF is
+var q : qubit;
+init
+    q := |1>;
+begin
+    X[q];
+end
+
+search in REDEF with =>! such that P(q, |0>) .
+
+prog REDEF is
+var q : qubit;
+init
+    q := |0>;
+begin
+    skip;
+    X[q];
+end
+
+show path 0 .
+
+search in REDEF with =>! such that P(q, |1>) .
+
+quit .

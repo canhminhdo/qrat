@@ -1,6 +1,7 @@
 #!/bin/bash
 
-PROG=$1
+DIR=$1
+PROG=$(basename "$DIR")
 shift
-../src/qrat $PROG/${PROG}.qw -no-banner "$@" < /dev/null > $PROG/${PROG}.out 2>&1
-diff $PROG/${PROG}.out $PROG/${PROG}.expected > /dev/null 2>&1
+../src/qrat $DIR/${PROG}.qw -no-banner "$@" < /dev/null > $DIR/${PROG}.out 2>&1
+diff $DIR/${PROG}.out $DIR/${PROG}.expected > /dev/null 2>&1

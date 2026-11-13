@@ -38,16 +38,24 @@ ctest --test-dir build -R teleportProg # run a single test by name
 ctest --test-dir build --output-on-failure
 ```
 
-Test fixtures live in `test/<name>/<name>.qw` + `test/<name>/<name>.expected` (e.g. `test/teleport`, `test/grover`,
-`test/loop`; the `*-exact` variants run the same programs under the exact backend via `set backend dw .` in
-their `.qw` scripts). A few fixtures target specific exact-backend behavior rather than mirroring an existing
-program: `test/seqmeas-exact` (consecutive measurements on unnormalized states), `test/unsupported-exact` (the
-clear-error path for a gate the exact backend can't represent), and `test/mixed-backend` (switching backends
-mid-script with `set backend mqt|dw .`, run without any fixed backend). To add a new regression test,
-add a `test/<name>/` directory with a `.qw` program and `.expected` output, then add a corresponding
-`TEST(ProgTest, ...)` case in `test/test_programs.cpp` calling `bash testScript.sh <name>` — any extra arguments
-after the name are passed through to the `qrat` binary. Test directories are copied into
-the build tree at configure time, so re-run the CMake configure step after adding or editing fixtures.
+Test fixtures are directories holding `<name>.qw` + `<name>.expected`, in three groups:
+
+- `test/<name>/` — programs run under the default (`mqt`) backend (`teleport`, `loop`, `rus`, `grover`).
+- `test/exact/<name>/` — the exact backend, selected by `set backend dw .` in the `.qw` script. `teleport`,
+  `loop`, `rus` and `grover` mirror the programs above; `seqmeas` (consecutive measurements on unnormalized
+  states) and `unsupported` (the clear-error path for a gate the exact backend can't represent) target
+  exact-backend behavior specifically.
+- `test/mix/<name>/` — backend switching and control-flow edge cases: `mixed-backend` (switching backends
+  mid-script with `set backend mqt|dw .`), and four cases that used to crash — `nested-if` (an `if` ending
+  another `if`'s branch, three levels deep), `if-in-loop` (an `if` as the last statement of a `while` body),
+  `redefine-prog` (`show path` after the searched program is redefined) and `empty-prog` (a program with no
+  `begin` section).
+
+To add a new regression test, add a `<group>/<name>/` directory under `test/` with a `.qw` program and
+`.expected` output, then add a corresponding `TEST(ProgTest, ...)` case in `test/test_programs.cpp` calling
+`bash testScript.sh <group>/<name>` (or just `<name>` for a top-level fixture) — any extra arguments after the
+path are passed through to the `qrat` binary. Test directories are copied into the build tree at configure
+time, so re-run the CMake configure step after adding or editing fixtures.
 
 ## Code style
 

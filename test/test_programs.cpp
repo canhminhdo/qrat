@@ -37,36 +37,58 @@ TEST(ProgTest, groverProg) {
 // exact backend
 
 TEST(ProgTest, teleportExactProg) {
-    int res = std::system("bash testScript.sh teleport-exact");
+    int res = std::system("bash testScript.sh exact/teleport");
     EXPECT_EQ(res, 0);
 }
 
 TEST(ProgTest, loopExactProg) {
-    int res = std::system("bash testScript.sh loop-exact");
+    int res = std::system("bash testScript.sh exact/loop");
     EXPECT_EQ(res, 0);
 }
 
 TEST(ProgTest, rusExactProg) {
-    int res = std::system("bash testScript.sh rus-exact");
+    int res = std::system("bash testScript.sh exact/rus");
     EXPECT_EQ(res, 0);
 }
 
 TEST(ProgTest, groverExactProg) {
-    int res = std::system("bash testScript.sh grover-exact");
+    int res = std::system("bash testScript.sh exact/grover");
     EXPECT_EQ(res, 0);
 }
 
 TEST(ProgTest, seqmeasExactProg) {
-    int res = std::system("bash testScript.sh seqmeas-exact");
+    int res = std::system("bash testScript.sh exact/seqmeas");
     EXPECT_EQ(res, 0);
 }
 
 TEST(ProgTest, unsupportedExactProg) {
-    int res = std::system("bash testScript.sh unsupported-exact");
+    int res = std::system("bash testScript.sh exact/unsupported");
     EXPECT_EQ(res, 0);
 }
 
+// mix
+
 TEST(ProgTest, mixedBackendProg) {
-    int res = std::system("bash testScript.sh mixed-backend");
+    int res = std::system("bash testScript.sh mix/mixed-backend");
+    EXPECT_EQ(res, 0);
+}
+
+TEST(ProgTest, nestedIfProg) {
+    int res = std::system("bash testScript.sh mix/nested-if");
+    EXPECT_EQ(res, 0);
+}
+
+TEST(ProgTest, ifInLoopProg) {
+    int res = std::system("bash testScript.sh mix/if-in-loop");
+    EXPECT_EQ(res, 0);
+}
+
+TEST(ProgTest, redefineProg) {
+    int res = std::system("bash testScript.sh mix/redefine-prog");
+    EXPECT_EQ(res, 0);
+}
+
+TEST(ProgTest, emptyProg) {
+    int res = std::system("bash testScript.sh mix/empty-prog");
     EXPECT_EQ(res, 0);
 }

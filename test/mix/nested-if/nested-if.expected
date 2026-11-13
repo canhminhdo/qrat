@@ -1,0 +1,18 @@
+Show timing is off.
+Random seed is set to 0.
+==========================================
+prog NESTEDIF
+==========================================
+psearch in NESTEDIF with =>! such that P(c, |1>) .
+
+Result: 0.25
+
+states: 13
+Simulation backend is set to exact.
+==========================================
+psearch in NESTEDIF with =>! such that P(c, |1>) .
+
+Result: (1 + 0*w + 0*w^2 + 0*w^3) / (sqrt(2)^4 * 1) (approx. 0.25)
+
+states: 13
+Bye.

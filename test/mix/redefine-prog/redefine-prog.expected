@@ -1,0 +1,29 @@
+Show timing is off.
+Random seed is set to 0.
+==========================================
+prog REDEF
+==========================================
+search in REDEF with =>! such that P(q, |0>) .
+
+Solution 1 (state 1)
+states: 2
+quantum state: 
+0: (1,0)
+
+No more solutions.
+states: 2
+==========================================
+prog REDEF
+[32mAdvisory: [0mredefining program [35mREDEF[0m.
+[31mWarning: [0mno state graph.
+==========================================
+search in REDEF with =>! such that P(q, |1>) .
+
+Solution 1 (state 2)
+states: 3
+quantum state: 
+1: (1,0)
+
+No more solutions.
+states: 3
+Bye.

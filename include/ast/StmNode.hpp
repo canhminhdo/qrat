@@ -14,7 +14,7 @@ public:
     StmNode *getNext();
 
 protected:
-    StmNode *next;
+    StmNode *next{nullptr};
 };
 
 inline void StmNode::setNext(StmNode *next) {

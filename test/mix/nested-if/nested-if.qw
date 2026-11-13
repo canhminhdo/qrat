@@ -1,0 +1,29 @@
+set show timing off .
+set random seed 0 .
+
+prog NESTEDIF is
+var a, b, c : qubit;
+init
+    a := |+>;
+    b := |+>;
+    c := |+>;
+begin
+    if M[a] = 0 then
+        if M[b] = 0 then
+            skip;
+        else
+            if M[c] = 0 then X[c]; else skip; fi;
+        fi;
+    else
+        skip;
+    fi;
+    H[a];
+end
+
+psearch in NESTEDIF with =>! such that P(c, |1>) .
+
+set backend dw .
+
+psearch in NESTEDIF with =>! such that P(c, |1>) .
+
+quit .
