@@ -135,7 +135,7 @@ TwoTargetOpWithTwoParam         XXminusYY|XXplusYY
 "C"{SingleTargetOpWithOneParam}     { Token token; token.tokenize(yytext, yylineno); yylval.gateInfo = {token, SINGLE_TARGET_COP_WITH_ONE_PARAM}; return KW_SINGLE_TARGET_COP_WITH_ONE_PARAM; }
 "MC"{SingleTargetOpWithOneParam}    { Token token; token.tokenize(yytext, yylineno); yylval.gateInfo = {token, SINGLE_TARGET_MCOP_WITH_ONE_PARAM}; return KW_SINGLE_TARGET_MCOP_WITH_ONE_PARAM; }
 
-SingleTargetOpWithTwoParam          { Token token; token.tokenize(yytext, yylineno); yylval.gateInfo = {token, SINGLE_TARGET_OP_WITH_TWO_PARAM}; return KW_SINGLE_TARGET_OP_WITH_TWO_PARAM; }
+{SingleTargetOpWithTwoParam}        { Token token; token.tokenize(yytext, yylineno); yylval.gateInfo = {token, SINGLE_TARGET_OP_WITH_TWO_PARAM}; return KW_SINGLE_TARGET_OP_WITH_TWO_PARAM; }
 "C"{SingleTargetOpWithTwoParam}     { Token token; token.tokenize(yytext, yylineno); yylval.gateInfo = {token, SINGLE_TARGET_COP_WITH_TWO_PARAM}; return KW_SINGLE_TARGET_COP_WITH_TWO_PARAM; }
 "MC"{SingleTargetOpWithTwoParam}    { Token token; token.tokenize(yytext, yylineno); yylval.gateInfo = {token, SINGLE_TARGET_MCOP_WITH_TWO_PARAM}; return KW_SINGLE_TARGET_MCOP_WITH_TWO_PARAM; }
 
@@ -164,8 +164,8 @@ e         { return KW_E; }
 
 ("|phi+>"|"|PHI+>") { return KW_KET_PHI_PLUS; }
 ("|phi->"|"|PHI->") { return KW_KET_PHI_MINUS; }
-("|psi+>"|"|psi+>") { return KW_KET_PSI_PLUS; }
-("|psi->"|"|psi->") { return KW_KET_PSI_MINUS; }
+("|psi+>"|"|PSI+>") { return KW_KET_PSI_PLUS; }
+("|psi->"|"|PSI->") { return KW_KET_PSI_MINUS; }
 
 "--backend="(PRISM|Storm)   { yylval.str = strdup(yytext); return KW_ARGUMENT; }
 "--save-model="(true|false)  { yylval.str = strdup(yytext); return KW_ARGUMENT; }
@@ -189,12 +189,13 @@ e         { return KW_E; }
 "/*"                    { lexerCommentMode(); }
 <COMMENT_MODE>{
 [^*]+     { /* Ignore content inside comments */ }
+"*"       { /* Ignore alone * in comments */ }
 "*/"      { lexerInitialMode(); }
 }
 
-[ \t\f\v\t\r]       /* ignore whitespaces */
-\n          /* ignore EOL, otherwise return EOL; */
-.           { printf("Mystery character %c at line %d\n", *yytext, yylineno); }
+[ \t\f\v\r] { /* ignore whitespaces */ }
+\n          { /* ignore EOL, otherwise return EOL; */ }
+.           { fprintf(stderr, "Mystery character %c at line %d\n", *yytext, yylineno); }
 
 <<EOF>>     {
                 /* if no rule for <<EOF>>, flex automatically calls yyterminate() to stop scanning */
