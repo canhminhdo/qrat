@@ -5,9 +5,15 @@
 #ifndef ASTNODE_HPP
 #define ASTNODE_HPP
 
+#include <cstddef>
+
 class Node {
 public:
     virtual ~Node() = default;
+
+    virtual std::size_t getHash() const = 0;
+
+    virtual bool isEqual(const Node &other) const = 0;
 
     virtual void eval() = 0;
 

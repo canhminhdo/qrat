@@ -35,11 +35,10 @@ void DwSimulation::validateProgram() {
 }
 
 void DwSimulation::validateStmSeq(StmSeq *seq) {
-    if (seq == nullptr || seq->getHead() == nullptr) {
+    if (seq == nullptr) {
         return;
     }
-    auto *tail = seq->getTail();
-    for (auto *stm = seq->getHead(); stm != nullptr; stm = (stm == tail) ? nullptr : stm->getNext()) {
+    for (auto *stm: seq->getStms()) {
         if (auto *unitaryStm = dynamic_cast<UnitaryStmNode *>(stm)) {
             checkSupported(unitaryStm);
         } else if (auto *condStm = dynamic_cast<CondStmNode *>(stm)) {

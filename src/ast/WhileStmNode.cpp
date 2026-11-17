@@ -3,13 +3,9 @@
 //
 
 #include "ast/WhileStmNode.hpp"
-#include "ast/EndStmNode.hpp"
 #include <iostream>
 
 WhileStmNode::WhileStmNode(ExpNode *cond, StmSeq *body) : cond{cond}, body{body} {
-    auto *endWhile = new EndStmNode();
-    endWhile->setNext(this);
-    body->addStm(endWhile);
 }
 
 WhileStmNode::~WhileStmNode() {
@@ -31,10 +27,8 @@ void WhileStmNode::dump(bool recursive) {
         std::cout << "do " << std::endl;
         body->dump();
         std::cout << "od " << std::endl;
-        next->dump();
     } else {
         std::cout << "do ... od" << std::endl;
-        next->dump();
     }
 }
 

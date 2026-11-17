@@ -6,8 +6,8 @@ prog RUS
 ==========================================
 search in RUS with =>! such that P(a, |0>) .
 
-Solution 1 (state 2)
-states: 3
+Solution 1 (state 3)
+states: 4
 quantum state: 
 00: (2 + 1*w + -1*w^2 + 2*w^3) / (sqrt(2)^5 * 1)
 10: (2 + 1*w + 1*w^2 + -2*w^3) / (sqrt(2)^5 * 1)

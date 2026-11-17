@@ -46,7 +46,6 @@ void CondStmNode::dump(bool recursive) {
         std::cout << "else" << std::endl;
         elseStm->dump();
         std::cout << "fi" << std::endl;
-        next->dump();
     } else {
         std::cout << "then ... else ... fi" << std::endl;
     }

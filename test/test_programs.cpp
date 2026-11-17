@@ -92,3 +92,13 @@ TEST(ProgTest, emptyProg) {
     int res = std::system("bash testScript.sh mix/empty-prog");
     EXPECT_EQ(res, 0);
 }
+
+TEST(ProgTest, cfgDemoProg) {
+    int res = std::system("bash testScript.sh mix/cfg-demo");
+    EXPECT_EQ(res, 0);
+}
+
+TEST(ProgTest, repeatedGateProg) {
+    int res = std::system("bash testScript.sh mix/repeated-gate");
+    EXPECT_EQ(res, 0);
+}

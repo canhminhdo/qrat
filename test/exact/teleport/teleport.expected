@@ -9,26 +9,26 @@ search in TELEPORT with =>! such that P(q2, init[q0]) .
 Solution 1 (state 10)
 states: 11
 quantum state: 
-000: (0 + 0*w + 1*w^2 + -1*w^3) / (sqrt(2)^4 * 1)
-100: (0 + 0*w + 1*w^2 + 1*w^3) / (sqrt(2)^4 * 1)
+011: (0 + 0*w + 1*w^2 + -1*w^3) / (sqrt(2)^4 * 1)
+111: (0 + 0*w + 1*w^2 + 1*w^3) / (sqrt(2)^4 * 1)
 
 Solution 2 (state 11)
 states: 12
 quantum state: 
-001: (0 + 0*w + 1*w^2 + -1*w^3) / (sqrt(2)^4 * 1)
-101: (0 + 0*w + 1*w^2 + 1*w^3) / (sqrt(2)^4 * 1)
+010: (0 + 0*w + 1*w^2 + -1*w^3) / (sqrt(2)^4 * 1)
+110: (0 + 0*w + 1*w^2 + 1*w^3) / (sqrt(2)^4 * 1)
 
 Solution 3 (state 12)
 states: 13
 quantum state: 
-010: (0 + 0*w + 1*w^2 + -1*w^3) / (sqrt(2)^4 * 1)
-110: (0 + 0*w + 1*w^2 + 1*w^3) / (sqrt(2)^4 * 1)
+001: (0 + 0*w + 1*w^2 + -1*w^3) / (sqrt(2)^4 * 1)
+101: (0 + 0*w + 1*w^2 + 1*w^3) / (sqrt(2)^4 * 1)
 
 Solution 4 (state 13)
 states: 14
 quantum state: 
-011: (0 + 0*w + 1*w^2 + -1*w^3) / (sqrt(2)^4 * 1)
-111: (0 + 0*w + 1*w^2 + 1*w^3) / (sqrt(2)^4 * 1)
+000: (0 + 0*w + 1*w^2 + -1*w^3) / (sqrt(2)^4 * 1)
+100: (0 + 0*w + 1*w^2 + 1*w^3) / (sqrt(2)^4 * 1)
 
 No more solutions.
 states: 14

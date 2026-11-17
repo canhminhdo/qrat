@@ -6,8 +6,8 @@ prog GROVER
 ==========================================
 search in GROVER with =>! such that P(q0, |1>) and P(q1, |1>) and P(q2, |0>) and P(q3, |0>) and P(q4, |0>) .
 
-Solution 1 (state 118)
-states: 119
+Solution 1 (state 101)
+states: 102
 quantum state: 
 00011: (23161 + 0*w + 0*w^2 + 0*w^3) / (sqrt(2)^29 * 1)
 

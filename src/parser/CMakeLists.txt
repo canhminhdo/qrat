@@ -28,6 +28,7 @@ add_library(
     ../utility/StringTable.cpp
     ../core/Interpreter.cpp
     ../core/SyntaxProg.cpp
+    ../core/ControlFlowGraph.cpp
     ../core/global.cpp
     ../core/SymbolTable.cpp
     ../core/VarSymbol.cpp
@@ -49,7 +50,6 @@ add_library(
     ../dd/exact/DwSimulation.cpp
     ../dd/SimulationFactory.cpp
     ../ast/CachedNode.cpp
-    ../ast/EndStmNode.cpp
     ../core/SearchGraph.cpp
     ../core/StateSpaceGraph.cpp
     ../core/StateTransitionGraph.cpp

@@ -1,0 +1,22 @@
+set show timing off .
+set random seed 0 .
+
+prog REPEATEDGATE is
+var q : qubit;
+init
+    q := |0>;
+begin
+    H[q];
+    H[q];
+    H[q];
+end
+
+search in REPEATEDGATE with =>! such that P(q, |+>) .
+
+psearch in REPEATEDGATE with =>! such that P(q, |+>) .
+
+set backend dw .
+
+psearch in REPEATEDGATE with =>! such that P(q, |+>) .
+
+quit .

@@ -8,26 +8,26 @@ search in TELEPORT with =>! such that P(q2, init[q0]) .
 Solution 1 (state 10)
 states: 11
 quantum state: 
-000: (0.767,-0.599)
-100: (0.182,0.142)
+011: (0.767,-0.599)
+111: (0.182,0.142)
 
 Solution 2 (state 11)
 states: 12
 quantum state: 
-001: (0.767,-0.599)
-101: (0.182,0.142)
+010: (0.767,-0.599)
+110: (0.182,0.142)
 
 Solution 3 (state 12)
 states: 13
 quantum state: 
-010: (0.767,-0.599)
-110: (0.182,0.142)
+001: (0.767,-0.599)
+101: (0.182,0.142)
 
 Solution 4 (state 13)
 states: 14
 quantum state: 
-011: (0.767,-0.599)
-111: (0.182,0.142)
+000: (0.767,-0.599)
+100: (0.182,0.142)
 
 No more solutions.
 states: 14

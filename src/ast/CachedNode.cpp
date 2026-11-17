@@ -3,6 +3,8 @@
 //
 
 #include "ast/CachedNode.hpp"
+#include "ast/StmNode.hpp"
+#include <cassert>
 #include <iostream>
 
 CachedNode::~CachedNode() {
@@ -13,7 +15,9 @@ CachedNode::~CachedNode() {
     nodeTab.clear();
 }
 
-ExpNode *CachedNode::makeNode(ExpNode *node) {
+Node *CachedNode::makeNode(Node *node) {
+    // a statement that is not shared is owned by its StmSeq; caching it too would delete it twice
+    assert(dynamic_cast<StmNode *>(node) == nullptr || static_cast<StmNode *>(node)->isShared());
     auto it = nodeTab.find(node);
     if (it != nodeTab.end()) {
         // std::cout << "Found node in cache, then delete the newly created node\n";
@@ -28,8 +32,19 @@ ExpNode *CachedNode::makeNode(ExpNode *node) {
 }
 
 void CachedNode::dump() const {
-    std::cout << "CachedNode:\n";
+    std::cout << "CachedNode (expressions):\n";
     for (auto *node: nodes) {
+        if (dynamic_cast<StmNode *>(node) != nullptr) {
+            continue;
+        }
+        node->dump();
+        std::cout << "-------------------\n";
+    }
+    std::cout << "CachedNode (statements):\n";
+    for (auto *node: nodes) {
+        if (dynamic_cast<StmNode *>(node) == nullptr) {
+            continue;
+        }
         node->dump();
         std::cout << "-------------------\n";
     }

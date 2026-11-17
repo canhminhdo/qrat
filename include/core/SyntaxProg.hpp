@@ -7,7 +7,9 @@
 
 #include "PropTable.hpp"
 #include "ast/CachedNode.hpp"
+#include "ast/ExpNode.hpp"
 #include "ast/StmSeq.hpp"
+#include "core/ControlFlowGraph.hpp"
 #include "core/SymbolTable.hpp"
 #include "core/Token.hpp"
 #include "core/type.hpp"
@@ -28,9 +30,9 @@ public:
 
     void addStmSeq(StmSeq *stmSeq);
 
-    void addEndStm(StmSeq *stmSeq);
-
     StmSeq *getStmSeq() const;
+
+    const ControlFlowGraph &getCfg() const;
 
     int getName() const;
 
@@ -40,7 +42,11 @@ public:
 
     Symbol *lookup(const Token &token);
 
-    ExpNode *makeNode(ExpNode *node);
+    // Caching for expressions and for statements that can be shared (gates and skip)
+    template <class T>
+    T *makeNode(T *node) {
+        return static_cast<T *>(cachedNodes.makeNode(node));
+    }
 
     void addProp(Token name, ExpNode *value);
 
@@ -58,7 +64,8 @@ private:
     std::size_t nqubits; // number of qubits
     SymbolTable symTab; // store variables and constants
     StmSeq *stmSeq; // store statements (quantum programs)
-    CachedNode cachedNodes; // cached nodes for some expressions in ASTs
+    ControlFlowGraph cfg; // control flow of the statements, built once in addStmSeq()
+    CachedNode cachedNodes; // owns the shared nodes of the ASTs: expressions, gate and skip statements
     PropTable propTab; // store propositions
 };
 #endif//SYNTAXPROG_HPP

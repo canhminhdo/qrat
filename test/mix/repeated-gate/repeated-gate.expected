@@ -1,0 +1,29 @@
+Show timing is off.
+Random seed is set to 0.
+==========================================
+prog REPEATEDGATE
+==========================================
+search in REPEATEDGATE with =>! such that P(q, |+>) .
+
+Solution 1 (state 3)
+states: 4
+quantum state: 
+0: (0.707,0)
+1: (0.707,0)
+
+No more solutions.
+states: 4
+==========================================
+psearch in REPEATEDGATE with =>! such that P(q, |+>) .
+
+Result: 1
+
+states: 4
+Simulation backend is set to exact.
+==========================================
+psearch in REPEATEDGATE with =>! such that P(q, |+>) .
+
+Result: (1 + 0*w + 0*w^2 + 0*w^3) / (sqrt(2)^0 * 1) (approx. 1)
+
+states: 4
+Bye.

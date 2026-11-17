@@ -6,23 +6,28 @@
 #define STMNODE_HPP
 
 #include "ast/Node.hpp"
+#include <cstddef>
+#include <functional>
 
 class StmNode : public Node {
 public:
-    void setNext(StmNode *next);
+    std::size_t getHash() const override;
 
-    StmNode *getNext();
+    bool isEqual(const Node &other) const override;
 
-protected:
-    StmNode *next{nullptr};
+    virtual bool isShared() const;
 };
 
-inline void StmNode::setNext(StmNode *next) {
-    this->next = next;
+inline std::size_t StmNode::getHash() const {
+    return std::hash<const StmNode *>{}(this);
 }
 
-inline StmNode *StmNode::getNext() {
-    return next;
+inline bool StmNode::isEqual(const Node &other) const {
+    return this == &other;
+}
+
+inline bool StmNode::isShared() const {
+    return false;
 }
 
 #endif //STMNODE_HPP

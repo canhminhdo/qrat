@@ -5,8 +5,8 @@ prog LOOP
 ==========================================
 search in LOOP with =>! such that P(q, |0>) .
 
-Solution 1 (state 2)
-states: 3
+Solution 1 (state 3)
+states: 4
 quantum state: 
 0: (1,0)
 

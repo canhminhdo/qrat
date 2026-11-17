@@ -9,30 +9,29 @@
 #include <unordered_map>
 #include <vector>
 
-#include "ExpNode.hpp"
-
+// Caching for expressions and the statements that can be shared (see StmNode::isShared()).
 class CachedNode {
 public:
     struct NodeHash {
-        std::size_t operator()(const ExpNode *node) const {
+        std::size_t operator()(const Node *node) const {
             return node->getHash();
         }
     };
 
     struct NodeEqual {
-        bool operator()(const ExpNode *lhs, const ExpNode *rhs) const {
+        bool operator()(const Node *lhs, const Node *rhs) const {
             return lhs->isEqual(*rhs);
         }
     };
 
     ~CachedNode();
 
-    ExpNode *makeNode(ExpNode *node);
+    Node *makeNode(Node *node);
 
     void dump() const;
 
 private:
-    std::unordered_map<ExpNode *, int, NodeHash, NodeEqual> nodeTab;
-    std::vector<ExpNode *> nodes;
+    std::unordered_map<Node *, int, NodeHash, NodeEqual> nodeTab;
+    std::vector<Node *> nodes;
 };
 #endif//CACHEDNODE_HPP

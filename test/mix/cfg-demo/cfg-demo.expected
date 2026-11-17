@@ -1,0 +1,34 @@
+Show timing is off.
+Random seed is set to 0.
+==========================================
+prog CFGDEMO
+==========================================
+search in CFGDEMO with =>! such that P(a, |0>) .
+
+Solution 1 (state 3)
+states: 4
+quantum state: 
+00: (0.707,0)
+10: (0.707,0)
+
+Solution 2 (state 9)
+states: 10
+quantum state: 
+10: (-1,0)
+
+No more solutions.
+states: 10
+==========================================
+psearch in CFGDEMO with =>! such that P(b, |1>) .
+
+Result: 0.5
+
+states: 10
+Simulation backend is set to exact.
+==========================================
+psearch in CFGDEMO with =>! such that P(b, |1>) .
+
+Result: (1 + 0*w + 0*w^2 + 0*w^3) / (sqrt(2)^2 * 1) (approx. 0.5)
+
+states: 10
+Bye.

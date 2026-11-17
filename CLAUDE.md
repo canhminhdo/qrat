@@ -49,7 +49,9 @@ Test fixtures are directories holding `<name>.qw` + `<name>.expected`, in three 
   mid-script with `set backend mqt|dw .`), and four cases that used to crash — `nested-if` (an `if` ending
   another `if`'s branch, three levels deep), `if-in-loop` (an `if` as the last statement of a `while` body),
   `redefine-prog` (`show path` after the searched program is redefined) and `empty-prog` (a program with no
-  `begin` section).
+  `begin` section) — plus `cfg-demo`, a small program exercising every location kind of the control-flow graph
+  (gate, loop, conditional, `skip`, `atomic`) whose ten states were derived by hand, and `repeated-gate`
+  (`H[q]; H[q]; H[q];`: one shared statement node at three locations).
 
 To add a new regression test, add a `<group>/<name>/` directory under `test/` with a `.qw` program and
 `.expected` output, then add a corresponding `TEST(ProgTest, ...)` case in `test/test_programs.cpp` calling
@@ -93,10 +95,17 @@ Docker: `docker build --no-cache -t qrat .` builds and packages the tool inside 
 1. **Parsing** (`src/parser/lexer.l`, `src/parser/parser.y`, built with Flex/Bison into `lexer.cpp`/`parser.cpp` in
    the build tree) — parses `.qw` source and interactive REPL commands into an AST.
 2. **AST** (`src/ast/`, `include/ast/`) — statement/expression node hierarchy (`StmNode`, `ExpNode` base classes;
-   `UnitaryStmNode`, `CondStmNode`, `WhileStmNode`, `AtomicStmNode`, `SkipStmNode`, `EndStmNode`, `MeasExpNode`,
+   `UnitaryStmNode`, `CondStmNode`, `WhileStmNode`, `AtomicStmNode`, `SkipStmNode`, `MeasExpNode`,
    `PropExpNode`, `KetExpNode`, `QubitExpNode`, `CondExpNode`, `BoolExpNode`, `OpExpNode`, `NumExpNode`,
-   `ConstExpNode`, `InitExpNode`, `CachedNode`, `StmSeq`). Statements form a linked list (`getNext()`), which is how
-   the graph search walks the program counter.
+   `ConstExpNode`, `InitExpNode`, `CachedNode`, `StmSeq`). A `StmSeq` is a plain
+   `std::vector<StmNode *>` in program order; statements carry no link to their successor, and the search does
+   not walk the lists (see the control-flow graph below). Equal nodes are represented once through the program's
+   `CachedNode`, which stores any `Node` by content (`Node::getHash()`/`isEqual()`): all expressions
+   and the statements that can be shared — gates (same name, type, qubits and parameters) and `skip`
+   (`StmNode::isShared()`) — all through the one template `SyntaxProg::makeNode()`. `if`, `while` and `atomic` nodes keep
+   the identity defaults of `StmNode`, are created with plain `new`, and are never shared. Ownership follows
+   from that: the `CachedNode` owns the shared nodes, and a `StmSeq` owns the non-shared statements it contains
+   (`StmSeq::~StmSeq` skips shared ones). A shared node therefore must not hold anything tied to one position.
 3. **Interpreter** (`include/core/Interpreter.hpp`, `src/core/Interpreter.cpp`) — the central coordinator invoked
    from the Bison actions in `parser.y`. Owns the current `SyntaxProg`, the active simulation backend
    (`SimulationBase *ddSim`, constructed in `initDDSimulation()` via `SimulationFactory::create()`), and the active
@@ -129,7 +138,19 @@ Docker: `docker build --no-cache -t qrat .` builds and packages the tool inside 
      dividing by the input state's squared norm at every measurement so consecutive measurements stay correct.
      `init[q]` projectors relocate the stored 1-qubit init state to the property's target qubit by rebuilding
      |v⟩⟨v| from its two exact amplitudes.
-5. **Graph search** (`include/core/SearchGraph.hpp` and its two subclasses):
+5. **Control-flow graph** (`include/core/ControlFlowGraph.hpp`, `src/core/ControlFlowGraph.cpp`) — built once per
+   program by `SyntaxProg::addStmSeq()` and owned by the `SyntaxProg` (`getCfg()`). It is a
+   `std::vector<Location>`; a location is identified by its index in that vector, and that integer is the
+   program counter stored in a search state. There is one location per statement (`SKIP`, `UNITARY`, `ATOMIC`,
+   `BRANCH` for both `if` and `while`) plus one `HALT`; statements inside an `atomic` body get none. A location
+   belongs to one occurrence of a statement, so a shared statement node gets one location per position. Each
+   location holds its successors as indices into the same vector (`next[0]`, or `next[measurement outcome]` for
+   a `BRANCH`) and pointers to the AST nodes it needs (gate, measured qubit, source statement for printing). Two
+   passes build it, both by position and never by node: `numberLocations()` appends the locations in source
+   pre-order, `setNext(list, first, after)` fills in the successors of the list starting at index `first`, where
+   `after` is the location that runs once the whole list has finished (an `if` passes its own successor to both
+   branches, a `while` passes itself to its body).
+6. **Graph search** (`include/core/SearchGraph.hpp` and its two subclasses):
    - `StateTransitionGraph` (`search`/`psearch` commands) — explores reachable `(program counter, quantum state)`
      pairs up to a search type (`Search::Type`: `=>1`, `=>*`, `=>+`, `=>!`) and depth/solution bounds; in
      probabilistic mode (`psearch`) it solves for reachability probabilities using Gauss-Seidel or Jacobi iterative
@@ -138,10 +159,12 @@ Docker: `docker build --no-cache -t qrat .` builds and packages the tool inside 
      fixed points of cyclic chains), or backward-reachability for qualitative checks.
    - `StateSpaceGraph` (`pcheck` command) — builds the full reachable state space, tagging states by which named
      property they satisfy, for export to an external model checker.
-   Both share `SearchGraph`'s state deduplication (`stateTab`, hashed by program counter + canonical DD node
-   pointer via `QState::node()`; both backends hash-cons, so dedup-up-to-global-scalar carries over) and dispatch
-   on statement type via `procSkipStm`/`procUnitaryStm`/`procCondStm`/`procWhileStm`/`procAtomicStm`.
-6. **Model export & checking** (`src/model/`, `include/model/`) — `DTMC` serializes a `StateSpaceGraph` into a PRISM
+   Both share `SearchGraph`'s state deduplication (`stateTab`, hashed and compared by the location index
+   `State::pc` + canonical DD node pointer via `QState::node()`; both backends hash-cons, so
+   dedup-up-to-global-scalar carries over) and dispatch on the location's kind in `procState` via
+   `procSkipStm`/`procUnitaryStm`/`procBranchStm`/`procAtomicStm`, reading successors from the control-flow
+   graph. A state is final when its `pc` is the graph's `halt()` (`SearchGraph::isFinalState`).
+7. **Model export & checking** (`src/model/`, `include/model/`) — `DTMC` serializes a `StateSpaceGraph` into a PRISM
    `.pm` model file with labeled properties; `Runner` is the abstract interface for invoking an external model
    checker binary as a subprocess and parsing its result, implemented by `PrismRunner` and `StormRunner`;
    `RunnerFactory` picks the backend from `pcheck` command-line-style arguments (`--backend=PRISM|Storm`,

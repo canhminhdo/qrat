@@ -6,10 +6,10 @@
 #define BASEGRAPH_HPP
 
 #include "ast/CondStmNode.hpp"
-#include "ast/EndStmNode.hpp"
 #include "ast/SkipStmNode.hpp"
 #include "ast/StmNode.hpp"
 #include "ast/WhileStmNode.hpp"
+#include "core/ControlFlowGraph.hpp"
 #include "dd/SimulationBase.hpp"
 #include "utility/HashUtil.hpp"
 #include "utility/Prob.hpp"
@@ -22,23 +22,15 @@ public:
 
     struct State {
         int stateNr;
-        StmNode *pc;      // program counter
+        int pc;           // program counter
         QState current{};// current quantum state
         int parent;
         vector<int> otherParents; // other parents of this state;
         std::vector<std::pair<int, Prob>> nextStates;
         int depth{0};
 
-        State(StmNode *pc, QState current, int parent = -1, int depth = 0)
+        State(int pc, QState current, int parent = -1, int depth = 0)
             : pc{pc}, current{std::move(current)}, parent{parent}, depth{depth} {
-        }
-
-        bool isFinalState() {
-            auto *endStm = dynamic_cast<EndStmNode *>(pc);
-            if (endStm != nullptr && endStm->getNext() == nullptr) {
-                return true;
-            }
-            return false;
         }
 
         virtual bool hasOutcome() const {
@@ -53,7 +45,7 @@ public:
     struct StateWithOutcome : public State {
         int outcome{0};
 
-        StateWithOutcome(StmNode *pc, QState current, int parent = -1, int depth = 0, int outcome = 0)
+        StateWithOutcome(int pc, QState current, int parent = -1, int depth = 0, int outcome = 0)
             : State(pc, std::move(current), parent, depth), outcome{outcome} {
         }
 
@@ -67,7 +59,7 @@ public:
 
     struct StateHash {
         std::size_t operator()(const State *s) const {
-            return HashUtil::combinedHash(std::hash<StmNode *>()(s->pc),
+            return HashUtil::combinedHash(std::hash<int>()(s->pc),
                                           std::hash<const void *>()(s->current.node()));
         }
     };
@@ -88,19 +80,17 @@ public:
 
     void procState(State *currentState, const Timer &timer);
 
-    void procSkipStm([[maybe_unused]] SkipStmNode *skipStm, State *currentState, StmNode *nextStm, const Timer &timer);
+    void procSkipStm(const ControlFlowGraph::Location &loc, State *currentState, const Timer &timer);
 
-    void procUnitaryStm(UnitaryStmNode *unitaryStm, State *currentState, StmNode *nextStm, const Timer &timer);
+    void procUnitaryStm(const ControlFlowGraph::Location &loc, State *currentState, const Timer &timer);
 
-    void procCondStm(CondStmNode *condStm, State *currentState, const Timer &timer);
+    void procBranchStm(const ControlFlowGraph::Location &loc, State *currentState, const Timer &timer);
 
-    void procWhileStm(WhileStmNode *whileStm, State *currentState, StmNode *nextStm, const Timer &timer);
+    void procAtomicStm(const ControlFlowGraph::Location &loc, State *currentState, const Timer &timer);
 
-    void procAtomicStm(AtomicStmNode *atomicStm, State *currentState, StmNode *nextStm, const Timer &timer);
+    void procCondBranch(State *currentState, int nextLoc, QState &v, const Prob &prob, int outcome, const Timer &timer);
 
-    void procCondBranch(State *currentState, StmNode *nextStm, QState &v, const Prob &prob, int outcome, const Timer &timer);
-
-    StmNode *getNextStatement(StmNode *stm);
+    bool isFinalState(const State *s) const;
 
     void showPath(int stateNr, bool endState = true) const;
 
@@ -125,6 +115,9 @@ public:
     const SyntaxProg *getProg() const;
 
 protected:
+    // the control-flow graph of the program being searched
+    const ControlFlowGraph &getCfg() const;
+
     // for analysis
     std::unordered_map<State *, int, StateHash, StateEqual> stateTab;
     std::vector<State *> seenStates;

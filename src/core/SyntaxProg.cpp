@@ -4,13 +4,9 @@
 
 
 #include "core/SyntaxProg.hpp"
-#include "ast/EndStmNode.hpp"
 #include "core/ConstSymbol.hpp"
 #include "core/VarSymbol.hpp"
 #include <iostream>
-
-#include "ast/CondStmNode.hpp"
-#include "ast/WhileStmNode.hpp"
 
 SyntaxProg::SyntaxProg(Token prog) {
     name = prog.code();
@@ -46,36 +42,16 @@ void SyntaxProg::addInit(Token variable, Node *value) {
 
 void SyntaxProg::addStmSeq(StmSeq *stmSeq) {
     this->stmSeq = stmSeq;
-    // add EndStmNode to the end of stmSeq recursively
-    this->stmSeq->addStm(new EndStmNode());
-    addEndStm(stmSeq);
-}
-
-void SyntaxProg::addEndStm(StmSeq *stmSeq) {
-    auto head = stmSeq->getHead();
-    while (head != nullptr) {
-        if (dynamic_cast<EndStmNode *>(head)) {
-            break;
-        }
-        StmNode *next = head->getNext();
-        auto *condStm = dynamic_cast<CondStmNode *>(head);
-        if (condStm != nullptr) {
-            condStm->getThenStm()->addStm(new EndStmNode(next));
-            condStm->getElseStm()->addStm(new EndStmNode(next));
-            addEndStm(condStm->getThenStm());
-            addEndStm(condStm->getElseStm());
-        }
-        auto *whileStm = dynamic_cast<WhileStmNode *>(head);
-        if (whileStm != nullptr) {
-            // conditionals may be nested in the while loop
-            addEndStm(whileStm->getBody());
-        }
-        head = next;
-    }
+    // compile the control flow once; the search reads successors from this table
+    cfg.build(stmSeq);
 }
 
 StmSeq *SyntaxProg::getStmSeq() const {
     return stmSeq;
+}
+
+const ControlFlowGraph &SyntaxProg::getCfg() const {
+    return cfg;
 }
 
 int SyntaxProg::getName() const {
@@ -98,10 +74,6 @@ bool SyntaxProg::hasConstSymbol(const Token &token) {
 
 Symbol *SyntaxProg::lookup(const Token &token) {
     return symTab.lookup(token.code());
-}
-
-ExpNode *SyntaxProg::makeNode(ExpNode *node) {
-    return cachedNodes.makeNode(node);
 }
 
 void SyntaxProg::addProp(Token name, ExpNode *value) {
@@ -128,6 +100,8 @@ void SyntaxProg::dump() const {
     std::cout << "Statements: " << std::endl;
     if (stmSeq != nullptr)
         stmSeq->dump();
+    std::cout << "Control Flow Graph: " << std::endl;
+    cfg.dump();
     std::cout << "CachedNodes: " << std::endl;
     cachedNodes.dump();
     std::cout << "Propositions: " << std::endl;

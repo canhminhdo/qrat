@@ -6,28 +6,28 @@
 #define STMSEQ_HPP
 
 #include "ast/StmNode.hpp"
+#include <vector>
 
 class StmSeq {
 public:
-    StmSeq();
+    StmSeq() = default;
 
     ~StmSeq();
 
     void addStm(StmNode *stm);
 
-    StmNode *getHead() const;
+    const std::vector<StmNode *> &getStms() const;
 
-    StmNode *getTail() const;
-
-    void dump(bool recursive = true);
+    bool empty() const;
 
     int size() const;
+
+    void dump(bool recursive = true);
 
     void info();
 
 private:
-    StmNode *head;
-    StmNode *tail;
+    std::vector<StmNode *> stms;
 };
 
 #endif //STMSEQ_HPP

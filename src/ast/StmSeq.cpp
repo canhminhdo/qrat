@@ -3,67 +3,42 @@
 //
 
 #include "ast/StmSeq.hpp"
-#include "ast/CondStmNode.hpp"
-#include "ast/EndStmNode.hpp"
 #include <iostream>
 
-StmSeq::StmSeq() : head{nullptr}, tail{nullptr} {
-}
-
 StmSeq::~StmSeq() {
-    StmNode *current = head;
-    while (current != nullptr) {
-        if (dynamic_cast<EndStmNode *>(current)) {
-            delete current;
-            break;
+    for (auto *stm: stms) {
+        // shared statements belong to the program's CachedNode
+        if (!stm->isShared()) {
+            delete stm;
         }
-        StmNode *next = current->getNext();
-        delete current;
-        current = next;
     }
 }
 
 void StmSeq::addStm(StmNode *stm) {
-    if (head == nullptr) {
-        head = stm;
-        tail = stm;
-    } else {
-        tail->setNext(stm);
-        tail = stm;
-    }
+    stms.push_back(stm);
 }
 
-StmNode *StmSeq::getHead() const {
-    return head;
+const std::vector<StmNode *> &StmSeq::getStms() const {
+    return stms;
 }
 
-StmNode *StmSeq::getTail() const {
-    return tail;
-}
-
-void StmSeq::dump(bool recursive) {
-    if (head)
-        head->dump();
+bool StmSeq::empty() const {
+    return stms.empty();
 }
 
 int StmSeq::size() const {
-    int count = 0;
-    auto current = head;
-    while (current != nullptr && current != tail) {
-        count++;
-        current = current->getNext();
+    return static_cast<int>(stms.size());
+}
+
+void StmSeq::dump(bool recursive) {
+    for (auto *stm: stms) {
+        stm->dump(recursive);
     }
-    if (dynamic_cast<EndStmNode *>(current) == nullptr)
-        count++;
-    return count;
+    std::cout << "End" << std::endl;
 }
 
 void StmSeq::info() {
-    StmNode *current = head;
-    while (current != nullptr && current != tail) {
-        current->info();
-        current = current->getNext();
+    for (auto *stm: stms) {
+        stm->info();
     }
-    if (dynamic_cast<EndStmNode *>(current) == nullptr)
-        current->info();
 }

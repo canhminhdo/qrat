@@ -14,6 +14,13 @@ public:
 
     ~SkipStmNode() override = default;
 
+    // all skip statements are one node
+    std::size_t getHash() const override;
+
+    bool isEqual(const Node &other) const override;
+
+    bool isShared() const override;
+
     void dump(bool recursive) override;
 
     const char *getName() const;

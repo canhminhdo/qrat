@@ -399,7 +399,7 @@ atomicStm   :   KW_ATOMIC '{' stmList  '}' expectedSemi
 /* skip statement */
 skipStm :   KW_SKIP expectedSemi
                 {
-                    $$ = new SkipStmNode();
+                    $$ = currentSyntaxProg->makeNode(new SkipStmNode());
                 }
         ;
 
@@ -408,20 +408,30 @@ unitaryStm  :   operation '[' varNameList ']' expectedSemi
                     {
                         std::string errMsg = "";
                         $$ = DDOperation::makeOperation(currentSyntaxProg, $1, $3, nullptr, errMsg);
+                        delete $3;
                         if (!errMsg.empty()) {
                             yyerror(errMsg.c_str());
                             YYERROR;
                         }
+                        if ($$ == nullptr) {
+                            YYERROR;
+                        }
+                        $$ = currentSyntaxProg->makeNode($$);
                     }
             |   operationWithParams '[' varNameList ']' '(' params ')' expectedSemi
                     {
                         std::string errMsg = "";
                         $$ = DDOperation::makeOperation(currentSyntaxProg, $1, $3, $6, errMsg);
+                        delete $3;
                         delete $6;
                         if (!errMsg.empty()) {
                             yyerror(errMsg.c_str());
                             YYERROR;
                         }
+                        if ($$ == nullptr) {
+                            YYERROR;
+                        }
+                        $$ = currentSyntaxProg->makeNode($$);
                     }
             ;
 operation   :   KW_SINGLE_TARGET_OP

@@ -3,12 +3,24 @@
 //
 
 #include "ast/SkipStmNode.hpp"
+#include <functional>
 #include <iostream>
+#include <string_view>
 
 void SkipStmNode::dump(bool recursive) {
     std::cout << getName() << std::endl;
-    if (recursive && next)
-        next->dump();
+}
+
+std::size_t SkipStmNode::getHash() const {
+    return std::hash<std::string_view>{}(name);
+}
+
+bool SkipStmNode::isEqual(const Node &other) const {
+    return dynamic_cast<const SkipStmNode *>(&other) != nullptr;
+}
+
+bool SkipStmNode::isShared() const {
+    return true;
 }
 
 void SkipStmNode::info() {

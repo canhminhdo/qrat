@@ -3,12 +3,9 @@
 //
 
 #include "core/SearchGraph.hpp"
-#include "ast/CondExpNode.hpp"
-#include "ast/NumExpNode.hpp"
 #include "core/global.hpp"
 #include "utility/Tty.hpp"
 #include <Configuration.hpp>
-#include <ast/AtomicStmNode.hpp>
 #include <iomanip>
 
 SearchGraph::~SearchGraph() {
@@ -20,7 +17,7 @@ SearchGraph::~SearchGraph() {
 }
 
 void SearchGraph::buildInitialState() {
-    auto *initialState = new State(currentProg->getStmSeq()->getHead(), ddSim->getInitialState());
+    auto *initialState = new State(getCfg().entry(), ddSim->getInitialState());
     assert(seenStates.empty());
     makeState(initialState);
 }
@@ -29,27 +26,27 @@ void SearchGraph::handleInCache(int currStateId, int nextStateId) {
 }
 
 void SearchGraph::procState(State *currentState, const Timer &timer) {
-    StmNode *stm = currentState->pc;
-    if (auto *endProg = dynamic_cast<EndStmNode *>(stm); endProg != nullptr && endProg->getNext() == nullptr) {
-        return;
-    }
-    StmNode *nextStm = getNextStatement(stm);
-    if (auto *skipStm = dynamic_cast<SkipStmNode *>(stm); skipStm != nullptr) {
-        procSkipStm(skipStm, currentState, nextStm, timer);
-    } else if (auto *unitaryStm = dynamic_cast<UnitaryStmNode *>(stm); unitaryStm != nullptr) {
-        procUnitaryStm(unitaryStm, currentState, nextStm, timer);
-    } else if (auto *condStm = dynamic_cast<CondStmNode *>(stm); condStm != nullptr) {
-        procCondStm(condStm, currentState, timer);
-    } else if (auto *whileStm = dynamic_cast<WhileStmNode *>(stm); whileStm != nullptr) {
-        procWhileStm(whileStm, currentState, nextStm, timer);
-    } else if (auto *atomicStm = dynamic_cast<AtomicStmNode *>(stm); atomicStm != nullptr) {
-        procAtomicStm(atomicStm, currentState, nextStm, timer);
-    } else {
-        throw std::runtime_error("Unknown statement type");
+    const auto &loc = getCfg().at(currentState->pc);
+    switch (loc.kind) {
+        case ControlFlowGraph::Kind::HALT:
+            return;
+        case ControlFlowGraph::Kind::SKIP:
+            procSkipStm(loc, currentState, timer);
+            break;
+        case ControlFlowGraph::Kind::UNITARY:
+            procUnitaryStm(loc, currentState, timer);
+            break;
+        case ControlFlowGraph::Kind::BRANCH:
+            procBranchStm(loc, currentState, timer);
+            break;
+        case ControlFlowGraph::Kind::ATOMIC:
+            procAtomicStm(loc, currentState, timer);
+            break;
     }
 }
-void SearchGraph::procSkipStm(SkipStmNode *skipStm, State *currentState, StmNode *nextStm, const Timer &timer) {
-    auto [newState, inCache] = makeState(new State(nextStm, currentState->current, currentState->stateNr,
+
+void SearchGraph::procSkipStm(const ControlFlowGraph::Location &loc, State *currentState, const Timer &timer) {
+    auto [newState, inCache] = makeState(new State(loc.next[0], currentState->current, currentState->stateNr,
                                                    currentState->depth + 1));
     currentState->nextStates.push_back(std::make_pair(newState->stateNr, 1));
     if (!inCache) {
@@ -58,13 +55,14 @@ void SearchGraph::procSkipStm(SkipStmNode *skipStm, State *currentState, StmNode
         handleInCache(currentState->stateNr, newState->stateNr);
     }
 }
-void SearchGraph::procUnitaryStm(UnitaryStmNode *unitaryStm, State *currentState, StmNode *nextStm, const Timer &timer) {
+
+void SearchGraph::procUnitaryStm(const ControlFlowGraph::Location &loc, State *currentState, const Timer &timer) {
     auto v = currentState->current;
-    auto v1 = ddSim->applyGate(unitaryStm, v);
+    auto v1 = ddSim->applyGate(loc.gate, v);
     if (ddSim->isUnreferenced(v1)) {
         ddSim->incRef(v1);
     }
-    auto [newState, inCache] = makeState(new State(nextStm, v1, currentState->stateNr, currentState->depth + 1));
+    auto [newState, inCache] = makeState(new State(loc.next[0], v1, currentState->stateNr, currentState->depth + 1));
     currentState->nextStates.push_back(std::make_pair(newState->stateNr, 1));
     if (!inCache) {
         checkState(newState, timer);
@@ -72,57 +70,27 @@ void SearchGraph::procUnitaryStm(UnitaryStmNode *unitaryStm, State *currentState
         handleInCache(currentState->stateNr, newState->stateNr);
     }
 }
-void SearchGraph::procCondStm(CondStmNode *condStm, State *currentState, const Timer &timer) {
-    auto *condExp = dynamic_cast<CondExpNode *>(condStm->getCond());
-    auto *measExp = dynamic_cast<MeasExpNode *>(condExp->getLeft());
-    auto *numExp = dynamic_cast<NumExpNode *>(condExp->getRight());
-    assert(condExp != nullptr && measExp != nullptr && numExp != nullptr);
-    auto isZero = numExp->isZero();
-    auto [v0, pZero, v1, pOne] = ddSim->measureWithProb(measExp, currentState->current);
-    procCondBranch(currentState, isZero ? condStm->getThenStm()->getHead() : condStm->getElseStm()->getHead(), v0,
-                   pZero, 0, timer);
+
+void SearchGraph::procBranchStm(const ControlFlowGraph::Location &loc, State *currentState, const Timer &timer) {
+    auto [v0, pZero, v1, pOne] = ddSim->measureWithProb(loc.meas, currentState->current);
+    procCondBranch(currentState, loc.next[1], v1, pOne, 1, timer);
     if (checkSearchCondition()) {
-        procCondBranch(currentState, isZero ? condStm->getElseStm()->getHead() : condStm->getThenStm()->getHead(), v1,
-                       pOne, 1, timer);
+        procCondBranch(currentState, loc.next[0], v0, pZero, 0, timer);
     }
 }
-void SearchGraph::procWhileStm(WhileStmNode *whileStm, State *currentState, StmNode *nextStm, const Timer &timer) {
-    auto *condExp = dynamic_cast<CondExpNode *>(whileStm->getCond());
-    auto *measExp = dynamic_cast<MeasExpNode *>(condExp->getLeft());
-    auto *numExp = dynamic_cast<NumExpNode *>(condExp->getRight());
-    assert(condExp != nullptr && measExp != nullptr && numExp != nullptr);
-    auto isZero = numExp->isZero();
-    auto [v0, pZero, v1, pOne] = ddSim->measureWithProb(measExp, currentState->current);
-    procCondBranch(currentState, isZero ? whileStm->getBody()->getHead() : nextStm, v0, pZero, 0, timer);
-    if (checkSearchCondition()) {
-        procCondBranch(currentState, isZero ? nextStm : whileStm->getBody()->getHead(), v1, pOne, 1, timer);
-    }
-}
-void SearchGraph::procAtomicStm(AtomicStmNode *atomicStm, State *currentState, StmNode *nextStm, const Timer &timer) {
-    auto *body = atomicStm->getBody();
-    auto *current = body->getHead();
-    auto *tail = body->getTail();
-    if (current == nullptr || tail == nullptr) {
-        return;
-    }
+
+void SearchGraph::procAtomicStm(const ControlFlowGraph::Location &loc, State *currentState, const Timer &timer) {
     auto v = currentState->current;
     ddSim->incRef(v);
-    while (current != tail) {
-        if (auto *skipStm = dynamic_cast<SkipStmNode *>(current); skipStm != nullptr) {
-            // do nothing, skip statement
-        } else if (auto *unitaryStm = dynamic_cast<UnitaryStmNode *>(current); unitaryStm != nullptr) {
-            auto v1 = ddSim->applyGate(unitaryStm, v);
-            ddSim->decRef(v);
-            ddSim->incRef(v1);
-            ddSim->garbageCollect();
-            v = v1;
-        } else {
-            throw std::runtime_error("Unknown statement type in atomic statement");
-        }
-        current = current->getNext();
+    for (auto *unitaryStm: loc.gates) {
+        auto v1 = ddSim->applyGate(unitaryStm, v);
+        ddSim->decRef(v);
+        ddSim->incRef(v1);
+        ddSim->garbageCollect();
+        v = v1;
     }
     ddSim->garbageCollect(true);
-    auto [newState, inCache] = makeState(new State(nextStm, v, currentState->stateNr, currentState->depth + 1));
+    auto [newState, inCache] = makeState(new State(loc.next[0], v, currentState->stateNr, currentState->depth + 1));
     currentState->nextStates.push_back(std::make_pair(newState->stateNr, 1));
     if (!inCache) {
         checkState(newState, timer);
@@ -130,14 +98,15 @@ void SearchGraph::procAtomicStm(AtomicStmNode *atomicStm, State *currentState, S
         handleInCache(currentState->stateNr, newState->stateNr);
     }
 }
-void SearchGraph::procCondBranch(State *currentState, StmNode *nextStm, QState &v, const Prob &prob, int outcome, const Timer &timer) {
+
+void SearchGraph::procCondBranch(State *currentState, int nextLoc, QState &v, const Prob &prob, int outcome, const Timer &timer) {
     if (prob.isZero() || v.isZeroTerminal()) {
         return;
     }
     if (ddSim->isUnreferenced(v)) {
         ddSim->incRef(v);
     }
-    auto [newState, inCache] = makeState(new StateWithOutcome(nextStm, v, currentState->stateNr,
+    auto [newState, inCache] = makeState(new StateWithOutcome(nextLoc, v, currentState->stateNr,
                                                               currentState->depth + 1, outcome));
     currentState->nextStates.push_back(std::make_pair(newState->stateNr, prob));
     if (!inCache) {
@@ -147,15 +116,12 @@ void SearchGraph::procCondBranch(State *currentState, StmNode *nextStm, QState &
     }
 }
 
-StmNode *SearchGraph::getNextStatement(StmNode *stm) {
-    StmNode *nextStm = stm->getNext();
-    while (auto *endStm = dynamic_cast<EndStmNode *>(nextStm)) {
-        if (endStm->getNext() == nullptr) {
-            break; // end of the program
-        }
-        nextStm = endStm->getNext();
-    }
-    return nextStm;
+bool SearchGraph::isFinalState(const State *s) const {
+    return s->pc == getCfg().halt();
+}
+
+const ControlFlowGraph &SearchGraph::getCfg() const {
+    return currentProg->getCfg();
 }
 
 void SearchGraph::showPath(int stateNr, bool endState) const {
@@ -173,9 +139,9 @@ void SearchGraph::showPath(int stateNr, bool endState) const {
     std::cout << "state " << s->stateNr << ", ";
     std::cout << "quantum state:\n";
     ddSim->printState(s->current);
-    if (!endState && !s->isFinalState()) {
+    if (!endState && !isFinalState(s)) {
         std::cout << "===[ ";
-        s->pc->info();
+        getCfg().at(s->pc).stm->info();
         std::cout << " ]===>\n";
     }
 }
@@ -218,7 +184,11 @@ void SearchGraph::printState(State *s, bool recursive) const {
     std::cout << "[State ID]: " << s->stateNr << "\n";
     std::cout << "[Parent State ID]: " << s->parent << "\n";
     std::cout << "[Program Counter]: ";
-    s->pc->dump(false);
+    if (isFinalState(s)) {
+        std::cout << "End" << std::endl;
+    } else {
+        getCfg().at(s->pc).stm->dump(false);
+    }
     std::cout << "[Depth]: " << s->depth << "\n";
     std::cout << "[Quantum State]: \n";
     ddSim->printState(s->current);

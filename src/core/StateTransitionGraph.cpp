@@ -65,7 +65,7 @@ bool StateTransitionGraph::checkSearchCondition() {
 
 void StateTransitionGraph::checkState(State *s, const Timer &timer) {
     if (isArrowExclamation(searchType)) {
-        if (!s->isFinalState())
+        if (!isFinalState(s))
             return;
     }
     if (ddSim->test(s->current, propExp)) {

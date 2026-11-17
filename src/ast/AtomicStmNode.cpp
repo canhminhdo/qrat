@@ -3,13 +3,11 @@
 //
 
 #include "ast/AtomicStmNode.hpp"
-#include "ast/EndStmNode.hpp"
 #include "ast/CondStmNode.hpp"
 #include "ast/WhileStmNode.hpp"
 #include <iostream>
 
 AtomicStmNode::AtomicStmNode(StmSeq *body) : body{body} {
-    body->addStm(new EndStmNode()); // Add an EndStmNode to the end of the body as termination marker
 }
 
 AtomicStmNode::~AtomicStmNode() {
@@ -21,15 +19,12 @@ StmSeq *AtomicStmNode::getBody() const {
 }
 
 bool AtomicStmNode::isValid() const {
-    auto current = body->getHead();
-    auto tail = body->getTail();
-    while (current != tail) {
-        if (dynamic_cast<CondStmNode *>(current) || dynamic_cast<WhileStmNode *>(current)) {
-            return false; // Atomic statements should not contain CondStmNode or WhileStmNode
+    for (auto *stm: body->getStms()) {
+        if (dynamic_cast<CondStmNode *>(stm) || dynamic_cast<WhileStmNode *>(stm)) {
+            return false;
         }
-        current = current->getNext();
     }
-    return current && tail;
+    return !body->empty();
 }
 
 void AtomicStmNode::dump(bool recursive) {
@@ -38,10 +33,8 @@ void AtomicStmNode::dump(bool recursive) {
         std::cout << "{" << std::endl;
         body->dump();
         std::cout << "}" << std::endl;
-        next->dump();
     } else {
         std::cout << "{ ... }" << std::endl;
-        next->dump();
     }
 }
 

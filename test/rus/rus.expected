@@ -5,8 +5,8 @@ prog RUS
 ==========================================
 search in RUS with =>! such that P(a, |0>) .
 
-Solution 1 (state 2)
-states: 3
+Solution 1 (state 3)
+states: 4
 quantum state: 
 00: (0.917,-0.326)
 10: (0.0772,-0.217)

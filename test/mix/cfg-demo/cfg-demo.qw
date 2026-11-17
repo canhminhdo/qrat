@@ -1,0 +1,29 @@
+set show timing off .
+set random seed 0 .
+
+prog CFGDEMO is
+var a, b : qubit;
+init
+    a := |0>;
+    b := |+>;
+begin
+    H[a];
+    while M[a] = 1 do
+        if M[b] = 0 then
+            X[b];
+        else
+            skip;
+        fi;
+        atomic { H[a]; skip; X[a]; };
+    od;
+end
+
+search in CFGDEMO with =>! such that P(a, |0>) .
+
+psearch in CFGDEMO with =>! such that P(b, |1>) .
+
+set backend dw .
+
+psearch in CFGDEMO with =>! such that P(b, |1>) .
+
+quit .

@@ -21,6 +21,13 @@ public:
     void eval() override {
     };
 
+    // equal gates on equal qubits with equal parameters are one node
+    std::size_t getHash() const override;
+
+    bool isEqual(const Node &other) const override;
+
+    bool isShared() const override;
+
     std::vector<Symbol *> getControls() const;
 
     std::vector<Symbol *> getTargets() const;
