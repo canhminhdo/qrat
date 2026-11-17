@@ -287,8 +287,8 @@ std::vector<bool> DwSimulation::basisToBits(const std::string &basis) const {
         if (basis[j] != '0' && basis[j] != '1') {
             throw std::runtime_error("Error: basis string must consist of 0s and 1s");
         }
-        // basis[0] is the highest qubit; amplitude() expects bits[i] = qubit i
-        bits[nqubits - 1 - j] = basis[j] == '1';
+        // basis[j] is qubit j, the j-th declared qubit, as in the default backend
+        bits[j] = basis[j] == '1';
     }
     return bits;
 }

@@ -102,3 +102,8 @@ TEST(ProgTest, repeatedGateProg) {
     int res = std::system("bash testScript.sh mix/repeated-gate");
     EXPECT_EQ(res, 0);
 }
+
+TEST(ProgTest, basisOrderProg) {
+    int res = std::system("bash testScript.sh mix/basis-order");
+    EXPECT_EQ(res, 0);
+}

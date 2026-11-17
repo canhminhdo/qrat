@@ -1,0 +1,36 @@
+Show timing is off.
+Random seed is set to 0.
+==========================================
+prog BASISORDER
+==========================================
+search in BASISORDER with =>! such that true .
+
+Solution 1 (state 1)
+states: 2
+quantum state: 
+001: (0.707,0)
+101: (0.707,0)
+
+No more solutions.
+states: 2
+[33mProbability of basis state |100> in state 1 is 0.5[0m
+[33mProbability of basis state |101> in state 1 is 0.5[0m
+[33mProbability of basis state |001> in state 1 is 0[0m
+[33mAmplitude of basis state |101> in state 1 is (0.707107,0)[0m
+Simulation backend is set to exact.
+==========================================
+search in BASISORDER with =>! such that true .
+
+Solution 1 (state 1)
+states: 2
+quantum state: 
+001: (1 + 0*w + 0*w^2 + 0*w^3) / (sqrt(2)^1 * 1)
+101: (1 + 0*w + 0*w^2 + 0*w^3) / (sqrt(2)^1 * 1)
+
+No more solutions.
+states: 2
+[33mProbability of basis state |100> in state 1 is (1 + 0*w + 0*w^2 + 0*w^3) / (sqrt(2)^2 * 1) (approx. 0.5)[0m
+[33mProbability of basis state |101> in state 1 is (1 + 0*w + 0*w^2 + 0*w^3) / (sqrt(2)^2 * 1) (approx. 0.5)[0m
+[33mProbability of basis state |001> in state 1 is (0 + 0*w + 0*w^2 + 0*w^3) / (sqrt(2)^0 * 1) (approx. 0)[0m
+[33mAmplitude of basis state |101> in state 1 is (1 + 0*w + 0*w^2 + 0*w^3) / (sqrt(2)^1 * 1) (of unnormalized state; squared norm = (1 + 0*w + 0*w^2 + 0*w^3) / (sqrt(2)^0 * 1))[0m
+Bye.

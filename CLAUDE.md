@@ -51,7 +51,8 @@ Test fixtures are directories holding `<name>.qw` + `<name>.expected`, in three 
   `redefine-prog` (`show path` after the searched program is redefined) and `empty-prog` (a program with no
   `begin` section) — plus `cfg-demo`, a small program exercising every location kind of the control-flow graph
   (gate, loop, conditional, `skip`, `atomic`) whose ten states were derived by hand, and `repeated-gate`
-  (`H[q]; H[q]; H[q];`: one shared statement node at three locations).
+  (`H[q]; H[q]; H[q];`: one shared statement node at three locations), and `basis-order` (`show prob|amp`
+  with non-palindromic basis strings under both backends).
 
 To add a new regression test, add a `<group>/<name>/` directory under `test/` with a `.qw` program and
 `.expected` output, then add a corresponding `TEST(ProgTest, ...)` case in `test/test_programs.cpp` calling
@@ -226,7 +227,9 @@ end
 **Commands** (REPL / script-level, drive the `Interpreter`): `load <file> .`, `search [bound{, depth}] in <Prog>
 with <arrow> such that <property> .` and `psearch ...` (qualitative vs. probabilistic reachability; `<arrow>` is
 one of `=>1 =>* =>+ =>!`, see `Search::Type`), `pcheck in <Prog> with "<formula>" <args> .` (export to
-PRISM/Storm), `show path/state <id> .`, `show prob|amp of basis '<bits>' in state <id> .`, `set show timing on|off
+PRISM/Storm), `show path/state <id> .`, `show prob|amp of basis '<bits>' in state <id> .` (`<bits>` lists the qubits in declaration
+order — first character = first declared qubit — in both backends; the `quantum state:` listing prints its
+labels the other way round, last declared qubit first), `set show timing on|off
 .`, `set random seed <n> .`, `set backend mqt|dw .` (selects the simulation backend for subsequent
 commands; `backend` is a reserved keyword), `quit .`.
 

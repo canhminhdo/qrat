@@ -1,0 +1,33 @@
+set show timing off .
+set random seed 0 .
+
+// The basis string of `show prob|amp` lists the qubits in declaration order: a, b, c.
+// The final state is a = 1, b = 0, c = |+>, so '100' and '101' have probability 1/2 each, and the mirror
+// image '001' has probability 0. None of the strings is a palindrome, so a reversed order is detected.
+prog BASISORDER is
+var a, b, c : qubit;
+init
+    a := |1>;
+    b := |0>;
+    c := |0>;
+begin
+    H[c];
+end
+
+search in BASISORDER with =>! such that true .
+
+show prob of basis '100' in state 1 .
+show prob of basis '101' in state 1 .
+show prob of basis '001' in state 1 .
+show amp of basis '101' in state 1 .
+
+set backend dw .
+
+search in BASISORDER with =>! such that true .
+
+show prob of basis '100' in state 1 .
+show prob of basis '101' in state 1 .
+show prob of basis '001' in state 1 .
+show amp of basis '101' in state 1 .
+
+quit .
